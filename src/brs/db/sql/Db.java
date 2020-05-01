@@ -128,6 +128,12 @@ public final class Db {
           config.addDataSourceProperty("DATABASE_TO_UPPER", "false");
           config.addDataSourceProperty("CASE_INSENSITIVE_IDENTIFIERS", "true");
           break;
+        case SQLITE:
+          Class.forName("org.sqlite.JDBC");
+          flywayBuilder.locations("classpath:/db/migration_sqlite");
+          runFlyway = true;
+          config.setAutoCommit(true);
+          break;
         default:
           break;
       }
@@ -219,17 +225,19 @@ public final class Db {
     Settings settings = new Settings();
     settings.setRenderSchema(Boolean.FALSE);
 
+    DSLContext ctx = null;
     if (con == null) {
-      try ( DSLContext ctx = DSL.using(cp, dialect, settings) ) {
-        return ctx;
-      }
+      ctx = DSL.using(cp, dialect, settings);
     }
     else {
       settings.setStatementType(StatementType.STATIC_STATEMENT);
-      try ( DSLContext ctx = DSL.using(con, dialect, settings) ) {
-        return ctx;
-      }
+      ctx = DSL.using(con, dialect, settings);
     }
+    if (dialect == SQLDialect.SQLITE) {
+        ctx.execute("PRAGMA foreign_keys = ON;");
+        ctx.execute("PRAGMA journal_mode = WAL;");
+    }
+    return ctx;
   }
 
   static <V> Map<BurstKey, V> getCache(String tableName) {
