@@ -3,6 +3,7 @@ package brs.db.sql;
 import brs.db.BurstKey;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.IndirectIncomingStore;
+import brs.schema.tables.records.IndirectIncomingRecord;
 import org.jooq.DSLContext;
 import org.jooq.Query;
 import org.jooq.Record;
@@ -33,19 +34,11 @@ public class SqlIndirectIncomingStore implements IndirectIncomingStore {
             }
 
             private Query getQuery(DSLContext ctx, IndirectIncoming indirectIncoming) {
-                return ctx.insertInto(
-                    INDIRECT_INCOMING,
-                    INDIRECT_INCOMING.ACCOUNT_ID,
-                    INDIRECT_INCOMING.TRANSACTION_ID,
-                    INDIRECT_INCOMING.HEIGHT
-                ).values(
-                    indirectIncoming.getAccountId(),
-                    indirectIncoming.getTransactionId(),
-                    indirectIncoming.getHeight()
-                ).onConflict(
-                    INDIRECT_INCOMING.ACCOUNT_ID, INDIRECT_INCOMING.TRANSACTION_ID
-                ).doUpdate()
-                    .set(INDIRECT_INCOMING.HEIGHT, indirectIncoming.getHeight());
+              IndirectIncomingRecord record = new IndirectIncomingRecord();
+              record.setAccountId(indirectIncoming.getAccountId());
+              record.setTransactionId(indirectIncoming.getTransactionId());
+              record.setHeight(indirectIncoming.getHeight());
+              return DbUtils.upsert(ctx, record, INDIRECT_INCOMING.ACCOUNT_ID, INDIRECT_INCOMING.TRANSACTION_ID);
             }
 
             @Override

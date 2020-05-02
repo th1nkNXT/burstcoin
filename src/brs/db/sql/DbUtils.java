@@ -1,6 +1,10 @@
 package brs.db.sql;
 
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Insert;
 import org.jooq.SelectQuery;
+import org.jooq.UpdatableRecord;
 
 public final class DbUtils {
 
@@ -30,4 +34,13 @@ public final class DbUtils {
       query.addOffset(from);
     }
   }
+
+  public static Insert<?> upsert(DSLContext ctx, UpdatableRecord<?> record, Field<?> ... keys) {
+    return ctx.insertInto(record.getTable())
+      .set(record)
+      .onConflict(keys)
+      .doUpdate()
+      .set(record);
+  }
+
 }

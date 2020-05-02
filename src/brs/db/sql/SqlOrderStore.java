@@ -140,35 +140,16 @@ public class SqlOrderStore implements OrderStore {
   }
 
   private void saveAsk(DSLContext ctx, Order.Ask ask) {
-    ctx.insertInto(
-            ASK_ORDER,
-            ASK_ORDER.ID,
-            ASK_ORDER.ACCOUNT_ID,
-            ASK_ORDER.ASSET_ID,
-            ASK_ORDER.PRICE,
-            ASK_ORDER.QUANTITY,
-            ASK_ORDER.CREATION_HEIGHT,
-            ASK_ORDER.HEIGHT,
-            ASK_ORDER.LATEST
-    ).values(
-            ask.getId(),
-            ask.getAccountId(),
-            ask.getAssetId(),
-            ask.getPriceNQT(),
-            ask.getQuantityQNT(),
-            ask.getHeight(),
-            Burst.getBlockchain().getHeight(),
-            true
-    ).onConflict(
-            ASK_ORDER.ID, ASK_ORDER.HEIGHT
-    ).doUpdate()
-            .set(ASK_ORDER.ACCOUNT_ID, ask.getAccountId())
-            .set(ASK_ORDER.ASSET_ID, ask.getAssetId())
-            .set(ASK_ORDER.PRICE, ask.getPriceNQT())
-            .set(ASK_ORDER.QUANTITY, ask.getQuantityQNT())
-            .set(ASK_ORDER.CREATION_HEIGHT, ask.getHeight())
-            .set(ASK_ORDER.LATEST, true)
-            .execute();
+    AskOrderRecord record = new AskOrderRecord();
+    record.setId(ask.getId());
+    record.setAccountId(ask.getAccountId());
+    record.setAssetId(ask.getAssetId());
+    record.setPrice(ask.getPriceNQT());
+    record.setQuantity(ask.getQuantityQNT());
+    record.setCreationHeight(ask.getHeight());
+    record.setHeight(Burst.getBlockchain().getHeight());
+    record.setLatest(true);
+    DbUtils.upsert(ctx, record, ASK_ORDER.ID, ASK_ORDER.HEIGHT).execute();
   }
 
   @Override
@@ -233,35 +214,16 @@ public class SqlOrderStore implements OrderStore {
   }
 
   private void saveBid(DSLContext ctx, Order.Bid bid) {
-    ctx.insertInto(
-            BID_ORDER,
-            BID_ORDER.ID,
-            BID_ORDER.ACCOUNT_ID,
-            BID_ORDER.ASSET_ID,
-            BID_ORDER.PRICE,
-            BID_ORDER.QUANTITY,
-            BID_ORDER.CREATION_HEIGHT,
-            BID_ORDER.HEIGHT,
-            BID_ORDER.LATEST
-    ).values(
-            bid.getId(),
-            bid.getAccountId(),
-            bid.getAssetId(),
-            bid.getPriceNQT(),
-            bid.getQuantityQNT(),
-            bid.getHeight(),
-            Burst.getBlockchain().getHeight(),
-            true
-    ).onConflict(
-            BID_ORDER.ID, BID_ORDER.HEIGHT
-    ).doUpdate()
-            .set(BID_ORDER.ACCOUNT_ID, bid.getAccountId())
-            .set(BID_ORDER.ASSET_ID, bid.getAssetId())
-            .set(BID_ORDER.PRICE, bid.getPriceNQT())
-            .set(BID_ORDER.QUANTITY, bid.getQuantityQNT())
-            .set(BID_ORDER.CREATION_HEIGHT, bid.getHeight())
-            .set(BID_ORDER.LATEST, true)
-            .execute();
+    BidOrderRecord record = new BidOrderRecord();
+    record.setId(bid.getId());
+    record.setAccountId(bid.getAccountId());
+    record.setAssetId(bid.getAssetId());
+    record.setPrice(bid.getPriceNQT());
+    record.setQuantity(bid.getQuantityQNT());
+    record.setCreationHeight(bid.getHeight());
+    record.setHeight(Burst.getBlockchain().getHeight());
+    record.setLatest(true);
+    DbUtils.upsert(ctx, record, BID_ORDER.ID, BID_ORDER.HEIGHT).execute();
   }
 
   class SqlAsk extends Order.Ask {

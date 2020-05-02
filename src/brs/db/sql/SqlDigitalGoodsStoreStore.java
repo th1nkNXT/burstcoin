@@ -8,6 +8,9 @@ import brs.db.VersionedEntityTable;
 import brs.db.VersionedValuesTable;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.DigitalGoodsStoreStore;
+import brs.schema.tables.records.GoodsRecord;
+import brs.schema.tables.records.PurchasePublicFeedbackRecord;
+import brs.schema.tables.records.PurchaseRecord;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -122,23 +125,12 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
 
       @Override
       protected void save(DSLContext ctx, DigitalGoodsStore.Purchase purchase, String publicFeedback) {
-        ctx.insertInto(
-                PURCHASE_PUBLIC_FEEDBACK,
-                PURCHASE_PUBLIC_FEEDBACK.ID,
-                PURCHASE_PUBLIC_FEEDBACK.PUBLIC_FEEDBACK,
-                PURCHASE_PUBLIC_FEEDBACK.HEIGHT,
-                PURCHASE_PUBLIC_FEEDBACK.LATEST
-        ).values(
-                purchase.getId(),
-                publicFeedback,
-                Burst.getBlockchain().getHeight(),
-                true
-        ).onConflict(
-                PURCHASE_PUBLIC_FEEDBACK.ID, PURCHASE_PUBLIC_FEEDBACK.HEIGHT
-        ).doUpdate()
-                .set(PURCHASE_PUBLIC_FEEDBACK.PUBLIC_FEEDBACK, publicFeedback)
-                .set(PURCHASE_PUBLIC_FEEDBACK.LATEST, true)
-                .execute();
+        PurchasePublicFeedbackRecord record = new PurchasePublicFeedbackRecord();
+        record.setId(purchase.getId());
+        record.setPublicFeedback(publicFeedback);
+        record.setHeight(Burst.getBlockchain().getHeight());
+        record.setLatest(true);
+        DbUtils.upsert(ctx, record, PURCHASE_PUBLIC_FEEDBACK.ID, PURCHASE_PUBLIC_FEEDBACK.HEIGHT).execute();
       }
     };
 
@@ -217,44 +209,19 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
   }
 
   private void saveGoods(DSLContext ctx, DigitalGoodsStore.Goods goods) {
-    ctx.insertInto(
-            GOODS,
-            GOODS.ID,
-            GOODS.SELLER_ID,
-            GOODS.NAME,
-            GOODS.DESCRIPTION,
-            GOODS.TAGS,
-            GOODS.TIMESTAMP,
-            GOODS.QUANTITY,
-            GOODS.PRICE,
-            GOODS.DELISTED,
-            GOODS.HEIGHT,
-            GOODS.LATEST
-    ).values(
-            goods.getId(),
-            goods.getSellerId(),
-            goods.getName(),
-            goods.getDescription(),
-            goods.getTags(),
-            goods.getTimestamp(),
-            goods.getQuantity(),
-            goods.getPriceNQT(),
-            goods.isDelisted(),
-            Burst.getBlockchain().getHeight(),
-            true
-    ).onConflict(
-            GOODS.ID, GOODS.HEIGHT
-    ).doUpdate()
-            .set(GOODS.SELLER_ID, goods.getSellerId())
-            .set(GOODS.NAME, goods.getName())
-            .set(GOODS.DESCRIPTION, goods.getDescription())
-            .set(GOODS.TAGS, goods.getTags())
-            .set(GOODS.TIMESTAMP, goods.getTimestamp())
-            .set(GOODS.QUANTITY, goods.getQuantity())
-            .set(GOODS.PRICE, goods.getPriceNQT())
-            .set(GOODS.DELISTED, goods.isDelisted())
-            .set(GOODS.LATEST, true)
-            .execute();
+    GoodsRecord record = new GoodsRecord();
+    record.setId(goods.getId());
+    record.setSellerId(goods.getSellerId());
+    record.setName(goods.getName());
+    record.setDescription(goods.getDescription());
+    record.setTags(goods.getTags());
+    record.setTimestamp(goods.getTimestamp());
+    record.setQuantity(goods.getQuantity());
+    record.setPrice(goods.getPriceNQT());
+    record.setDelisted(goods.isDelisted());
+    record.setHeight(Burst.getBlockchain().getHeight());
+    record.setLatest(true);
+    DbUtils.upsert(ctx, record, GOODS.ID, GOODS.HEIGHT).execute();
   }
 
   private void savePurchase(DSLContext ctx, DigitalGoodsStore.Purchase purchase) {
@@ -276,74 +243,29 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
       refundNote  = purchase.getRefundNote().getData();
       refundNonce = purchase.getRefundNote().getNonce();
     }
-    ctx.insertInto(
-            PURCHASE,
-            PURCHASE.ID,
-            PURCHASE.BUYER_ID,
-            PURCHASE.GOODS_ID,
-            PURCHASE.SELLER_ID,
-            PURCHASE.QUANTITY,
-            PURCHASE.PRICE,
-            PURCHASE.DEADLINE,
-            PURCHASE.NOTE,
-            PURCHASE.NONCE,
-            PURCHASE.TIMESTAMP,
-            PURCHASE.PENDING,
-            PURCHASE.GOODS,
-            PURCHASE.GOODS_NONCE,
-            PURCHASE.REFUND_NOTE,
-            PURCHASE.REFUND_NONCE,
-            PURCHASE.HAS_FEEDBACK_NOTES,
-            PURCHASE.HAS_PUBLIC_FEEDBACKS,
-            PURCHASE.DISCOUNT,
-            PURCHASE.REFUND,
-            PURCHASE.HEIGHT,
-            PURCHASE.LATEST
-    ).values(
-            purchase.getId(),
-            purchase.getBuyerId(),
-            purchase.getGoodsId(),
-            purchase.getSellerId(),
-            purchase.getQuantity(),
-            purchase.getPriceNQT(),
-            purchase.getDeliveryDeadlineTimestamp(),
-            note,
-            nonce,
-            purchase.getTimestamp(),
-            purchase.isPending(),
-            goods,
-            goodsNonce,
-            refundNote,
-            refundNonce,
-            purchase.getFeedbackNotes() != null && !purchase.getFeedbackNotes().isEmpty(),
-            !purchase.getPublicFeedback().isEmpty(),
-            purchase.getDiscountNQT(),
-            purchase.getRefundNQT(),
-            Burst.getBlockchain().getHeight(),
-            true
-    ).onConflict(
-            PURCHASE.ID, PURCHASE.HEIGHT
-    ).doUpdate()
-            .set(PURCHASE.BUYER_ID, purchase.getBuyerId())
-            .set(PURCHASE.GOODS_ID, purchase.getGoodsId())
-            .set(PURCHASE.SELLER_ID, purchase.getSellerId())
-            .set(PURCHASE.QUANTITY, purchase.getQuantity())
-            .set(PURCHASE.PRICE, purchase.getPriceNQT())
-            .set(PURCHASE.DEADLINE, purchase.getDeliveryDeadlineTimestamp())
-            .set(PURCHASE.NOTE, note)
-            .set(PURCHASE.NONCE, nonce)
-            .set(PURCHASE.TIMESTAMP, purchase.getTimestamp())
-            .set(PURCHASE.PENDING, purchase.isPending())
-            .set(PURCHASE.GOODS, goods)
-            .set(PURCHASE.GOODS_NONCE, goodsNonce)
-            .set(PURCHASE.REFUND_NOTE, refundNote)
-            .set(PURCHASE.REFUND_NONCE, refundNonce)
-            .set(PURCHASE.HAS_FEEDBACK_NOTES, purchase.getFeedbackNotes() != null && !purchase.getFeedbackNotes().isEmpty())
-            .set(PURCHASE.HAS_PUBLIC_FEEDBACKS, !purchase.getPublicFeedback().isEmpty())
-            .set(PURCHASE.DISCOUNT, purchase.getDiscountNQT())
-            .set(PURCHASE.REFUND, purchase.getRefundNQT())
-            .set(PURCHASE.LATEST, true)
-            .execute();
+    PurchaseRecord record = new PurchaseRecord();
+    record.setId(purchase.getId());
+    record.setBuyerId(purchase.getBuyerId());
+    record.setGoodsId(purchase.getGoodsId());
+    record.setSellerId(purchase.getSellerId());
+    record.setQuantity(purchase.getQuantity());
+    record.setPrice(purchase.getPriceNQT());
+    record.setDeadline(purchase.getDeliveryDeadlineTimestamp());
+    record.setNote(note);
+    record.setNonce(nonce);
+    record.setTimestamp(purchase.getTimestamp());
+    record.setPending(purchase.isPending());
+    record.setGoods(goods);
+    record.setGoodsNonce(goodsNonce);
+    record.setRefundNote(refundNote);
+    record.setRefundNonce(refundNonce);
+    record.setHasFeedbackNotes(purchase.getFeedbackNotes() != null && !purchase.getFeedbackNotes().isEmpty());
+    record.setHasPublicFeedbacks(!purchase.getPublicFeedback().isEmpty());
+    record.setDiscount(purchase.getDiscountNQT());
+    record.setRefund(purchase.getRefundNQT());
+    record.setHeight(Burst.getBlockchain().getHeight());
+    record.setLatest(true);
+    DbUtils.upsert(ctx, record, PURCHASE.ID, PURCHASE.HEIGHT).execute();
   }
 
   @Override
