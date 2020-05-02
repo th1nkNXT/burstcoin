@@ -7,6 +7,9 @@ import brs.db.VersionedEntityTable;
 import brs.db.cache.DBCacheManagerImpl;
 import brs.db.store.AccountStore;
 import brs.db.store.DerivedTableManager;
+import brs.schema.tables.records.AccountAssetRecord;
+import brs.schema.tables.records.AccountRecord;
+import brs.schema.tables.records.RewardRecipAssignRecord;
 import brs.util.Convert;
 import org.jooq.*;
 import org.slf4j.LoggerFactory;
@@ -49,10 +52,14 @@ public class SqlAccountStore implements AccountStore {
 
       @Override
       protected void save(DSLContext ctx, Account.RewardRecipientAssignment assignment) {
-        ctx.mergeInto(REWARD_RECIP_ASSIGN, REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.PREV_RECIP_ID, REWARD_RECIP_ASSIGN.RECIP_ID, REWARD_RECIP_ASSIGN.FROM_HEIGHT, REWARD_RECIP_ASSIGN.HEIGHT, REWARD_RECIP_ASSIGN.LATEST)
-                .key(REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT)
-                .values(assignment.accountId, assignment.getPrevRecipientId(), assignment.getRecipientId(), assignment.getFromHeight(), Burst.getBlockchain().getHeight(), true)
-                .execute();
+    	RewardRecipAssignRecord record = new RewardRecipAssignRecord();
+    	record.setAccountId(assignment.getAccountId());
+    	record.setPrevRecipId(assignment.getPrevRecipientId());
+    	record.setRecipId(assignment.getRecipientId());
+    	record.setFromHeight(assignment.getFromHeight());
+    	record.setHeight(Burst.getBlockchain().getHeight());
+    	record.setLatest(true);
+    	DbUtils.upsert(ctx, record, REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT).execute();
       }
     };
 
@@ -74,10 +81,14 @@ public class SqlAccountStore implements AccountStore {
 
       @Override
       protected void save(DSLContext ctx, Account.AccountAsset accountAsset) {
-        ctx.mergeInto(ACCOUNT_ASSET, ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.QUANTITY, ACCOUNT_ASSET.UNCONFIRMED_QUANTITY, ACCOUNT_ASSET.HEIGHT, ACCOUNT_ASSET.LATEST)
-                .key(ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT)
-                .values(accountAsset.accountId, accountAsset.assetId, accountAsset.getQuantityQNT(), accountAsset.getUnconfirmedQuantityQNT(), Burst.getBlockchain().getHeight(), true)
-                .execute();
+    	AccountAssetRecord record = new AccountAssetRecord();
+    	record.setAccountId(accountAsset.getAccountId());
+    	record.setAssetId(accountAsset.getAssetId());
+    	record.setQuantity(accountAsset.getQuantityQNT());
+    	record.setUnconfirmedQuantity(accountAsset.getUnconfirmedQuantityQNT());
+    	record.setHeight(Burst.getBlockchain().getHeight());
+    	record.setLatest(true);
+    	DbUtils.upsert(ctx, record, ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT).execute();
       }
 
       @Override
@@ -87,7 +98,9 @@ public class SqlAccountStore implements AccountStore {
     };
 
     accountTable = new VersionedBatchEntitySqlTable<Account>("account", brs.schema.Tables.ACCOUNT, accountDbKeyFactory, derivedTableManager, dbCacheManager, Account.class) {
-      @Override
+      private AccountRecord record;
+
+	@Override
       protected Account load(DSLContext ctx, Record rs) {
         return new SqlAccount(rs);
       }
@@ -98,12 +111,20 @@ public class SqlAccountStore implements AccountStore {
         int height = Burst.getBlockchain().getHeight();
         for (Account account: accounts) {
           if (account == null) continue;
+          record = new AccountRecord();
+          record.setId(account.getId());
+          record.setCreationHeight(account.getCreationHeight());
+          record.setPublicKey(account.getPublicKey());
+          record.setKeyHeight(account.getKeyHeight());
+          record.setBalance(account.getBalanceNQT());
+          record.setUnconfirmedBalance(account.getUnconfirmedBalanceNQT());
+          record.setForgedBalance(account.getForgedBalanceNQT());
+          record.setName(account.getName());
+          record.setDescription(account.getDescription());
+          record.setHeight(height);
+          record.setLatest(true);
           accountQueries.add(
-                  ctx.mergeInto(ACCOUNT, ACCOUNT.ID, ACCOUNT.HEIGHT, ACCOUNT.CREATION_HEIGHT, ACCOUNT.PUBLIC_KEY, ACCOUNT.KEY_HEIGHT, ACCOUNT.BALANCE,
-                          ACCOUNT.UNCONFIRMED_BALANCE, ACCOUNT.FORGED_BALANCE, ACCOUNT.NAME, ACCOUNT.DESCRIPTION, ACCOUNT.LATEST)
-                          .key(ACCOUNT.ID, ACCOUNT.HEIGHT)
-                          .values(account.getId(), height, account.getCreationHeight(), account.getPublicKey(), account.getKeyHeight(),
-                                  account.getBalanceNQT(), account.getUnconfirmedBalanceNQT(), account.getForgedBalanceNQT(), account.getName(), account.getDescription(), true)
+        		  DbUtils.upsert(ctx, record, ACCOUNT.ID, ACCOUNT.HEIGHT)
           );
         }
         ctx.batch(accountQueries).execute();

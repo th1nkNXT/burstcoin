@@ -82,10 +82,18 @@ public class SqlATStore implements ATStore {
   }
 
   private void saveATState(DSLContext ctx, brs.at.AT.ATState atState) {
-    ctx.mergeInto(AT_STATE, AT_STATE.AT_ID, AT_STATE.STATE, AT_STATE.PREV_HEIGHT, AT_STATE.NEXT_HEIGHT, AT_STATE.SLEEP_BETWEEN, AT_STATE.PREV_BALANCE, AT_STATE.FREEZE_WHEN_SAME_BALANCE, AT_STATE.MIN_ACTIVATE_AMOUNT, AT_STATE.HEIGHT, AT_STATE.LATEST)
-            .key(AT_STATE.AT_ID, AT_STATE.HEIGHT)
-            .values(atState.getATId(), brs.at.AT.compressState(atState.getState()), atState.getPrevHeight(), atState.getNextHeight(), atState.getSleepBetween(), atState.getPrevBalance(), atState.getFreezeWhenSameBalance(), atState.getMinActivationAmount(), Burst.getBlockchain().getHeight(), true)
-            .execute();
+	AtStateRecord record = new AtStateRecord();
+	record.setAtId(atState.getATId());
+	record.setState(brs.at.AT.compressState(atState.getState()));
+	record.setPrevHeight(atState.getPrevHeight());
+	record.setNextHeight(atState.getNextHeight());
+	record.setSleepBetween(atState.getSleepBetween());
+	record.setPrevBalance(atState.getPrevBalance());
+	record.setFreezeWhenSameBalance(atState.getFreezeWhenSameBalance());
+	record.setMinActivateAmount(atState.getMinActivationAmount());
+	record.setHeight(Burst.getBlockchain().getHeight());
+	record.setLatest(true);
+	DbUtils.upsert(ctx, record, AT_STATE.AT_ID, AT_STATE.HEIGHT).execute();
   }
 
   private void saveAT(DSLContext ctx, brs.at.AT at) {

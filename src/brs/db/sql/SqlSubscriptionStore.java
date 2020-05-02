@@ -6,6 +6,8 @@ import brs.db.BurstKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.SubscriptionStore;
+import brs.schema.tables.records.SubscriptionRecord;
+
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -89,10 +91,17 @@ public class SqlSubscriptionStore implements SubscriptionStore {
   }
 
   private void saveSubscription(DSLContext ctx, Subscription subscription) {
-    ctx.mergeInto(SUBSCRIPTION, SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
-            .key(SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
-            .values(subscription.id, subscription.senderId, subscription.recipientId, subscription.amountNQT, subscription.frequency, subscription.getTimeNext(), Burst.getBlockchain().getHeight(), true)
-            .execute();
+	SubscriptionRecord record = new SubscriptionRecord();
+	record.setId(subscription.id);
+	record.setSenderId(subscription.senderId);
+	record.setRecipientId(subscription.recipientId);
+	record.setAmount(subscription.amountNQT);
+	record.setFrequency(subscription.frequency);
+	record.setTimeNext(subscription.getTimeNext());
+	record.setHeight(Burst.getBlockchain().getHeight());
+	record.setLatest(true);
+	DbUtils.upsert(ctx, record, SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
+		.execute();
   }
 
   private class SqlSubscription extends Subscription {

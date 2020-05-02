@@ -1,6 +1,10 @@
 package brs.db.sql;
 
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Insert;
 import org.jooq.SelectQuery;
+import org.jooq.UpdatableRecord;
 
 public final class DbUtils {
 
@@ -29,5 +33,13 @@ public final class DbUtils {
     else if (from > 0) {
       query.addOffset(from);
     }
+  }
+  
+  public static Insert<?> upsert(DSLContext ctx, UpdatableRecord<?> record, Field<?> ... keys) {
+	  return ctx.insertInto(record.getTable())
+			  .set(record)
+			  .onConflict(keys) // TODO work around having to use spread operator here...
+			  .doUpdate()
+			  .set(record);
   }
 }

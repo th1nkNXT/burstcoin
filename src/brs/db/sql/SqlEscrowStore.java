@@ -7,6 +7,9 @@ import brs.db.BurstKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.EscrowStore;
+import brs.schema.tables.records.EscrowDecisionRecord;
+import brs.schema.tables.records.EscrowRecord;
+
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
@@ -64,10 +67,13 @@ public class SqlEscrowStore implements EscrowStore {
   }
 
   private void saveDecision(DSLContext ctx, Escrow.Decision decision) {
-    ctx.mergeInto(ESCROW_DECISION, ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.DECISION, ESCROW_DECISION.HEIGHT, ESCROW_DECISION.LATEST)
-            .key(ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.HEIGHT)
-            .values(decision.escrowId, decision.accountId, (int) Escrow.decisionToByte(decision.getDecision()), Burst.getBlockchain().getHeight(), true)
-            .execute();
+	EscrowDecisionRecord record = new EscrowDecisionRecord();
+	record.setEscrowId(decision.escrowId);
+	record.setAccountId(decision.accountId);
+	record.setDecision((int) Escrow.decisionToByte(decision.getDecision()));
+	record.setHeight(Burst.getBlockchain().getHeight());
+	record.setLatest(true);
+	DbUtils.upsert(ctx, record, ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.HEIGHT).execute();
   }
 
   @Override
@@ -108,10 +114,17 @@ public class SqlEscrowStore implements EscrowStore {
   }
 
   private void saveEscrow(DSLContext ctx, Escrow escrow) {
-    ctx.mergeInto(ESCROW, ESCROW.ID, ESCROW.SENDER_ID, ESCROW.RECIPIENT_ID, ESCROW.AMOUNT, ESCROW.REQUIRED_SIGNERS, ESCROW.DEADLINE, ESCROW.DEADLINE_ACTION, ESCROW.HEIGHT, ESCROW.LATEST)
-            .key(ESCROW.ID, ESCROW.HEIGHT)
-            .values(escrow.id, escrow.senderId, escrow.recipientId, escrow.amountNQT, escrow.requiredSigners, escrow.deadline, (int) Escrow.decisionToByte(escrow.deadlineAction), Burst.getBlockchain().getHeight(), true)
-            .execute();
+	EscrowRecord record = new EscrowRecord();
+	record.setId(escrow.id);
+	record.setSenderId(escrow.senderId);
+	record.setRecipientId(escrow.recipientId);
+	record.setAmount(escrow.amountNQT);
+	record.setRequiredSigners(escrow.requiredSigners);
+	record.setDeadline(escrow.deadline);
+	record.setDeadlineAction((int) Escrow.decisionToByte(escrow.deadlineAction));
+	record.setHeight(Burst.getBlockchain().getHeight());
+	record.setLatest(true);
+	DbUtils.upsert(ctx, record, ESCROW.ID, ESCROW.HEIGHT).execute();
   }
 
   private class SqlDecision extends Escrow.Decision {
