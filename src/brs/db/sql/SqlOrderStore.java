@@ -162,13 +162,11 @@ public class SqlOrderStore implements OrderStore {
     ).onConflict(
             ASK_ORDER.ID, ASK_ORDER.HEIGHT
     ).doUpdate()
-            .set(ASK_ORDER.ID, ask.getId())
             .set(ASK_ORDER.ACCOUNT_ID, ask.getAccountId())
             .set(ASK_ORDER.ASSET_ID, ask.getAssetId())
             .set(ASK_ORDER.PRICE, ask.getPriceNQT())
             .set(ASK_ORDER.QUANTITY, ask.getQuantityQNT())
             .set(ASK_ORDER.CREATION_HEIGHT, ask.getHeight())
-            .set(ASK_ORDER.HEIGHT, Burst.getBlockchain().getHeight())
             .set(ASK_ORDER.LATEST, true)
             .execute();
   }
@@ -257,13 +255,11 @@ public class SqlOrderStore implements OrderStore {
     ).onConflict(
             BID_ORDER.ID, BID_ORDER.HEIGHT
     ).doUpdate()
-            .set(BID_ORDER.ID, bid.getId())
             .set(BID_ORDER.ACCOUNT_ID, bid.getAccountId())
             .set(BID_ORDER.ASSET_ID, bid.getAssetId())
             .set(BID_ORDER.PRICE, bid.getPriceNQT())
             .set(BID_ORDER.QUANTITY, bid.getQuantityQNT())
             .set(BID_ORDER.CREATION_HEIGHT, bid.getHeight())
-            .set(BID_ORDER.HEIGHT, Burst.getBlockchain().getHeight())
             .set(BID_ORDER.LATEST, true)
             .execute();
   }

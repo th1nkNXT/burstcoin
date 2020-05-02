@@ -80,10 +80,7 @@ public class SqlEscrowStore implements EscrowStore {
     ).onConflict(
             ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.HEIGHT
     ).doUpdate()
-            .set(ESCROW_DECISION.ESCROW_ID, decision.escrowId)
-            .set(ESCROW_DECISION.ACCOUNT_ID, decision.accountId)
             .set(ESCROW_DECISION.DECISION, (int) Escrow.decisionToByte(decision.getDecision()))
-            .set(ESCROW_DECISION.HEIGHT, Burst.getBlockchain().getHeight())
             .set(ESCROW_DECISION.LATEST, true)
             .execute();
   }
@@ -150,14 +147,12 @@ public class SqlEscrowStore implements EscrowStore {
     ).onConflict(
             ESCROW.ID, ESCROW.HEIGHT
     ).doUpdate()
-            .set(ESCROW.ID, escrow.id)
             .set(ESCROW.SENDER_ID, escrow.senderId)
             .set(ESCROW.RECIPIENT_ID, escrow.recipientId)
             .set(ESCROW.AMOUNT, escrow.amountNQT)
             .set(ESCROW.REQUIRED_SIGNERS, escrow.requiredSigners)
             .set(ESCROW.DEADLINE, escrow.deadline)
             .set(ESCROW.DEADLINE_ACTION, (int) Escrow.decisionToByte(escrow.deadlineAction))
-            .set(ESCROW.HEIGHT, Burst.getBlockchain().getHeight())
             .set(ESCROW.LATEST, true)
             .execute();
   }

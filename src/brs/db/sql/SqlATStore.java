@@ -108,7 +108,6 @@ public class SqlATStore implements ATStore {
     ).onConflict(
             AT_STATE.AT_ID, AT_STATE.HEIGHT
     ).doUpdate()
-            .set(AT_STATE.AT_ID, atState.getATId())
             .set(AT_STATE.STATE, brs.at.AT.compressState(atState.getState()))
             .set(AT_STATE.PREV_HEIGHT, atState.getPrevHeight())
             .set(AT_STATE.NEXT_HEIGHT, atState.getNextHeight())
@@ -116,7 +115,6 @@ public class SqlATStore implements ATStore {
             .set(AT_STATE.PREV_BALANCE, atState.getPrevBalance())
             .set(AT_STATE.FREEZE_WHEN_SAME_BALANCE, atState.getFreezeWhenSameBalance())
             .set(AT_STATE.MIN_ACTIVATE_AMOUNT, atState.getMinActivationAmount())
-            .set(AT_STATE.HEIGHT, Burst.getBlockchain().getHeight())
             .set(AT_STATE.LATEST, true)
             .execute();
   }

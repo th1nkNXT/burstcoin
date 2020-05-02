@@ -67,11 +67,9 @@ public class SqlAccountStore implements AccountStore {
         ).onConflict(
                 REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT
         ).doUpdate()
-                .set(REWARD_RECIP_ASSIGN.ACCOUNT_ID, assignment.accountId)
                 .set(REWARD_RECIP_ASSIGN.PREV_RECIP_ID, assignment.getPrevRecipientId())
                 .set(REWARD_RECIP_ASSIGN.RECIP_ID, assignment.getRecipientId())
                 .set(REWARD_RECIP_ASSIGN.FROM_HEIGHT, assignment.getFromHeight())
-                .set(REWARD_RECIP_ASSIGN.HEIGHT, Burst.getBlockchain().getHeight())
                 .set(REWARD_RECIP_ASSIGN.LATEST, true)
                 .execute();
       }
@@ -113,11 +111,8 @@ public class SqlAccountStore implements AccountStore {
         ).onConflict(
                 ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT
         ).doUpdate()
-                .set(ACCOUNT_ASSET.ACCOUNT_ID, accountAsset.accountId)
-                .set(ACCOUNT_ASSET.ASSET_ID, accountAsset.assetId)
                 .set(ACCOUNT_ASSET.QUANTITY, accountAsset.getQuantityQNT())
                 .set(ACCOUNT_ASSET.UNCONFIRMED_QUANTITY, accountAsset.getUnconfirmedQuantityQNT())
-                .set(ACCOUNT_ASSET.HEIGHT, Burst.getBlockchain().getHeight())
                 .set(ACCOUNT_ASSET.LATEST, true)
                 .execute();
       }
@@ -169,8 +164,6 @@ public class SqlAccountStore implements AccountStore {
                   ).onConflict(
                           ACCOUNT.ID, ACCOUNT.HEIGHT
                   ).doUpdate()
-                          .set(ACCOUNT.ID, account.getId())
-                          .set(ACCOUNT.HEIGHT, height)
                           .set(ACCOUNT.CREATION_HEIGHT, account.getCreationHeight())
                           .set(ACCOUNT.PUBLIC_KEY, account.getPublicKey())
                           .set(ACCOUNT.KEY_HEIGHT, account.getKeyHeight())

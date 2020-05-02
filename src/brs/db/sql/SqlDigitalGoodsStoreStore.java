@@ -136,9 +136,7 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
         ).onConflict(
                 PURCHASE_PUBLIC_FEEDBACK.ID, PURCHASE_PUBLIC_FEEDBACK.HEIGHT
         ).doUpdate()
-                .set(PURCHASE_PUBLIC_FEEDBACK.ID, purchase.getId())
                 .set(PURCHASE_PUBLIC_FEEDBACK.PUBLIC_FEEDBACK, publicFeedback)
-                .set(PURCHASE_PUBLIC_FEEDBACK.HEIGHT, Burst.getBlockchain().getHeight())
                 .set(PURCHASE_PUBLIC_FEEDBACK.LATEST, true)
                 .execute();
       }
@@ -247,7 +245,6 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
     ).onConflict(
             GOODS.ID, GOODS.HEIGHT
     ).doUpdate()
-            .set(GOODS.ID, goods.getId())
             .set(GOODS.SELLER_ID, goods.getSellerId())
             .set(GOODS.NAME, goods.getName())
             .set(GOODS.DESCRIPTION, goods.getDescription())
@@ -256,7 +253,6 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
             .set(GOODS.QUANTITY, goods.getQuantity())
             .set(GOODS.PRICE, goods.getPriceNQT())
             .set(GOODS.DELISTED, goods.isDelisted())
-            .set(GOODS.HEIGHT, Burst.getBlockchain().getHeight())
             .set(GOODS.LATEST, true)
             .execute();
   }
@@ -328,7 +324,6 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
     ).onConflict(
             PURCHASE.ID, PURCHASE.HEIGHT
     ).doUpdate()
-            .set(PURCHASE.ID, purchase.getId())
             .set(PURCHASE.BUYER_ID, purchase.getBuyerId())
             .set(PURCHASE.GOODS_ID, purchase.getGoodsId())
             .set(PURCHASE.SELLER_ID, purchase.getSellerId())
@@ -347,7 +342,6 @@ public class SqlDigitalGoodsStoreStore implements DigitalGoodsStoreStore {
             .set(PURCHASE.HAS_PUBLIC_FEEDBACKS, !purchase.getPublicFeedback().isEmpty())
             .set(PURCHASE.DISCOUNT, purchase.getDiscountNQT())
             .set(PURCHASE.REFUND, purchase.getRefundNQT())
-            .set(PURCHASE.HEIGHT, Burst.getBlockchain().getHeight())
             .set(PURCHASE.LATEST, true)
             .execute();
   }

@@ -45,8 +45,6 @@ public class SqlIndirectIncomingStore implements IndirectIncomingStore {
                 ).onConflict(
                     INDIRECT_INCOMING.ACCOUNT_ID, INDIRECT_INCOMING.TRANSACTION_ID
                 ).doUpdate()
-                    .set(INDIRECT_INCOMING.ACCOUNT_ID, indirectIncoming.getAccountId())
-                    .set(INDIRECT_INCOMING.TRANSACTION_ID, indirectIncoming.getTransactionId())
                     .set(INDIRECT_INCOMING.HEIGHT, indirectIncoming.getHeight());
             }
 
