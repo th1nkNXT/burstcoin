@@ -33,8 +33,21 @@ public class SqlIndirectIncomingStore implements IndirectIncomingStore {
             }
 
             private Query getQuery(DSLContext ctx, IndirectIncoming indirectIncoming) {
-                return ctx.insertInto(INDIRECT_INCOMING, INDIRECT_INCOMING.ACCOUNT_ID, INDIRECT_INCOMING.TRANSACTION_ID, INDIRECT_INCOMING.HEIGHT)
-                        .values(indirectIncoming.getAccountId(), indirectIncoming.getTransactionId(), indirectIncoming.getHeight());
+                return ctx.insertInto(
+                    INDIRECT_INCOMING,
+                    INDIRECT_INCOMING.ACCOUNT_ID,
+                    INDIRECT_INCOMING.TRANSACTION_ID,
+                    INDIRECT_INCOMING.HEIGHT
+                ).values(
+                    indirectIncoming.getAccountId(),
+                    indirectIncoming.getTransactionId(),
+                    indirectIncoming.getHeight()
+                ).onConflict(
+                    INDIRECT_INCOMING.ACCOUNT_ID, INDIRECT_INCOMING.TRANSACTION_ID
+                ).doUpdate()
+                    .set(INDIRECT_INCOMING.ACCOUNT_ID, indirectIncoming.getAccountId())
+                    .set(INDIRECT_INCOMING.TRANSACTION_ID, indirectIncoming.getTransactionId())
+                    .set(INDIRECT_INCOMING.HEIGHT, indirectIncoming.getHeight());
             }
 
             @Override
