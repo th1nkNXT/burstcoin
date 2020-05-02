@@ -82,9 +82,42 @@ public class SqlATStore implements ATStore {
   }
 
   private void saveATState(DSLContext ctx, brs.at.AT.ATState atState) {
-    ctx.mergeInto(AT_STATE, AT_STATE.AT_ID, AT_STATE.STATE, AT_STATE.PREV_HEIGHT, AT_STATE.NEXT_HEIGHT, AT_STATE.SLEEP_BETWEEN, AT_STATE.PREV_BALANCE, AT_STATE.FREEZE_WHEN_SAME_BALANCE, AT_STATE.MIN_ACTIVATE_AMOUNT, AT_STATE.HEIGHT, AT_STATE.LATEST)
-            .key(AT_STATE.AT_ID, AT_STATE.HEIGHT)
-            .values(atState.getATId(), brs.at.AT.compressState(atState.getState()), atState.getPrevHeight(), atState.getNextHeight(), atState.getSleepBetween(), atState.getPrevBalance(), atState.getFreezeWhenSameBalance(), atState.getMinActivationAmount(), Burst.getBlockchain().getHeight(), true)
+    ctx.insertInto(
+            AT_STATE,
+            AT_STATE.AT_ID,
+            AT_STATE.STATE,
+            AT_STATE.PREV_HEIGHT,
+            AT_STATE.NEXT_HEIGHT,
+            AT_STATE.SLEEP_BETWEEN,
+            AT_STATE.PREV_BALANCE,
+            AT_STATE.FREEZE_WHEN_SAME_BALANCE,
+            AT_STATE.MIN_ACTIVATE_AMOUNT,
+            AT_STATE.HEIGHT,
+            AT_STATE.LATEST
+    ).values(
+            atState.getATId(),
+            brs.at.AT.compressState(atState.getState()),
+            atState.getPrevHeight(),
+            atState.getNextHeight(),
+            atState.getSleepBetween(),
+            atState.getPrevBalance(),
+            atState.getFreezeWhenSameBalance(),
+            atState.getMinActivationAmount(),
+            Burst.getBlockchain().getHeight(),
+            true
+    ).onConflict(
+            AT_STATE.AT_ID, AT_STATE.HEIGHT
+    ).doUpdate()
+            .set(AT_STATE.AT_ID, atState.getATId())
+            .set(AT_STATE.STATE, brs.at.AT.compressState(atState.getState()))
+            .set(AT_STATE.PREV_HEIGHT, atState.getPrevHeight())
+            .set(AT_STATE.NEXT_HEIGHT, atState.getNextHeight())
+            .set(AT_STATE.SLEEP_BETWEEN, atState.getSleepBetween())
+            .set(AT_STATE.PREV_BALANCE, atState.getPrevBalance())
+            .set(AT_STATE.FREEZE_WHEN_SAME_BALANCE, atState.getFreezeWhenSameBalance())
+            .set(AT_STATE.MIN_ACTIVATE_AMOUNT, atState.getMinActivationAmount())
+            .set(AT_STATE.HEIGHT, Burst.getBlockchain().getHeight())
+            .set(AT_STATE.LATEST, true)
             .execute();
   }
 

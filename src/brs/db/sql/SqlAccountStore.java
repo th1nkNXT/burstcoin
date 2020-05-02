@@ -49,9 +49,30 @@ public class SqlAccountStore implements AccountStore {
 
       @Override
       protected void save(DSLContext ctx, Account.RewardRecipientAssignment assignment) {
-        ctx.mergeInto(REWARD_RECIP_ASSIGN, REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.PREV_RECIP_ID, REWARD_RECIP_ASSIGN.RECIP_ID, REWARD_RECIP_ASSIGN.FROM_HEIGHT, REWARD_RECIP_ASSIGN.HEIGHT, REWARD_RECIP_ASSIGN.LATEST)
-                .key(REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT)
-                .values(assignment.accountId, assignment.getPrevRecipientId(), assignment.getRecipientId(), assignment.getFromHeight(), Burst.getBlockchain().getHeight(), true)
+        ctx.insertInto(
+                REWARD_RECIP_ASSIGN,
+                REWARD_RECIP_ASSIGN.ACCOUNT_ID,
+                REWARD_RECIP_ASSIGN.PREV_RECIP_ID,
+                REWARD_RECIP_ASSIGN.RECIP_ID,
+                REWARD_RECIP_ASSIGN.FROM_HEIGHT,
+                REWARD_RECIP_ASSIGN.HEIGHT,
+                REWARD_RECIP_ASSIGN.LATEST
+        ).values(
+                assignment.accountId,
+                assignment.getPrevRecipientId(),
+                assignment.getRecipientId(),
+                assignment.getFromHeight(),
+                Burst.getBlockchain().getHeight(),
+                true
+        ).onConflict(
+                REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT
+        ).doUpdate()
+                .set(REWARD_RECIP_ASSIGN.ACCOUNT_ID, assignment.accountId)
+                .set(REWARD_RECIP_ASSIGN.PREV_RECIP_ID, assignment.getPrevRecipientId())
+                .set(REWARD_RECIP_ASSIGN.RECIP_ID, assignment.getRecipientId())
+                .set(REWARD_RECIP_ASSIGN.FROM_HEIGHT, assignment.getFromHeight())
+                .set(REWARD_RECIP_ASSIGN.HEIGHT, Burst.getBlockchain().getHeight())
+                .set(REWARD_RECIP_ASSIGN.LATEST, true)
                 .execute();
       }
     };
@@ -74,9 +95,30 @@ public class SqlAccountStore implements AccountStore {
 
       @Override
       protected void save(DSLContext ctx, Account.AccountAsset accountAsset) {
-        ctx.mergeInto(ACCOUNT_ASSET, ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.QUANTITY, ACCOUNT_ASSET.UNCONFIRMED_QUANTITY, ACCOUNT_ASSET.HEIGHT, ACCOUNT_ASSET.LATEST)
-                .key(ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT)
-                .values(accountAsset.accountId, accountAsset.assetId, accountAsset.getQuantityQNT(), accountAsset.getUnconfirmedQuantityQNT(), Burst.getBlockchain().getHeight(), true)
+        ctx.insertInto(
+                ACCOUNT_ASSET,
+                ACCOUNT_ASSET.ACCOUNT_ID,
+                ACCOUNT_ASSET.ASSET_ID,
+                ACCOUNT_ASSET.QUANTITY,
+                ACCOUNT_ASSET.UNCONFIRMED_QUANTITY,
+                ACCOUNT_ASSET.HEIGHT,
+                ACCOUNT_ASSET.LATEST
+        ).values(
+                accountAsset.accountId,
+                accountAsset.assetId,
+                accountAsset.getQuantityQNT(),
+                accountAsset.getUnconfirmedQuantityQNT(),
+                Burst.getBlockchain().getHeight(),
+                true
+        ).onConflict(
+                ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT
+        ).doUpdate()
+                .set(ACCOUNT_ASSET.ACCOUNT_ID, accountAsset.accountId)
+                .set(ACCOUNT_ASSET.ASSET_ID, accountAsset.assetId)
+                .set(ACCOUNT_ASSET.QUANTITY, accountAsset.getQuantityQNT())
+                .set(ACCOUNT_ASSET.UNCONFIRMED_QUANTITY, accountAsset.getUnconfirmedQuantityQNT())
+                .set(ACCOUNT_ASSET.HEIGHT, Burst.getBlockchain().getHeight())
+                .set(ACCOUNT_ASSET.LATEST, true)
                 .execute();
       }
 
@@ -96,14 +138,48 @@ public class SqlAccountStore implements AccountStore {
       protected void bulkInsert(DSLContext ctx, Collection<Account> accounts) {
         List<Query> accountQueries = new ArrayList<>();
         int height = Burst.getBlockchain().getHeight();
-        for (Account account: accounts) {
+        for (Account account : accounts) {
           if (account == null) continue;
           accountQueries.add(
-                  ctx.mergeInto(ACCOUNT, ACCOUNT.ID, ACCOUNT.HEIGHT, ACCOUNT.CREATION_HEIGHT, ACCOUNT.PUBLIC_KEY, ACCOUNT.KEY_HEIGHT, ACCOUNT.BALANCE,
-                          ACCOUNT.UNCONFIRMED_BALANCE, ACCOUNT.FORGED_BALANCE, ACCOUNT.NAME, ACCOUNT.DESCRIPTION, ACCOUNT.LATEST)
-                          .key(ACCOUNT.ID, ACCOUNT.HEIGHT)
-                          .values(account.getId(), height, account.getCreationHeight(), account.getPublicKey(), account.getKeyHeight(),
-                                  account.getBalanceNQT(), account.getUnconfirmedBalanceNQT(), account.getForgedBalanceNQT(), account.getName(), account.getDescription(), true)
+                  ctx.insertInto(
+                          ACCOUNT,
+                          ACCOUNT.ID,
+                          ACCOUNT.HEIGHT,
+                          ACCOUNT.CREATION_HEIGHT,
+                          ACCOUNT.PUBLIC_KEY,
+                          ACCOUNT.KEY_HEIGHT,
+                          ACCOUNT.BALANCE,
+                          ACCOUNT.UNCONFIRMED_BALANCE,
+                          ACCOUNT.FORGED_BALANCE,
+                          ACCOUNT.NAME,
+                          ACCOUNT.DESCRIPTION,
+                          ACCOUNT.LATEST
+                  ).values(
+                          account.getId(),
+                          height,
+                          account.getCreationHeight(),
+                          account.getPublicKey(),
+                          account.getKeyHeight(),
+                          account.getBalanceNQT(),
+                          account.getUnconfirmedBalanceNQT(),
+                          account.getForgedBalanceNQT(),
+                          account.getName(),
+                          account.getDescription(),
+                          true
+                  ).onConflict(
+                          ACCOUNT.ID, ACCOUNT.HEIGHT
+                  ).doUpdate()
+                          .set(ACCOUNT.ID, account.getId())
+                          .set(ACCOUNT.HEIGHT, height)
+                          .set(ACCOUNT.CREATION_HEIGHT, account.getCreationHeight())
+                          .set(ACCOUNT.PUBLIC_KEY, account.getPublicKey())
+                          .set(ACCOUNT.KEY_HEIGHT, account.getKeyHeight())
+                          .set(ACCOUNT.BALANCE, account.getBalanceNQT())
+                          .set(ACCOUNT.UNCONFIRMED_BALANCE, account.getUnconfirmedBalanceNQT())
+                          .set(ACCOUNT.FORGED_BALANCE, account.getForgedBalanceNQT())
+                          .set(ACCOUNT.NAME, account.getName())
+                          .set(ACCOUNT.DESCRIPTION, account.getDescription())
+                          .set(ACCOUNT.LATEST, true)
           );
         }
         ctx.batch(accountQueries).execute();

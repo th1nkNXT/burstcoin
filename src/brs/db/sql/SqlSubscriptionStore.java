@@ -89,9 +89,43 @@ public class SqlSubscriptionStore implements SubscriptionStore {
   }
 
   private void saveSubscription(DSLContext ctx, Subscription subscription) {
-    ctx.mergeInto(SUBSCRIPTION, SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
-            .key(SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
-            .values(subscription.id, subscription.senderId, subscription.recipientId, subscription.amountNQT, subscription.frequency, subscription.getTimeNext(), Burst.getBlockchain().getHeight(), true)
+    ctx.insertInto(
+            SUBSCRIPTION,
+            SUBSCRIPTION.ID,
+            SUBSCRIPTION.SENDER_ID,
+            SUBSCRIPTION.RECIPIENT_ID,
+            SUBSCRIPTION.AMOUNT,
+            SUBSCRIPTION.FREQUENCY,
+            SUBSCRIPTION.TIME_NEXT,
+            SUBSCRIPTION.HEIGHT,
+            SUBSCRIPTION.LATEST
+    ).values(
+            subscription.id,
+            subscription.senderId,
+            subscription.recipientId,
+            subscription.amountNQT,
+            subscription.frequency,
+            subscription.getTimeNext(),
+            Burst.getBlockchain().getHeight(),
+            true
+    ).onConflict(
+            SUBSCRIPTION.ID,
+            SUBSCRIPTION.SENDER_ID,
+            SUBSCRIPTION.RECIPIENT_ID,
+            SUBSCRIPTION.AMOUNT,
+            SUBSCRIPTION.FREQUENCY,
+            SUBSCRIPTION.TIME_NEXT,
+            SUBSCRIPTION.HEIGHT,
+            SUBSCRIPTION.LATEST
+    ).doUpdate()
+            .set(SUBSCRIPTION.ID, subscription.id)
+            .set(SUBSCRIPTION.SENDER_ID, subscription.senderId)
+            .set(SUBSCRIPTION.RECIPIENT_ID, subscription.recipientId)
+            .set(SUBSCRIPTION.AMOUNT, subscription.amountNQT)
+            .set(SUBSCRIPTION.FREQUENCY, subscription.frequency)
+            .set(SUBSCRIPTION.TIME_NEXT, subscription.getTimeNext())
+            .set(SUBSCRIPTION.HEIGHT, Burst.getBlockchain().getHeight())
+            .set(SUBSCRIPTION.LATEST, true)
             .execute();
   }
 

@@ -64,9 +64,27 @@ public class SqlEscrowStore implements EscrowStore {
   }
 
   private void saveDecision(DSLContext ctx, Escrow.Decision decision) {
-    ctx.mergeInto(ESCROW_DECISION, ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.DECISION, ESCROW_DECISION.HEIGHT, ESCROW_DECISION.LATEST)
-            .key(ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.HEIGHT)
-            .values(decision.escrowId, decision.accountId, (int) Escrow.decisionToByte(decision.getDecision()), Burst.getBlockchain().getHeight(), true)
+    ctx.insertInto(
+            ESCROW_DECISION,
+            ESCROW_DECISION.ESCROW_ID,
+            ESCROW_DECISION.ACCOUNT_ID,
+            ESCROW_DECISION.DECISION,
+            ESCROW_DECISION.HEIGHT,
+            ESCROW_DECISION.LATEST
+    ).values(
+            decision.escrowId,
+            decision.accountId,
+            (int) Escrow.decisionToByte(decision.getDecision()),
+            Burst.getBlockchain().getHeight(),
+            true
+    ).onConflict(
+            ESCROW_DECISION.ESCROW_ID, ESCROW_DECISION.ACCOUNT_ID, ESCROW_DECISION.HEIGHT
+    ).doUpdate()
+            .set(ESCROW_DECISION.ESCROW_ID, decision.escrowId)
+            .set(ESCROW_DECISION.ACCOUNT_ID, decision.accountId)
+            .set(ESCROW_DECISION.DECISION, (int) Escrow.decisionToByte(decision.getDecision()))
+            .set(ESCROW_DECISION.HEIGHT, Burst.getBlockchain().getHeight())
+            .set(ESCROW_DECISION.LATEST, true)
             .execute();
   }
 
@@ -108,9 +126,39 @@ public class SqlEscrowStore implements EscrowStore {
   }
 
   private void saveEscrow(DSLContext ctx, Escrow escrow) {
-    ctx.mergeInto(ESCROW, ESCROW.ID, ESCROW.SENDER_ID, ESCROW.RECIPIENT_ID, ESCROW.AMOUNT, ESCROW.REQUIRED_SIGNERS, ESCROW.DEADLINE, ESCROW.DEADLINE_ACTION, ESCROW.HEIGHT, ESCROW.LATEST)
-            .key(ESCROW.ID, ESCROW.HEIGHT)
-            .values(escrow.id, escrow.senderId, escrow.recipientId, escrow.amountNQT, escrow.requiredSigners, escrow.deadline, (int) Escrow.decisionToByte(escrow.deadlineAction), Burst.getBlockchain().getHeight(), true)
+    ctx.insertInto(
+            ESCROW,
+            ESCROW.ID,
+            ESCROW.SENDER_ID,
+            ESCROW.RECIPIENT_ID,
+            ESCROW.AMOUNT,
+            ESCROW.REQUIRED_SIGNERS,
+            ESCROW.DEADLINE,
+            ESCROW.DEADLINE_ACTION,
+            ESCROW.HEIGHT,
+            ESCROW.LATEST
+    ).values(
+            escrow.id,
+            escrow.senderId,
+            escrow.recipientId,
+            escrow.amountNQT,
+            escrow.requiredSigners,
+            escrow.deadline,
+            (int) Escrow.decisionToByte(escrow.deadlineAction),
+            Burst.getBlockchain().getHeight(),
+            true
+    ).onConflict(
+            ESCROW.ID, ESCROW.HEIGHT
+    ).doUpdate()
+            .set(ESCROW.ID, escrow.id)
+            .set(ESCROW.SENDER_ID, escrow.senderId)
+            .set(ESCROW.RECIPIENT_ID, escrow.recipientId)
+            .set(ESCROW.AMOUNT, escrow.amountNQT)
+            .set(ESCROW.REQUIRED_SIGNERS, escrow.requiredSigners)
+            .set(ESCROW.DEADLINE, escrow.deadline)
+            .set(ESCROW.DEADLINE_ACTION, (int) Escrow.decisionToByte(escrow.deadlineAction))
+            .set(ESCROW.HEIGHT, Burst.getBlockchain().getHeight())
+            .set(ESCROW.LATEST, true)
             .execute();
   }
 

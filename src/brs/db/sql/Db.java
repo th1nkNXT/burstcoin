@@ -13,7 +13,6 @@ import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
-import org.jooq.conf.StatementType;
 import org.jooq.impl.DSL;
 import org.jooq.tools.jdbc.JDBCUtils;
 import org.mariadb.jdbc.MariaDbDataSource;
@@ -133,6 +132,8 @@ public final class Db {
           flywayBuilder.locations("classpath:/db/migration_sqlite");
           runFlyway = true;
           config.setAutoCommit(true);
+          config.addDataSourceProperty("journal_mode", "WAL");
+          config.addDataSourceProperty("foreign_keys", "ON");
           break;
         default:
           break;
@@ -230,12 +231,7 @@ public final class Db {
       ctx = DSL.using(cp, dialect, settings);
     }
     else {
-      settings.setStatementType(StatementType.STATIC_STATEMENT);
       ctx = DSL.using(con, dialect, settings);
-    }
-    if (dialect == SQLDialect.SQLITE) {
-        ctx.execute("PRAGMA foreign_keys = ON;");
-        ctx.execute("PRAGMA journal_mode = WAL;");
     }
     return ctx;
   }
