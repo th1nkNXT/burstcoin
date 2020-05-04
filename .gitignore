@@ -12,3 +12,7 @@ target
 *.prefs
 .project
 .classpath
+*.h2
+*.h2.*
+*.sqlite
+*.sqlite-*

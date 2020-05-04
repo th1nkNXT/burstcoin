@@ -133,12 +133,16 @@ public final class Db {
           flywayBuilder.locations("classpath:/db/migration_sqlite");
           runFlyway = true;
           config.setAutoCommit(true);
+          config.addDataSourceProperty("journal_mode", "WAL");
+          config.addDataSourceProperty("foreign_keys", "ON");
+          config.addDataSourceProperty("temp_store", 2);
+          config.addDataSourceProperty("synchronous", 1);
           break;
         default:
           break;
       }
 
-        cp = new HikariDataSource(config);
+      cp = new HikariDataSource(config);
 
       if (runFlyway) {
         logger.info("Running flyway migration");
@@ -232,10 +236,6 @@ public final class Db {
     else {
       settings.setStatementType(StatementType.STATIC_STATEMENT);
       ctx = DSL.using(con, dialect, settings);
-    }
-    if (dialect == SQLDialect.SQLITE) {
-        ctx.execute("PRAGMA foreign_keys = ON;");
-        ctx.execute("PRAGMA journal_mode = WAL;");
     }
     return ctx;
   }
