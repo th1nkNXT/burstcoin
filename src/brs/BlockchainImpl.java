@@ -26,6 +26,7 @@ public class BlockchainImpl implements Blockchain {
   }
 
   private final AtomicReference<Block> lastBlock = new AtomicReference<>();
+  private final AtomicReference<Block> prevBlock = new AtomicReference<>();
 
   private <T> T bcslRead(Supplier<T> supplier) {
     return StampedLockUtils.stampedLockRead(bcsl, supplier);
@@ -35,11 +36,12 @@ public class BlockchainImpl implements Blockchain {
   public Block getLastBlock() {
     return bcslRead(lastBlock::get);
   }
-
+  
   @Override
   public void setLastBlock(Block block) {
     long stamp = bcsl.writeLock();
     try {
+      prevBlock.set(null);
       lastBlock.set(block);
     } finally {
       bcsl.unlockWrite(stamp);
@@ -49,6 +51,7 @@ public class BlockchainImpl implements Blockchain {
   void setLastBlock(Block previousBlock, Block block) {
     long stamp = bcsl.writeLock();
     try {
+      prevBlock.set(null);
       if (! lastBlock.compareAndSet(previousBlock, block)) {
         throw new IllegalStateException("Last block is no longer previous block");
       }
@@ -132,7 +135,15 @@ public class BlockchainImpl implements Blockchain {
     if (height == block.getHeight()) {
       return block;
     }
-    return blockDb.findBlockAtHeight(height);
+    Block prev = prevBlock.get();
+    if (prev != null && height == prev.getHeight()) {
+      return prev;
+    }
+    
+    Block ret = blockDb.findBlockAtHeight(height);
+    if(height == block.getHeight()-1)
+    	prevBlock.set(ret);
+    return ret;
   }
 
   @Override
