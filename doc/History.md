@@ -7,6 +7,7 @@
 - Enforce slot fees (CIP23)
 - New deadline computation formula aiming at more stable block times (CIP24)
 - Can run on recent Java versions (previously limited to Java 8)
+- Added sqlite database backend (now default)
 - A new GUI implementation
 - Improved CORS support
 - Fixed Escrow ID in Escrow Result Attachment Protobuf is always 2
