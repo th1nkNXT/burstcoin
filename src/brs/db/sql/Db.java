@@ -37,6 +37,10 @@ public final class Db {
 
   private static HikariDataSource cp;
   private static SQLDialect dialect;
+  private static Settings settings = new Settings();
+  private static Settings staticSettings = new Settings();
+  private static Boolean useStaticStatementsInTransaction;
+
   private static final ThreadLocal<Connection> localConnection = new ThreadLocal<>();
   private static final ThreadLocal<Map<String, Map<BurstKey, Object>>> transactionCaches = new ThreadLocal<>();
   private static final ThreadLocal<Map<String, Map<BurstKey, Object>>> transactionBatches = new ThreadLocal<>();
@@ -54,15 +58,29 @@ public final class Db {
       dbUrl = propertyService.getString(Props.DEV_DB_URL);
       dbUsername = propertyService.getString(Props.DEV_DB_USERNAME);
       dbPassword = propertyService.getString(Props.DEV_DB_PASSWORD);
-    }
-    else {
+    } else {
       dbUrl = propertyService.getString(Props.DB_URL);
       dbUsername = propertyService.getString(Props.DB_USERNAME);
       dbPassword = propertyService.getString(Props.DB_PASSWORD);
     }
+    logger.debug("Database jdbc url set to: {}", dbUrl);
+
     dialect = JDBCUtils.dialect(dbUrl);
 
-    logger.debug("Database jdbc url set to: {}", dbUrl);
+    switch (dialect) {
+      case MYSQL:
+      case MARIADB:
+        useStaticStatementsInTransaction = true;
+        staticSettings.setRenderSchema(Boolean.FALSE);
+        staticSettings.setStatementType(StatementType.STATIC_STATEMENT);
+        break;
+      default:
+        useStaticStatementsInTransaction = false;
+        break;
+    }
+
+    settings.setRenderSchema(Boolean.FALSE);
+
     try {
       HikariConfig config = new HikariConfig();
       config.setJdbcUrl(dbUrl);
@@ -71,12 +89,19 @@ public final class Db {
       if (dbPassword != null)
         config.setPassword(dbPassword);
 
-      config.setMaximumPoolSize(propertyService.getInt(Props.DB_CONNECTIONS));
-
       FluentConfiguration flywayBuilder = Flyway.configure()
-              .dataSource(dbUrl, dbUsername, dbPassword)
-              .baselineOnMigrate(true);
+        .dataSource(dbUrl, dbUsername, dbPassword)
+        .baselineOnMigrate(true);
       boolean runFlyway = false;
+
+      switch (dialect) {
+        case SQLITE:
+          config.setMaximumPoolSize(1);
+          break;
+        default:
+          config.setMaximumPoolSize(propertyService.getInt(Props.DB_CONNECTIONS));
+          break;
+      }
 
       switch (dialect) {
         case MYSQL:
@@ -133,7 +158,8 @@ public final class Db {
           flywayBuilder.locations("classpath:/db/migration_sqlite");
           runFlyway = true;
           config.setAutoCommit(true);
-          config.addDataSourceProperty("journal_mode", "WAL");
+          config.addDataSourceProperty("journal_mode", "TRUNCATE");
+          config.addDataSourceProperty("locking_mode", "EXCLUSIVE");
           config.addDataSourceProperty("foreign_keys", "ON");
           config.addDataSourceProperty("temp_store", 2);
           config.addDataSourceProperty("synchronous", 1);
@@ -176,28 +202,26 @@ public final class Db {
 
   public static void shutdown() {
     if (dialect == SQLDialect.H2) {
-      try ( Connection con = cp.getConnection(); Statement stmt = con.createStatement() ) {
+      try (Connection con = cp.getConnection(); Statement stmt = con.createStatement()) {
         // COMPACT is not giving good result.
-        if(Burst.getPropertyService().getBoolean(Props.DB_H2_DEFRAG_ON_SHUTDOWN)) {
+        if (Burst.getPropertyService().getBoolean(Props.DB_H2_DEFRAG_ON_SHUTDOWN)) {
           stmt.execute("SHUTDOWN DEFRAG");
         } else {
           stmt.execute("SHUTDOWN");
         }
-      }
-      catch (SQLException e) {
+      } catch (SQLException e) {
         logger.info(e.toString(), e);
-      }
-      finally {
+      } finally {
         logger.info("Database shutdown completed.");
       }
     }
-    if (cp != null && !cp.isClosed() ) {
+    if (cp != null && !cp.isClosed()) {
       cp.close();
     }
   }
 
   private static Connection getPooledConnection() throws SQLException {
-      return cp.getConnection();
+    return cp.getConnection();
   }
 
   public static Connection getConnection() throws SQLException {
@@ -213,9 +237,9 @@ public final class Db {
   }
 
   public static <T> T useDSLContext(Function<DSLContext, T> function) {
-      try (DSLContext context = getDSLContext()) {
-          return function.apply(context);
-      }
+    try (DSLContext context = getDSLContext()) {
+      return function.apply(context);
+    }
   }
 
   public static void useDSLContext(Consumer<DSLContext> consumer) { // TODO RxJava
@@ -225,17 +249,13 @@ public final class Db {
   }
 
   private static DSLContext getDSLContext() {
-    Connection con    = localConnection.get();
-    Settings settings = new Settings();
-    settings.setRenderSchema(Boolean.FALSE);
+    Connection con = localConnection.get();
 
     DSLContext ctx = null;
     if (con == null) {
       ctx = DSL.using(cp, dialect, settings);
-    }
-    else {
-      settings.setStatementType(StatementType.STATIC_STATEMENT);
-      ctx = DSL.using(con, dialect, settings);
+    } else {
+      ctx = DSL.using(con, dialect, useStaticStatementsInTransaction ? staticSettings : settings);
     }
     return ctx;
   }
@@ -273,8 +293,7 @@ public final class Db {
       transactionBatches.set(new HashMap<>());
 
       return con;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e.toString(), e);
     }
   }
@@ -287,7 +306,7 @@ public final class Db {
     try {
       con.commit();
     } catch (SQLException e) {
-        throw new RuntimeException(e.toString(), e);
+      throw new RuntimeException(e.toString(), e);
     }
   }
 
@@ -298,8 +317,7 @@ public final class Db {
     }
     try {
       con.rollback();
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       throw new RuntimeException(e.toString(), e);
     }
     transactionCaches.get().clear();
