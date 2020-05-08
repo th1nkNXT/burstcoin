@@ -90,9 +90,9 @@ public final class ThreadPool {
 
     int cores = propertyService.getInt(Props.CPU_NUM_CORES);
     if (cores <= 0) {
-        logger.warn("Cannot use 0 cores - defaulting to all available");
-        cores = Runtime.getRuntime().availableProcessors();
-      }
+      cores = Runtime.getRuntime().availableProcessors();
+      logger.info("CPU cores: {}", cores);
+    }
     int totalThreads = backgroundJobs.size() + backgroundJobsCores.size() * cores;
     logger.debug("Starting {} background jobs", totalThreads);
     scheduledThreadPool = Executors.newScheduledThreadPool(totalThreads);
@@ -109,7 +109,7 @@ public final class ThreadPool {
       scheduledThreadPool.scheduleWithFixedDelay(toRun, 0, Math.max(entry.getValue() / timeMultiplier, 1), TimeUnit.MILLISECONDS);
     }
     backgroundJobs.clear();
-	
+
     // Starting multicore-Threads:
     for (Map.Entry<Runnable,Long> entry : backgroundJobsCores.entrySet()) {
       for (int i=0; i < cores; i++)
