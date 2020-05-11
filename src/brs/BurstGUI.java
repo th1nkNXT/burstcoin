@@ -233,7 +233,7 @@ public class BurstGUI extends JFrame {
     		
     		return newTrayIcon;
     	} catch (Exception e) {
-    		LOGGER.warn("Could not create tray icon");
+    		LOGGER.info("Could not create tray icon");
     		return null;
     	}
     }
