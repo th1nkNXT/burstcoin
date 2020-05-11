@@ -91,7 +91,8 @@ public final class ThreadPool {
     int cores = propertyService.getInt(Props.CPU_NUM_CORES);
     if (cores <= 0) {
       cores = Runtime.getRuntime().availableProcessors();
-      logger.info("Using all available CPU cores: {}", cores);
+      cores = Math.max(1, cores - 2);
+      logger.info("Using {} CPU cores", cores);
     }
     int totalThreads = backgroundJobs.size() + backgroundJobsCores.size() * cores;
     logger.debug("Starting {} background jobs", totalThreads);
