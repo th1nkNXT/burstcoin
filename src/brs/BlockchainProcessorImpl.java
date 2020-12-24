@@ -18,10 +18,12 @@ import brs.peer.Peers;
 import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.*;
+import brs.services.impl.BlockServiceImpl;
 import brs.statistics.StatisticsManagerImpl;
 import brs.transactionduplicates.TransactionDuplicatesCheckerImpl;
 import brs.unconfirmedtransactions.UnconfirmedTransactionStore;
 import brs.util.*;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -160,6 +162,9 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
     }
 
     addGenesisBlock();
+    if(Boolean.FALSE.equals(propertyService.getBoolean(Props.DB_SKIP_CHECK))) {
+      checkDatabaseState();
+    }
 
     Runnable getMoreBlocksThread = new Runnable() {
       private JsonElement getCumulativeDifficultyRequest;
@@ -221,6 +226,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
               if (betterCumulativeDifficulty.compareTo(curCumulativeDifficulty) <= 0) {
                 return;
               }
+              logger.trace("Got a better cumulative difficulty {} than current {}.", betterCumulativeDifficulty, curCumulativeDifficulty);
 
               long commonBlockId = Genesis.GENESIS_BLOCK_ID;
               long cacheLastBlockId = downloadCache.getLastBlockId();
@@ -770,6 +776,33 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
     blockchainStore.addBlock(block);
     blockchain.setLastBlock(block);
   }
+  
+  private void checkDatabaseState() {
+    logger.info("Checking database state (it can take a minute or two)...");
+    long totalEffectiveBalance = 0;
+    long totalMined = 0;
+    
+    for (int i=0; i <= blockchain.getHeight(); i++) {
+      totalMined += BlockServiceImpl.getBlockReward(i);
+    }
+
+    for (Account account : accountService.getAllAccounts(0, -1)) {
+      long effectiveBalanceBURST = account.getBalanceNQT();
+      if (effectiveBalanceBURST > 0 && account.getId() != 0) {
+        totalEffectiveBalance += effectiveBalanceBURST;
+      }
+    }
+    for (Escrow escrow : escrowService.getAllEscrowTransactions()) {
+      totalEffectiveBalance += escrow.getAmountNQT();
+    }
+    
+    logger.info("Total mined {}, total effective on wallets {}", totalMined, totalEffectiveBalance);
+    
+    if(totalEffectiveBalance > totalMined) {
+      logger.info("Database is inconsistent, please sync from empty. Alternatively, pop off some blocks or add '{} = true' at your own risk.", Props.DB_SKIP_CHECK.getName());
+      System.exit(-1);
+    }
+  }
 
   private void addGenesisBlock() {
     if (blockDb.hasBlock(Genesis.GENESIS_BLOCK_ID)) {
@@ -1132,6 +1165,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
           Map<Long, Map<Long, Transaction>> unconfirmedTransactionsOrderedBySlotThenPriority = new HashMap<>();
             inclusionCandidates.collect(Collectors.toMap(Function.identity(), priorityCalculator::applyAsLong)).forEach((transaction, priority) -> {
             long slot = (transaction.getFeeNQT() - (transaction.getFeeNQT() % FEE_QUANT)) / FEE_QUANT;
+            slot = Math.min(Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS), slot);
             unconfirmedTransactionsOrderedBySlotThenPriority.computeIfAbsent(slot, k -> new HashMap<>());
             unconfirmedTransactionsOrderedBySlotThenPriority.get(slot).put(priority, transaction);
           });
