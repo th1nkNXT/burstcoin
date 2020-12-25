@@ -122,42 +122,7 @@ public class BlockServiceImpl implements BlockService {
     if (block.isVerified()) {
       return;
     }
-    
-    // Check on the number of blocks mined to estimate the capacity and also the committed balance on 4 days
-    int nBlocksMined = 1; // The current block being mined
-    long committedBalance = 0;
-    Account account = accountService.getAccount(block.getGeneratorId());
-    if (account != null) {
-    	committedBalance = account.getBalanceNQT();
-        Account accountPast = accountService.getAccount(block.getGeneratorId(), block.getHeight() - Constants.MIN_MAX_ROLLBACK/2);
-        if(accountPast == null) {
-        	committedBalance = 0;
-        }
-        else {
-        	committedBalance = Math.min(committedBalance, accountPast.getBalanceNQT());
-        }
-    	
-    	// We use no pagination and look back up to the capacity estimation blocks in past
-        // TODO implement the pagination on the getBlocks method and used Constants.MIN_MAX_ROLLBACK
-    	nBlocksMined += blockchain.getBlocksCount(account,
-    	    block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS - Constants.MIN_MAX_ROLLBACK,
-    	    block.getHeight() - Constants.MIN_MAX_ROLLBACK);
-//    	for(Block mb : minedBlocks) {
-//    		if(mb.getHeight() < block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS) {
-//    			break;
-//    		}
-//    		nBlocksMined++;
-//    	}
-    }
-    
-    long estimatedCapacityGb = Constants.INITIAL_BASE_TARGET*nBlocksMined*1000L
-    		/(Constants.CAPACITY_ESTIMATION_BLOCKS * block.getBaseTarget());
-    estimatedCapacityGb = Math.max(estimatedCapacityGb, 1L);
-    logger.info("Miner {}, height {}, forged {} blocks out of {}, estimated capacity {} Tb, balance {}/Tb",
-    		BurstID.fromLong(block.getGeneratorId()).getID(),
-    		block.getHeight(), nBlocksMined, Constants.CAPACITY_ESTIMATION_BLOCKS, estimatedCapacityGb/1000D,
-    		BurstValue.fromPlanck(committedBalance/estimatedCapacityGb*1000).toFormattedString());
-    
+        
     int checkPointHeight = Burst.getPropertyService().getInt(
     		Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ?
     				Props.DEV_CHECKPOINT_HEIGHT : Props.BRS_CHECKPOINT_HEIGHT);
@@ -179,6 +144,34 @@ public class BlockServiceImpl implements BlockService {
     		}
     		logger.info("Checkpoint block {} with previous block hash {} verified", block.getHeight(), Hex.toHexString(block.getPreviousBlockHash()));
     	}
+    	
+        // Check on the number of blocks mined to estimate the capacity and also the committed balance on 4 days
+        int nBlocksMined = 1; // The current block being mined
+        long committedBalance = 0;
+        Account account = accountService.getAccount(block.getGeneratorId());
+        if (account != null) {
+            committedBalance = account.getBalanceNQT();
+            Account accountPast = accountService.getAccount(block.getGeneratorId(), block.getHeight() - Constants.MIN_MAX_ROLLBACK/2);
+            if(accountPast == null) {
+                committedBalance = 0;
+            }
+            else {
+                committedBalance = Math.min(committedBalance, accountPast.getBalanceNQT());
+            }
+            
+            nBlocksMined += blockchain.getBlocksCount(account,
+                block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS - Constants.MIN_MAX_ROLLBACK,
+                block.getHeight() - Constants.MIN_MAX_ROLLBACK);
+        }
+        
+        long estimatedCapacityGb = Constants.INITIAL_BASE_TARGET*nBlocksMined*1000L
+                /(Constants.CAPACITY_ESTIMATION_BLOCKS * block.getBaseTarget());
+        estimatedCapacityGb = Math.max(estimatedCapacityGb, 1L);
+        logger.info("Miner {}, height {}, forged {} blocks out of {}, estimated capacity {} Tb, balance {}/Tb",
+                BurstID.fromLong(block.getGeneratorId()).getID(),
+                block.getHeight(), nBlocksMined, Constants.CAPACITY_ESTIMATION_BLOCKS, estimatedCapacityGb/1000D,
+                BurstValue.fromPlanck(committedBalance/estimatedCapacityGb*1000).toFormattedString());
+    	
         // Pre-verify poc:
         if (scoopData == null) {
           block.setPocTime(generator.calculateHit(block.getGeneratorId(), block.getNonce(), block.getGenerationSignature(), getScoopNum(block), block.getHeight()));
