@@ -21,9 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Collection;
 
 public class BlockServiceImpl implements BlockService {
 
@@ -108,14 +106,6 @@ public class BlockServiceImpl implements BlockService {
     }
   }
   
-  private Account getRewardAccount(byte []publicKey) {
-	Account rewardAccount = accountService.getAccount(publicKey);
-	Account.RewardRecipientAssignment rewardRecipiengAssignment = accountService.getRewardRecipientAssignment(rewardAccount);
-	if (rewardRecipiengAssignment != null) {
-	  rewardAccount = accountService.getAccount(rewardRecipiengAssignment.getRecipientId());
-	}
-	return rewardAccount;
-  }
   @Override
   public void watchBlock(Block block) {
 	  watchedBlocks.add(block);
@@ -139,7 +129,7 @@ public class BlockServiceImpl implements BlockService {
     Account account = accountService.getAccount(block.getGeneratorId());
     if (account != null) {
     	committedBalance = account.getBalanceNQT();
-        Account accountPast = accountService.getAccount(block.getGeneratorId(), block.getHeight() - Constants.MIN_MAX_ROLLBACK);
+        Account accountPast = accountService.getAccount(block.getGeneratorId(), block.getHeight() - Constants.MIN_MAX_ROLLBACK/2);
         if(accountPast == null) {
         	committedBalance = 0;
         }
@@ -149,20 +139,24 @@ public class BlockServiceImpl implements BlockService {
     	
     	// We use no pagination and look back up to the capacity estimation blocks in past
         // TODO implement the pagination on the getBlocks method and used Constants.MIN_MAX_ROLLBACK
-    	Collection<Block> minedBlocks = blockchain.getBlocks(account, 0, 0, 0);
-    	for(Block mb : minedBlocks) {
-    		if(mb.getHeight() < block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS) {
-    			break;
-    		}
-    	}
+    	nBlocksMined += blockchain.getBlocksCount(account,
+    	    block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS - Constants.MIN_MAX_ROLLBACK,
+    	    block.getHeight() - Constants.MIN_MAX_ROLLBACK);
+//    	for(Block mb : minedBlocks) {
+//    		if(mb.getHeight() < block.getHeight() - Constants.CAPACITY_ESTIMATION_BLOCKS) {
+//    			break;
+//    		}
+//    		nBlocksMined++;
+//    	}
     }
     
     long estimatedCapacityGb = Constants.INITIAL_BASE_TARGET*nBlocksMined*1000L
     		/(Constants.CAPACITY_ESTIMATION_BLOCKS * block.getBaseTarget());
-    logger.info("Miner {}, forged {} blocks, estimated capacity {} Tb, balance {}/Tb",
+    estimatedCapacityGb = Math.max(estimatedCapacityGb, 1L);
+    logger.info("Miner {}, height {}, forged {} blocks out of {}, estimated capacity {} Tb, balance {}/Tb",
     		BurstID.fromLong(block.getGeneratorId()).getID(),
-    		nBlocksMined, estimatedCapacityGb/1000D,
-    		BurstValue.fromPlanck(committedBalance*1000/estimatedCapacityGb).toFormattedString());
+    		block.getHeight(), nBlocksMined, Constants.CAPACITY_ESTIMATION_BLOCKS, estimatedCapacityGb/1000D,
+    		BurstValue.fromPlanck(committedBalance/estimatedCapacityGb*1000).toFormattedString());
     
     int checkPointHeight = Burst.getPropertyService().getInt(
     		Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ?

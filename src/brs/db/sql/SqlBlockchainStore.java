@@ -42,12 +42,28 @@ public class SqlBlockchainStore implements BlockchainStore {
   @Override
   public Collection<Block> getBlocks(Account account, int timestamp, int from, int to) {
     return Db.useDSLContext(ctx -> {
-      // FIXME: pagination is ignored here
       SelectConditionStep<BlockRecord> query = ctx.selectFrom(BLOCK).where(BLOCK.GENERATOR_ID.eq(account.getId()));
       if (timestamp > 0) {
         query.and(BLOCK.TIMESTAMP.ge(timestamp));
       }
+      if(from > 0) {
+        query.and(BLOCK.HEIGHT.ge(from));
+      }
+      if(to > 0) {
+        query.and(BLOCK.HEIGHT.le(to));
+      }
       return getBlocks(query.orderBy(BLOCK.HEIGHT.desc()).fetch());
+    });
+  }
+  
+  @Override
+  public int getBlocksCount(Account account, int from, int to) {
+    return Db.useDSLContext(ctx -> {
+      int count = ctx.selectCount().from(BLOCK)
+          .where(BLOCK.GENERATOR_ID.eq(account.getId()))
+          .and(BLOCK.HEIGHT.ge(from)).and(BLOCK.HEIGHT.le(to))
+          .fetchOne(0, int.class);
+      return count;
     });
   }
 
