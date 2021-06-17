@@ -8,3 +8,5 @@ Please use the following workflow to contribute:
 * Submit a pull request against `develop`
 
 *Note:* A minimum of 2 approving reviews are required to merge. Squash merges are preferred unless there are very few commits to merge
+
+Please be aware that you need to install Lombok into your IDE.

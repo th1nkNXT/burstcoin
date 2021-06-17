@@ -55,7 +55,9 @@ public final class API {
       SubscriptionService subscriptionService, ATService atService,
       TimeService timeService, EconomicClustering economicClustering, PropertyService propertyService,
       ThreadPool threadPool, TransactionService transactionService, BlockService blockService,
-      Generator generator, APITransactionManager apiTransactionManager, FeeSuggestionCalculator feeSuggestionCalculator, DeeplinkQRCodeGenerator deepLinkQRCodeGenerator, IndirectIncomingService indirectIncomingService) {
+      Generator generator, APITransactionManager apiTransactionManager, FeeSuggestionCalculator feeSuggestionCalculator, 
+      DeeplinkQRCodeGenerator deepLinkQRCodeGenerator, IndirectIncomingService indirectIncomingService, 
+      TransactionRetrievalService transactionRetrievalService) {
 
     List<String> allowedBotHostsList = propertyService.getStringList(Props.API_ALLOWED);
     Set<Subnet> allowedBotHosts;
@@ -163,6 +165,7 @@ public final class API {
               accountService, aliasService, assetExchange, escrowService, digitalGoodsStoreService,
               subscriptionService, atService, timeService, economicClustering, transactionService, blockService, generator, propertyService,
               apiTransactionManager, feeSuggestionCalculator, deepLinkQRCodeGenerator, indirectIncomingService,
+              transactionRetrievalService,
               allowedBotHosts);
       ServletHolder apiServletHolder = new ServletHolder(apiServlet);
       apiHandler.addServlet(apiServletHolder, API_PATH);

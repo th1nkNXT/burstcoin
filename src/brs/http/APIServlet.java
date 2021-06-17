@@ -38,7 +38,8 @@ public final class APIServlet extends HttpServlet {
                     EscrowService escrowService, DGSGoodsStoreService digitalGoodsStoreService,
                     SubscriptionService subscriptionService, ATService atService, TimeService timeService, EconomicClustering economicClustering, TransactionService transactionService,
                     BlockService blockService, Generator generator, PropertyService propertyService, APITransactionManager apiTransactionManager, FeeSuggestionCalculator feeSuggestionCalculator,
-                    DeeplinkQRCodeGenerator deeplinkQRCodeGenerator, IndirectIncomingService indirectIncomingService, Set<Subnet> allowedBotHosts) {
+                    DeeplinkQRCodeGenerator deeplinkQRCodeGenerator, IndirectIncomingService indirectIncomingService, TransactionRetrievalService transactionRetrievalService, 
+                    Set<Subnet> allowedBotHosts) {
 
     enforcePost = propertyService.getBoolean(Props.API_SERVER_ENFORCE_POST);
     allowedOrigins = propertyService.getString(Props.API_ALLOWED_ORIGINS);
@@ -147,7 +148,7 @@ public final class APIServlet extends HttpServlet {
     map.put("getAccountEscrowTransactions", new GetAccountEscrowTransactions(parameterService, escrowService));
     map.put("sendMoneySubscription", new SendMoneySubscription(parameterService, blockchain, apiTransactionManager));
     map.put("subscriptionCancel", new SubscriptionCancel(parameterService, subscriptionService, blockchain, apiTransactionManager));
-    map.put("getSubscription", new GetSubscription(subscriptionService));
+    map.put("getSubscription", new GetSubscription(subscriptionService, transactionRetrievalService));
     map.put("getAccountSubscriptions", new GetAccountSubscriptions(parameterService, subscriptionService));
     map.put("getSubscriptionsToAccount", new GetSubscriptionsToAccount(parameterService, subscriptionService));
     map.put("createATProgram", new CreateATProgram(parameterService, blockchain, apiTransactionManager));
