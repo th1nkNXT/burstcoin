@@ -6,6 +6,8 @@ import brs.fluxcapacitor.FluxValues;
 import brs.peer.Peer;
 import brs.util.Convert;
 import brs.util.JSON;
+import lombok.Builder;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -54,10 +56,11 @@ public class Block {
   private Peer downloadedFrom = null;
   private int byteLength = 0;
 
-  Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT,
-      int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature,
+  @Builder
+  public Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT,
+      int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature, 
       byte[] blockSignature, byte[] previousBlockHash, List<Transaction> transactions,
-      long nonce, byte[] blockATs, int height, long baseTarget) throws BurstException.ValidationException {
+      long nonce, byte[] blockATs, int height, long baseTarget, BigInteger cumulativeDifficulty, long nextBlockId, long id) throws BurstException.ValidationException {
 
     if (payloadLength > Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height) || payloadLength < 0) {
       throw new BurstException.NotValidException(
@@ -74,8 +77,8 @@ public class Block {
     this.generatorPublicKey = generatorPublicKey;
     this.generationSignature = generationSignature;
     this.blockSignature = blockSignature;
-
     this.previousBlockHash = previousBlockHash;
+
     if (transactions != null) {
       this.blockTransactions.set(Collections.unmodifiableList(transactions));
       if (blockTransactions.get().size() > (Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {
@@ -93,13 +96,6 @@ public class Block {
     this.nonce = nonce;
     this.blockATs = blockATs;
     this.baseTarget = baseTarget;
-  }
-
-  public Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT, int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature, byte[] blockSignature, byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget,
-      long nextBlockId, int height, Long id, long nonce, byte[] blockATs) throws BurstException.ValidationException {
-
-    this(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature, previousBlockHash, null, nonce, blockATs, height, baseTarget);
-
     this.cumulativeDifficulty = cumulativeDifficulty == null ? BigInteger.ZERO : cumulativeDifficulty;
     this.nextBlockId.set(nextBlockId);
     this.height = height;
@@ -327,9 +323,24 @@ public class Block {
       }
     
       byte[] blockATs = Convert.parseHexString(JSON.getAsString(blockData.get("blockATs")));
-      return new Block(version, timestamp, previousBlock, totalAmountNQT, totalFeeNQT,
-          payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature,
-          previousBlockHash, new ArrayList<>(blockTransactions.values()), nonce, blockATs, height, baseTarget);
+      return Block.builder()
+          .version(version)
+          .timestamp(timestamp)
+          .previousBlockId(previousBlock)
+          .totalAmountNQT(totalAmountNQT)
+          .totalFeeNQT(totalFeeNQT)
+          .payloadLength(payloadLength)
+          .payloadHash(payloadHash)
+          .generatorPublicKey(generatorPublicKey)
+          .generationSignature(generationSignature)
+          .blockSignature(blockSignature)
+          .previousBlockHash(previousBlockHash)
+          .transactions(new ArrayList<>(blockTransactions.values()))
+          .nonce(nonce)
+          .blockATs(blockATs)
+          .height(height)
+          .baseTarget(baseTarget)
+        .build();
     } catch (BurstException.ValidationException | RuntimeException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Failed to parse block: {}", JSON.toJsonString(blockData));

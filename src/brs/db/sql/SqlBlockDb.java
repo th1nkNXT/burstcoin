@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static brs.schema.Tables.BLOCK;
@@ -102,9 +103,26 @@ public class SqlBlockDb implements BlockDb {
     long nonce                      = r.getNonce();
     byte[] blockATs                 = r.getAts();
 
-    return new Block(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash,
-                         generatorPublicKey, generationSignature, blockSignature, previousBlockHash,
-                         cumulativeDifficulty, baseTarget, nextBlockId, height, id, nonce, blockATs);
+    return Block.builder()
+        .version(version)
+        .timestamp(timestamp)
+        .previousBlockId(previousBlockId)
+        .totalAmountNQT(totalAmountNQT)
+        .totalFeeNQT(totalFeeNQT)
+        .payloadLength(payloadLength)
+        .payloadHash(payloadHash)
+        .generatorPublicKey(generatorPublicKey)
+        .generationSignature(generationSignature)
+        .blockSignature(blockSignature)
+        .previousBlockHash(previousBlockHash)
+        .cumulativeDifficulty(cumulativeDifficulty)
+        .baseTarget(baseTarget)
+        .nextBlockId(nextBlockId)
+        .height(height)
+        .id(id)
+        .nonce(nonce)
+        .blockATs(blockATs)
+      .build();
   }
 
   public void saveBlock(DSLContext ctx, Block block) {

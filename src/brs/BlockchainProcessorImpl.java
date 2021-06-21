@@ -859,9 +859,24 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       ByteBuffer bf = ByteBuffer.allocate(0);
       bf.order(ByteOrder.LITTLE_ENDIAN);
       byte[] byteATs = bf.array();
-      Block genesisBlock = new Block(-1, 0, 0, 0, 0, transactions.size() * 128,
-          digest.digest(), Genesis.getCreatorPublicKey(), new byte[32],
-          Genesis.getGenesisBlockSignature(), null, transactions, 0, byteATs, -1, Constants.INITIAL_BASE_TARGET);
+      Block genesisBlock = Block.builder()
+            .version(-1)
+            .timestamp(0)
+            .previousBlockId(0)
+            .totalAmountNQT(0)
+            .totalFeeNQT(0)
+            .payloadLength(transactions.size() * 128)
+            .payloadHash(digest.digest())
+            .generatorPublicKey(Genesis.getCreatorPublicKey())
+            .generationSignature(new byte[32])
+            .blockSignature(Genesis.getGenesisBlockSignature())
+            .previousBlockHash(null)
+            .transactions(transactions)
+            .nonce(0)
+            .blockATs(byteATs)
+            .height(-1)
+            .baseTarget(Constants.INITIAL_BASE_TARGET)
+          .build();
       blockService.setPrevious(genesisBlock, null);
       addBlock(genesisBlock);
     } catch (BurstException.ValidationException e) {
@@ -1349,10 +1364,24 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       Block block;
       byte[] previousBlockHash = Crypto.sha256().digest(previousBlock.getBytes());
       try {
-        block = new Block(getBlockVersion(), blockTimestamp,
-            previousBlock.getId(), totalAmountNQT, totalFeeNQT, Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH) - payloadSize, payloadHash, publicKey,
-            generationSignature, null, previousBlockHash, new ArrayList<>(orderedBlockTransactions), nonce,
-            byteATs, previousBlock.getHeight(), Constants.INITIAL_BASE_TARGET);
+        block = Block.builder()
+            .version(getBlockVersion())
+            .timestamp(blockTimestamp)
+            .previousBlockId(previousBlock.getId())
+            .totalAmountNQT(totalAmountNQT)
+            .totalFeeNQT(totalFeeNQT)
+            .payloadLength(Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH) - payloadSize)
+            .payloadHash(payloadHash)
+            .generatorPublicKey(publicKey)
+            .generationSignature(generationSignature)
+            .blockSignature(null)
+            .previousBlockHash(previousBlockHash)
+            .transactions(new ArrayList<>(orderedBlockTransactions))
+            .nonce(nonce)
+            .blockATs(byteATs)
+            .height(previousBlock.getHeight())
+            .baseTarget(Constants.INITIAL_BASE_TARGET)
+          .build();
       } catch (BurstException.ValidationException e) {
         // shouldn't happen because all transactions are already validated
         logger.info("Error generating block", e);
