@@ -1,5 +1,4 @@
 package brs.services.impl;
-import static brs.schema.Tables.ACCOUNT;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -24,9 +23,7 @@ import brs.Burst;
 import brs.BurstException.ValidationException;
 import brs.Constants;
 import brs.Generator;
-import brs.db.BurstKey;
 import brs.db.sql.DbKey;
-import brs.db.sql.DbKey.LongKey;
 import brs.db.store.AccountStore;
 import brs.db.store.Stores;
 import brs.fluxcapacitor.FluxCapacitor;
@@ -95,34 +92,6 @@ public class BlockServiceImplTest {
     assertTrue(t.verifyBlockSignature(block));
   }
   
-  @DisplayName("Verify that the reward fallback is working as expected.")
-  @Test
-  public void verifyBlockSignatureWithRewardFallback() throws ValidationException, BlockOutOfOrderException {
-    BurstKey burstKey = new LongKey(111L, ACCOUNT.ID.getName());
-    when(Burst.getStores()).thenReturn(storesMock);
-    when(storesMock.getAccountStore()).thenReturn(accountStoreMock);
-    when(accountStoreMock.getAccountKeyFactory()).thenReturn(accountKeyFactoryMock);
-    when(accountKeyFactoryMock.newKey(eq(111L))).thenReturn(burstKey);
-
-    Block block = createValidBlock(currentHeight+1);
-    Block prevBlock = createPrevBlock(block);
-    when(blockchainMock.getBlock(block.getPreviousBlockId())).thenReturn(prevBlock);
-
-    // TODO: test reward account
-    Account rewardAccount = new Account(111L);
-/*    RewardRecipientAssignment rewardRecipientAssignment = new RewardRecipientAssignment(rewardAccount.id, );
-    public RewardRecipientAssignment(Long accountId, Long prevRecipientId, Long recipientId, int fromHeight, BurstKey burstKey) {
-      this.accountId = accountId;
-      this.prevRecipientId = prevRecipientId;
-      this.recipientId = recipientId;
-      this.fromHeight = fromHeight;
-      this.burstKey = burstKey;
-    }
-*/
-    when(accountServiceMock.getAccount(eq(block.getGeneratorPublicKey()))).thenReturn(rewardAccount);
-    assertTrue(t.verifyBlockSignature(block));
-  }
-
   private Block createValidBlock(int height) throws ValidationException {
     return Block.builder()
       .version(3)
@@ -142,6 +111,7 @@ public class BlockServiceImplTest {
 
   private Block createPrevBlock(Block block) throws ValidationException {
     return Block.builder()
+      .id(3444294670862540038L)  
       .version(block.getVersion())
       .height(block.getHeight()-1)
       .blockSignature(Convert.parseHexString("0271d3d9adae0636d8d7c4a3612848f694690157693847734441f3a499410a0cadfc65aac43802afe39e22725465b9301eae89ae59fdd554835607a40c3b370b"))
