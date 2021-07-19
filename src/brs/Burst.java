@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 
 public final class Burst {
 
-  public static final Version VERSION = Version.parse("v3.0.1");
+  public static final Version VERSION = Version.parse("v3.1.1");
 
   public static final String APPLICATION = "BRS";
 
@@ -92,7 +92,7 @@ public final class Burst {
   private static Server apiV2Server;
 
   private static PropertyService loadProperties(String confFolder) {
-    logger.info("Initializing Burst Reference Software (BRS) version {}", VERSION);
+    logger.info("Initializing Signum Node version {}", VERSION);
     
     logger.info("Configurations from folder {}", confFolder);
     Properties defaultProperties = new Properties();
@@ -177,8 +177,10 @@ public final class Burst {
     try {
       long startTime = System.currentTimeMillis();
       
-      // Additional valid prefix
-      BurstKitUtils.addAddressPrefix(propertyService.getBoolean(Props.DEV_TESTNET) ? "TS" : "S");
+      // Address prefix and coin name
+      BurstKitUtils.setAddressPrefix(propertyService.getBoolean(Props.DEV_TESTNET) ? "TS" : "S");
+      BurstKitUtils.addAddressPrefix("BURST");
+      BurstKitUtils.setValueSuffix("SIGNA");
 
       final TimeService timeService = new TimeServiceImpl();
 
