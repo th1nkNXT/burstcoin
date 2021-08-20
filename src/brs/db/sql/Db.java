@@ -115,7 +115,7 @@ public final class Db {
               };
           flywayBuilder.dataSource(
               flywayDataSource); // TODO Remove this hack once a stable version of Flyway has this
-                                 // bug fixed
+          // bug fixed
           config.setConnectionInitSql("SET NAMES utf8mb4;");
           break;
         case H2:

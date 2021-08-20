@@ -655,9 +655,8 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                       "cache is reset due to orphaned block(s). CacheSize: {}",
                       downloadCache.size());
                 }
-                downloadCache
-                    .resetCache(); // resetting cache because we have blocks that cannot be
-                                   // processed.
+                downloadCache.resetCache(); // resetting cache because we have blocks that cannot be
+                // processed.
                 break;
               }
               try {

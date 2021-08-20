@@ -982,7 +982,7 @@ class AtMachineProcessor {
     } else if (op == OpCode.E_OP_CODE_ERR_ADR) {
       getAddr(
           true); // rico666: Why getAddr if rc is set hard anyway ?? // TODO check if this updates
-                 // the buffer or can be removed
+      // the buffer or can be removed
 
       // don't check rc to allow for unsetting handler with -1
       rc = 5;
