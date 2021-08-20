@@ -11,7 +11,17 @@ on:
       - 'v*'
 
 jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--skip-sorting-imports --replace"
+          # Recommended if you use MacOS:
+          # githubToken: ${{ secrets.GITHUB_TOKEN }}
   build:
+    needs: formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
