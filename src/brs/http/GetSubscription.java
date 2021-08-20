@@ -47,7 +47,6 @@ final class GetSubscription extends APIServlet.JsonRequestHandler {
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Subscription not found");
       return response;
     }
-    // retrieve additional transaction data
     Transaction transaction = transactionRetrievalService.getTransaction(subscriptionId);
 		
     return JSONData.subscription(subscription, transaction);
