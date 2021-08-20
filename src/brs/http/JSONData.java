@@ -43,7 +43,8 @@ public final class JSONData {
       json.addProperty(GUARANTEED_BALANCE_NQT_RESPONSE, "0");
     } else {
       json.addProperty(BALANCE_NQT_RESPONSE, String.valueOf(account.getBalanceNQT()));
-      json.addProperty(UNCONFIRMED_BALANCE_NQT_RESPONSE, String.valueOf(account.getUnconfirmedBalanceNQT()));
+      json.addProperty(
+          UNCONFIRMED_BALANCE_NQT_RESPONSE, String.valueOf(account.getUnconfirmedBalanceNQT()));
       json.addProperty(FORGED_BALANCE_NQT_RESPONSE, String.valueOf(account.getForgedBalanceNQT()));
       json.addProperty(GUARANTEED_BALANCE_NQT_RESPONSE, String.valueOf(account.getBalanceNQT()));
     }
@@ -69,7 +70,9 @@ public final class JSONData {
     putAccount(json, ACCOUNT_RESPONSE, accountAsset.getAccountId());
     json.addProperty(ASSET_RESPONSE, Convert.toUnsignedLong(accountAsset.getAssetId()));
     json.addProperty(QUANTITY_QNT_RESPONSE, String.valueOf(accountAsset.getQuantityQNT()));
-    json.addProperty(UNCONFIRMED_QUANTITY_QNT_RESPONSE, String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
+    json.addProperty(
+        UNCONFIRMED_QUANTITY_QNT_RESPONSE,
+        String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
     return json;
   }
 
@@ -96,13 +99,18 @@ public final class JSONData {
     return json;
   }
 
-  static JsonObject block(Block block, boolean includeTransactions, int currentBlockchainHeight, long blockReward,
+  static JsonObject block(
+      Block block,
+      boolean includeTransactions,
+      int currentBlockchainHeight,
+      long blockReward,
       int scoopNum) {
     JsonObject json = new JsonObject();
     json.addProperty(BLOCK_RESPONSE, block.getStringId());
     json.addProperty(HEIGHT_RESPONSE, block.getHeight());
     putAccount(json, GENERATOR_RESPONSE, block.getGeneratorId());
-    json.addProperty(GENERATOR_PUBLIC_KEY_RESPONSE, Convert.toHexString(block.getGeneratorPublicKey()));
+    json.addProperty(
+        GENERATOR_PUBLIC_KEY_RESPONSE, Convert.toHexString(block.getGeneratorPublicKey()));
     json.addProperty(NONCE_RESPONSE, Convert.toUnsignedLong(block.getNonce()));
     json.addProperty(SCOOP_NUM_RESPONSE, scoopNum);
     json.addProperty(TIMESTAMP_RESPONSE, block.getTimestamp());
@@ -110,11 +118,13 @@ public final class JSONData {
     json.addProperty(TOTAL_AMOUNT_NQT_RESPONSE, String.valueOf(block.getTotalAmountNQT()));
     json.addProperty(TOTAL_FEE_NQT_RESPONSE, String.valueOf(block.getTotalFeeNQT()));
     json.addProperty(BLOCK_REWARD_NQT_RESPONSE, Convert.toUnsignedLong(blockReward));
-    json.addProperty(BLOCK_REWARD_RESPONSE, Convert.toUnsignedLong(blockReward / Constants.ONE_BURST));
+    json.addProperty(
+        BLOCK_REWARD_RESPONSE, Convert.toUnsignedLong(blockReward / Constants.ONE_BURST));
     json.addProperty(PAYLOAD_LENGTH_RESPONSE, block.getPayloadLength());
     json.addProperty(VERSION_RESPONSE, block.getVersion());
     json.addProperty(BASE_TARGET_RESPONSE, Convert.toUnsignedLong(block.getCapacityBaseTarget()));
-    json.addProperty(AVERAGE_COMMITMENT_NQT_RESPONSE, Convert.toUnsignedLong(block.getAverageCommitment()));
+    json.addProperty(
+        AVERAGE_COMMITMENT_NQT_RESPONSE, Convert.toUnsignedLong(block.getAverageCommitment()));
 
     if (block.getPreviousBlockId() != 0) {
       json.addProperty(PREVIOUS_BLOCK_RESPONSE, Convert.toUnsignedLong(block.getPreviousBlockId()));
@@ -125,10 +135,12 @@ public final class JSONData {
     }
 
     json.addProperty(PAYLOAD_HASH_RESPONSE, Convert.toHexString(block.getPayloadHash()));
-    json.addProperty(GENERATION_SIGNATURE_RESPONSE, Convert.toHexString(block.getGenerationSignature()));
+    json.addProperty(
+        GENERATION_SIGNATURE_RESPONSE, Convert.toHexString(block.getGenerationSignature()));
 
     if (block.getVersion() > 1) {
-      json.addProperty(PREVIOUS_BLOCK_HASH_RESPONSE, Convert.toHexString(block.getPreviousBlockHash()));
+      json.addProperty(
+          PREVIOUS_BLOCK_HASH_RESPONSE, Convert.toHexString(block.getPreviousBlockHash()));
     }
 
     json.addProperty(BLOCK_SIGNATURE_RESPONSE, Convert.toHexString(block.getBlockSignature()));
@@ -318,19 +330,23 @@ public final class JSONData {
     json.addProperty(SUBTYPE_RESPONSE, transaction.getType().getSubtype());
     json.addProperty(TIMESTAMP_RESPONSE, transaction.getTimestamp());
     json.addProperty(DEADLINE_RESPONSE, transaction.getDeadline());
-    json.addProperty(SENDER_PUBLIC_KEY_RESPONSE, Convert.toHexString(transaction.getSenderPublicKey()));
+    json.addProperty(
+        SENDER_PUBLIC_KEY_RESPONSE, Convert.toHexString(transaction.getSenderPublicKey()));
     if (transaction.getRecipientId() != 0) {
       putAccount(json, RECIPIENT_RESPONSE, transaction.getRecipientId());
     }
     json.addProperty(AMOUNT_NQT_RESPONSE, String.valueOf(transaction.getAmountNQT()));
     json.addProperty(FEE_NQT_RESPONSE, String.valueOf(transaction.getFeeNQT()));
     if (transaction.getReferencedTransactionFullHash() != null) {
-      json.addProperty(REFERENCED_TRANSACTION_FULL_HASH_RESPONSE, transaction.getReferencedTransactionFullHash());
+      json.addProperty(
+          REFERENCED_TRANSACTION_FULL_HASH_RESPONSE,
+          transaction.getReferencedTransactionFullHash());
     }
     byte[] signature = Convert.emptyToNull(transaction.getSignature());
     if (signature != null) {
       json.addProperty(SIGNATURE_RESPONSE, Convert.toHexString(signature));
-      json.addProperty(SIGNATURE_HASH_RESPONSE, Convert.toHexString(Crypto.sha256().digest(signature)));
+      json.addProperty(
+          SIGNATURE_HASH_RESPONSE, Convert.toHexString(Crypto.sha256().digest(signature)));
       json.addProperty(FULL_HASH_RESPONSE, transaction.getFullHash());
       json.addProperty(TRANSACTION_RESPONSE, transaction.getStringId());
     } else if (!transaction.getType().isSigned()) {
@@ -431,6 +447,5 @@ public final class JSONData {
     return json;
   }
 
-  private JSONData() {
-  } // never
+  private JSONData() {} // never
 }
