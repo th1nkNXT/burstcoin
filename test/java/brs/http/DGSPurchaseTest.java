@@ -47,7 +47,13 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     mockTimeService = mock(TimeService.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new DGSPurchase(mockParameterService, mockBlockchain, mockAccountService, mockTimeService, apiTransactionManagerMock);
+    t =
+        new DGSPurchase(
+            mockParameterService,
+            mockBlockchain,
+            mockAccountService,
+            mockTimeService,
+            apiTransactionManagerMock);
   }
 
   @Test
@@ -56,11 +62,11 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     final long goodsPrice = 10L;
     final long deliveryDeadlineTimestamp = 100;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity),
-        new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
-        new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, deliveryDeadlineTimestamp)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(QUANTITY_PARAMETER, goodsQuantity),
+            new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
+            new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, deliveryDeadlineTimestamp));
 
     final long mockSellerId = 123L;
     final long mockGoodsId = 123L;
@@ -79,10 +85,13 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     when(mockAccountService.getAccount(eq(mockSellerId))).thenReturn(mockSellerAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsPurchase attachment = (Attachment.DigitalGoodsPurchase) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsPurchase attachment =
+        (Attachment.DigitalGoodsPurchase)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(PURCHASE, attachment.getTransactionType());
@@ -108,9 +117,8 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   public void processRequest_incorrectPurchaseQuantity() throws BurstException {
     final int goodsQuantity = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(QUANTITY_PARAMETER, goodsQuantity));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -126,10 +134,10 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     final int goodsQuantity = 5;
     final long goodsPrice = 5L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity),
-        new MockParam(PRICE_NQT_PARAMETER, goodsPrice)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(QUANTITY_PARAMETER, goodsQuantity),
+            new MockParam(PRICE_NQT_PARAMETER, goodsPrice));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -141,16 +149,15 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     assertEquals(INCORRECT_PURCHASE_PRICE, t.processRequest(req));
   }
 
-
   @Test
   public void processRequest_missingDeliveryDeadlineTimestamp() throws BurstException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity),
-        new MockParam(PRICE_NQT_PARAMETER, goodsPrice)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(QUANTITY_PARAMETER, goodsQuantity),
+            new MockParam(PRICE_NQT_PARAMETER, goodsPrice));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -167,11 +174,11 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity),
-        new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
-        new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, "unParsable")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(QUANTITY_PARAMETER, goodsQuantity),
+            new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
+            new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, "unParsable"));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -184,16 +191,17 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDeliveryDeadlineTimestamp_beforeCurrentTime() throws BurstException {
+  public void processRequest_incorrectDeliveryDeadlineTimestamp_beforeCurrentTime()
+      throws BurstException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
     final long deliveryDeadlineTimestamp = 100;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(QUANTITY_PARAMETER, goodsQuantity),
-        new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
-        new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, deliveryDeadlineTimestamp)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(QUANTITY_PARAMETER, goodsQuantity),
+            new MockParam(PRICE_NQT_PARAMETER, goodsPrice),
+            new MockParam(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER, deliveryDeadlineTimestamp));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);

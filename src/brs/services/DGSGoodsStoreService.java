@@ -44,15 +44,18 @@ public interface DGSGoodsStoreService { // TODO Redundant name!
 
   void purchase(Transaction transaction, Attachment.DigitalGoodsPurchase attachment);
 
-  void addPurchase(Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId);
+  void addPurchase(
+      Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId);
 
   void listGoods(Transaction transaction, Attachment.DigitalGoodsListing attachment);
 
   void delistGoods(long goodsId);
 
-  void feedback(long purchaseId, Appendix.EncryptedMessage encryptedMessage, Appendix.Message message);
+  void feedback(
+      long purchaseId, Appendix.EncryptedMessage encryptedMessage, Appendix.Message message);
 
-  void refund(long sellerId, long purchaseId, long refundNQT, Appendix.EncryptedMessage encryptedMessage);
+  void refund(
+      long sellerId, long purchaseId, long refundNQT, Appendix.EncryptedMessage encryptedMessage);
 
   Collection<Purchase> getExpiredPendingPurchases(int timestamp);
 

@@ -17,8 +17,15 @@ final class SetAccountInfo extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  public SetAccountInfo(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.ACCOUNTS, APITag.CREATE_TRANSACTION}, apiTransactionManager, NAME_PARAMETER, DESCRIPTION_PARAMETER);
+  public SetAccountInfo(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.ACCOUNTS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        NAME_PARAMETER,
+        DESCRIPTION_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -38,9 +45,8 @@ final class SetAccountInfo extends CreateTransaction {
     }
 
     Account account = parameterService.getSenderAccount(req);
-    Attachment attachment = new Attachment.MessagingAccountInfo(name, description, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.MessagingAccountInfo(name, description, blockchain.getHeight());
     return createTransaction(req, account, attachment);
-
   }
-
 }

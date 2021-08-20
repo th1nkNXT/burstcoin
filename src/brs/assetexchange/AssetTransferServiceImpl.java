@@ -21,7 +21,6 @@ class AssetTransferServiceImpl {
   private final EntitySqlTable<AssetTransfer> assetTransferTable;
   private final LongKeyFactory<AssetTransfer> transferDbKeyFactory;
 
-
   public AssetTransferServiceImpl(AssetTransferStore assetTransferStore) {
     this.assetTransferStore = assetTransferStore;
     this.assetTransferTable = assetTransferStore.getAssetTransferTable();
@@ -40,7 +39,8 @@ class AssetTransferServiceImpl {
     return assetTransferStore.getAssetTransfers(assetId, from, to);
   }
 
-  public Collection<AssetTransfer> getAccountAssetTransfers(long accountId, long assetId, int from, int to) {
+  public Collection<AssetTransfer> getAccountAssetTransfers(
+      long accountId, long assetId, int from, int to) {
     return assetTransferStore.getAccountAssetTransfers(accountId, assetId, from, to);
   }
 
@@ -52,12 +52,12 @@ class AssetTransferServiceImpl {
     return assetTransferTable.getCount();
   }
 
-  public AssetTransfer addAssetTransfer(Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
+  public AssetTransfer addAssetTransfer(
+      Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
     BurstKey dbKey = transferDbKeyFactory.newKey(transaction.getId());
     AssetTransfer assetTransfer = new AssetTransfer(dbKey, transaction, attachment);
     assetTransferTable.insert(assetTransfer);
     listeners.notify(assetTransfer, Event.ASSET_TRANSFER);
     return assetTransfer;
   }
-
 }

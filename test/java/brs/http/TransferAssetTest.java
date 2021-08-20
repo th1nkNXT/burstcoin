@@ -46,7 +46,9 @@ public class TransferAssetTest extends AbstractTransactionTest {
     transactionProcessorMock = mock(TransactionProcessor.class);
     accountServiceMock = mock(AccountService.class);
 
-    t = new TransferAsset(parameterServiceMock, blockchainMock, apiTransactionManagerMock, accountServiceMock);
+    t =
+        new TransferAsset(
+            parameterServiceMock, blockchainMock, apiTransactionManagerMock, accountServiceMock);
   }
 
   @Test
@@ -55,11 +57,11 @@ public class TransferAssetTest extends AbstractTransactionTest {
     final long assetIdParameter = 456L;
     final long quantityQNTParameter = 56L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(RECIPIENT_PARAMETER, recipientParameter),
-        new MockParam(ASSET_PARAMETER, assetIdParameter),
-        new MockParam(QUANTITY_QNT_PARAMETER, quantityQNTParameter)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(RECIPIENT_PARAMETER, recipientParameter),
+            new MockParam(ASSET_PARAMETER, assetIdParameter),
+            new MockParam(QUANTITY_QNT_PARAMETER, quantityQNTParameter));
 
     Asset mockAsset = mock(Asset.class);
 
@@ -67,15 +69,20 @@ public class TransferAssetTest extends AbstractTransactionTest {
     when(mockAsset.getId()).thenReturn(assetIdParameter);
 
     final Account mockSenderAccount = mock(Account.class);
-    when(accountServiceMock.getUnconfirmedAssetBalanceQNT(eq(mockSenderAccount), eq(assetIdParameter))).thenReturn(500L);
+    when(accountServiceMock.getUnconfirmedAssetBalanceQNT(
+            eq(mockSenderAccount), eq(assetIdParameter)))
+        .thenReturn(500L);
 
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockSenderAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.ColoredCoinsAssetTransfer attachment = (Attachment.ColoredCoinsAssetTransfer) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.ColoredCoinsAssetTransfer attachment =
+        (Attachment.ColoredCoinsAssetTransfer)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ASSET_TRANSFER, attachment.getTransactionType());
@@ -85,11 +92,11 @@ public class TransferAssetTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_assetBalanceLowerThanQuantityNQTParameter() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(RECIPIENT_PARAMETER, "123"),
-        new MockParam(ASSET_PARAMETER, "456"),
-        new MockParam(QUANTITY_QNT_PARAMETER, "5")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(RECIPIENT_PARAMETER, "123"),
+            new MockParam(ASSET_PARAMETER, "456"),
+            new MockParam(QUANTITY_QNT_PARAMETER, "5"));
 
     Asset mockAsset = mock(Asset.class);
 
@@ -99,7 +106,8 @@ public class TransferAssetTest extends AbstractTransactionTest {
     final Account mockSenderAccount = mock(Account.class);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockSenderAccount);
 
-    when(accountServiceMock.getUnconfirmedAssetBalanceQNT(eq(mockSenderAccount), anyLong())).thenReturn(2L);
+    when(accountServiceMock.getUnconfirmedAssetBalanceQNT(eq(mockSenderAccount), anyLong()))
+        .thenReturn(2L);
 
     assertEquals(NOT_ENOUGH_ASSETS, t.processRequest(req));
   }

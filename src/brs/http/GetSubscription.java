@@ -18,7 +18,7 @@ final class GetSubscription extends APIServlet.JsonRequestHandler {
   private final SubscriptionService subscriptionService;
 
   GetSubscription(SubscriptionService subscriptionService) {
-    super(new APITag[] { APITag.ACCOUNTS }, SUBSCRIPTION_PARAMETER);
+    super(new APITag[] {APITag.ACCOUNTS}, SUBSCRIPTION_PARAMETER);
     this.subscriptionService = subscriptionService;
   }
 
@@ -26,7 +26,8 @@ final class GetSubscription extends APIServlet.JsonRequestHandler {
   JsonElement processRequest(HttpServletRequest req) {
     long subscriptionId;
     try {
-      subscriptionId = Convert.parseUnsignedLong(Convert.emptyToNull(req.getParameter(SUBSCRIPTION_PARAMETER)));
+      subscriptionId =
+          Convert.parseUnsignedLong(Convert.emptyToNull(req.getParameter(SUBSCRIPTION_PARAMETER)));
     } catch (Exception e) {
       JsonObject response = new JsonObject();
       response.addProperty(ERROR_CODE_RESPONSE, 3);

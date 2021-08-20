@@ -37,7 +37,10 @@ public final class PeerServlet extends HttpServlet {
 
   abstract static class ExtendedPeerRequestHandler implements PeerRequestHandler {
     @Override
-    public JsonElement processRequest(JsonObject request, Peer peer) { return null; }
+    public JsonElement processRequest(JsonObject request, Peer peer) {
+      return null;
+    }
+
     abstract ExtendedProcessRequest extendedProcessRequest(JsonObject request, Peer peer);
   }
 
@@ -55,14 +58,16 @@ public final class PeerServlet extends HttpServlet {
     void run();
   }
 
-  private final Map<String,PeerRequestHandler> peerRequestHandlers;
+  private final Map<String, PeerRequestHandler> peerRequestHandlers;
 
-  public PeerServlet(TimeService timeService, AccountService accountService,
-                     Blockchain blockchain,
-                     TransactionProcessor transactionProcessor,
-                     BlockchainProcessor blockchainProcessor,
-                     PropertyService propertyService) {
-    final Map<String,PeerRequestHandler> map = new HashMap<>();
+  public PeerServlet(
+      TimeService timeService,
+      AccountService accountService,
+      Blockchain blockchain,
+      TransactionProcessor transactionProcessor,
+      BlockchainProcessor blockchainProcessor,
+      PropertyService propertyService) {
+    final Map<String, PeerRequestHandler> map = new HashMap<>();
     map.put("addPeers", AddPeers.instance);
     map.put("getCumulativeDifficulty", new GetCumulativeDifficulty(blockchain));
     map.put("getInfo", new GetInfo(timeService));
@@ -78,6 +83,7 @@ public final class PeerServlet extends HttpServlet {
   }
 
   private static final JsonElement UNSUPPORTED_REQUEST_TYPE;
+
   static {
     final JsonObject response = new JsonObject();
     response.addProperty("error", "Unsupported request type!");
@@ -85,6 +91,7 @@ public final class PeerServlet extends HttpServlet {
   }
 
   private static final JsonElement UNSUPPORTED_PROTOCOL;
+
   static {
     final JsonObject response = new JsonObject();
     response.addProperty("error", "Unsupported protocol!");
@@ -141,20 +148,21 @@ public final class PeerServlet extends HttpServlet {
 
       if (request.get(PROTOCOL) != null && JSON.getAsString(request.get(PROTOCOL)).equals("B1")) {
         requestType = "" + JSON.getAsString(request.get("requestType"));
-        PeerRequestHandler peerRequestHandler = peerRequestHandlers.get(JSON.getAsString(request.get("requestType")));
+        PeerRequestHandler peerRequestHandler =
+            peerRequestHandlers.get(JSON.getAsString(request.get("requestType")));
         if (peerRequestHandler != null) {
-          if(peerRequestHandler instanceof ExtendedPeerRequestHandler) {
-            extendedProcessRequest = ((ExtendedPeerRequestHandler) peerRequestHandler).extendedProcessRequest(request, peer);
+          if (peerRequestHandler instanceof ExtendedPeerRequestHandler) {
+            extendedProcessRequest =
+                ((ExtendedPeerRequestHandler) peerRequestHandler)
+                    .extendedProcessRequest(request, peer);
             response = extendedProcessRequest.response;
           } else {
             response = peerRequestHandler.processRequest(request, peer);
           }
-        }
-        else {
+        } else {
           response = UNSUPPORTED_REQUEST_TYPE;
         }
-      }
-      else {
+      } else {
         if (logger.isDebugEnabled()) {
           logger.debug("Unsupported protocol {}", JSON.getAsString(request.get(PROTOCOL)));
         }
@@ -187,9 +195,8 @@ public final class PeerServlet extends HttpServlet {
       return;
     }
 
-    if(extendedProcessRequest != null) {
+    if (extendedProcessRequest != null) {
       extendedProcessRequest.afterRequestHook.run();
     }
   }
-
 }

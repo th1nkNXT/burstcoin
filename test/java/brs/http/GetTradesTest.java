@@ -47,12 +47,12 @@ public class GetTradesTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ASSET_PARAMETER, assetId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Asset mockAsset = mock(Asset.class);
     when(mockAsset.getId()).thenReturn(assetId);
@@ -61,7 +61,8 @@ public class GetTradesTest extends AbstractUnitTest {
     final Collection<Trade> mockTradesIterator = mockCollection(mockTrade);
 
     when(mockParameterService.getAsset(eq(req))).thenReturn(mockAsset);
-    when(mockAssetExchange.getTrades(eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockTradesIterator);
+    when(mockAssetExchange.getTrades(eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockTradesIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -81,12 +82,12 @@ public class GetTradesTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ACCOUNT_PARAMETER, accountId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(accountId);
@@ -95,7 +96,8 @@ public class GetTradesTest extends AbstractUnitTest {
     final Collection<Trade> mockTradesIterator = mockCollection(mockTrade);
 
     when(mockParameterService.getAccount(eq(req))).thenReturn(mockAccount);
-    when(mockAssetExchange.getAccountTrades(eq(accountId), eq(firstIndex), eq(lastIndex))).thenReturn(mockTradesIterator);
+    when(mockAssetExchange.getAccountTrades(eq(accountId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockTradesIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -116,13 +118,13 @@ public class GetTradesTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ASSET_PARAMETER, assetId),
-        new MockParam(ACCOUNT_PARAMETER, accountId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetId),
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Asset mockAsset = mock(Asset.class);
     when(mockAsset.getId()).thenReturn(assetId);
@@ -135,7 +137,9 @@ public class GetTradesTest extends AbstractUnitTest {
 
     when(mockParameterService.getAsset(eq(req))).thenReturn(mockAsset);
     when(mockParameterService.getAccount(eq(req))).thenReturn(mockAccount);
-    when(mockAssetExchange.getAccountAssetTrades(eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockTradesIterator);
+    when(mockAssetExchange.getAccountAssetTrades(
+            eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockTradesIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);

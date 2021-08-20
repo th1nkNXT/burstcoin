@@ -22,8 +22,8 @@ public final class ThreadPool {
   private static final Logger logger = LoggerFactory.getLogger(ThreadPool.class);
 
   private static ScheduledExecutorService scheduledThreadPool;
-  private final  Map<Runnable,Long> backgroundJobs = new HashMap<>();
-  private final Map<Runnable,Long> backgroundJobsCores = new HashMap<>();
+  private final Map<Runnable, Long> backgroundJobs = new HashMap<>();
+  private final Map<Runnable, Long> backgroundJobsCores = new HashMap<>();
   private final List<Runnable> beforeStartJobs = new ArrayList<>();
   private final List<Runnable> lastBeforeStartJobs = new ArrayList<>();
   private final List<Runnable> afterStartJobs = new ArrayList<>();
@@ -53,7 +53,8 @@ public final class ThreadPool {
     scheduleThread(name, runnable, delay, TimeUnit.SECONDS);
   }
 
-  public synchronized void scheduleThread(String name, Runnable runnable, int delay, TimeUnit timeUnit) {
+  public synchronized void scheduleThread(
+      String name, Runnable runnable, int delay, TimeUnit timeUnit) {
     if (scheduledThreadPool != null) {
       throw new IllegalStateException("Executor service already started, no new jobs accepted");
     }
@@ -90,41 +91,51 @@ public final class ThreadPool {
 
     int cores = propertyService.getInt(Props.CPU_NUM_CORES);
     if (cores <= 0) {
-        cores = Runtime.getRuntime().availableProcessors() / 2;
-        cores = Math.max(1, cores);
+      cores = Runtime.getRuntime().availableProcessors() / 2;
+      cores = Math.max(1, cores);
     }
     logger.info("Using {} cores", cores);
     int totalThreads = backgroundJobs.size() + backgroundJobsCores.size() * cores;
     logger.debug("Starting {} background jobs", totalThreads);
     scheduledThreadPool = Executors.newScheduledThreadPool(totalThreads);
-    for (Map.Entry<Runnable,Long> entry : backgroundJobs.entrySet()) {
+    for (Map.Entry<Runnable, Long> entry : backgroundJobs.entrySet()) {
       final Runnable inner = entry.getKey();
-      Runnable toRun = () -> {
-        try {
-          inner.run();
-        }
-        catch (Exception e) {
-          logger.warn("Uncaught exception while running background thread "+inner.getClass().getSimpleName(), e);
-        }
-      };
-      scheduledThreadPool.scheduleWithFixedDelay(toRun, 0, Math.max(entry.getValue() / timeMultiplier, 1), TimeUnit.MILLISECONDS);
+      Runnable toRun =
+          () -> {
+            try {
+              inner.run();
+            } catch (Exception e) {
+              logger.warn(
+                  "Uncaught exception while running background thread "
+                      + inner.getClass().getSimpleName(),
+                  e);
+            }
+          };
+      scheduledThreadPool.scheduleWithFixedDelay(
+          toRun, 0, Math.max(entry.getValue() / timeMultiplier, 1), TimeUnit.MILLISECONDS);
     }
     backgroundJobs.clear();
-	
+
     // Starting multicore-Threads:
-    for (Map.Entry<Runnable,Long> entry : backgroundJobsCores.entrySet()) {
-      for (int i=0; i < cores; i++)
-        scheduledThreadPool.scheduleWithFixedDelay(entry.getKey(), 0, Math.max(entry.getValue() / timeMultiplier, 1), TimeUnit.MILLISECONDS);
+    for (Map.Entry<Runnable, Long> entry : backgroundJobsCores.entrySet()) {
+      for (int i = 0; i < cores; i++)
+        scheduledThreadPool.scheduleWithFixedDelay(
+            entry.getKey(),
+            0,
+            Math.max(entry.getValue() / timeMultiplier, 1),
+            TimeUnit.MILLISECONDS);
     }
     backgroundJobsCores.clear();
 
     if (logger.isDebugEnabled()) {
       logger.debug("Starting {} delayed tasks", afterStartJobs.size());
     }
-    Thread thread = new Thread(() -> {
-      runAll(afterStartJobs);
-      afterStartJobs.clear();
-    });
+    Thread thread =
+        new Thread(
+            () -> {
+              runAll(afterStartJobs);
+              afterStartJobs.clear();
+            });
     thread.setDaemon(true);
     thread.start();
   }
@@ -143,11 +154,12 @@ public final class ThreadPool {
     if (!executor.isTerminated()) {
       executor.shutdown();
       try {
-        executor.awaitTermination(propertyService.getInt(Props.BRS_SHUTDOWN_TIMEOUT), TimeUnit.SECONDS);
+        executor.awaitTermination(
+            propertyService.getInt(Props.BRS_SHUTDOWN_TIMEOUT), TimeUnit.SECONDS);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
-      if (! executor.isTerminated()) {
+      if (!executor.isTerminated()) {
         logger.error("some threads didn't terminate, forcing shutdown");
         executor.shutdownNow();
       }
@@ -158,14 +170,16 @@ public final class ThreadPool {
     List<Thread> threads = new ArrayList<>();
     final StringBuffer errors = new StringBuffer();
     for (final Runnable runnable : jobs) {
-      Thread thread = new Thread(() -> {
-        try {
-          runnable.run();
-        } catch (Exception t) {
-          errors.append(t.getMessage()).append('\n');
-          throw t;
-        }
-      });
+      Thread thread =
+          new Thread(
+              () -> {
+                try {
+                  runnable.run();
+                } catch (Exception t) {
+                  errors.append(t.getMessage()).append('\n');
+                  throw t;
+                }
+              });
       thread.setDaemon(true);
       thread.start();
       threads.add(thread);
@@ -181,5 +195,4 @@ public final class ThreadPool {
       throw new RuntimeException("Errors running startup tasks:\n" + errors.toString());
     }
   }
-
 }

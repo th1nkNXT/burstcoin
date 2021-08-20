@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetDGSPendingPurchasesTest extends AbstractUnitTest {
@@ -44,16 +43,18 @@ public class GetDGSPendingPurchasesTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, sellerId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, sellerId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Purchase mockPurchase = mock(Purchase.class);
 
     final Collection<Purchase> mockPurchaseIterator = mockCollection(mockPurchase);
-    when(mockDGSGoodStoreService.getPendingSellerPurchases(eq(sellerId), eq(firstIndex), eq(lastIndex))).thenReturn(mockPurchaseIterator);
+    when(mockDGSGoodStoreService.getPendingSellerPurchases(
+            eq(sellerId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockPurchaseIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -66,11 +67,9 @@ public class GetDGSPendingPurchasesTest extends AbstractUnitTest {
 
   @Test
   public void processRequest_missingSeller() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, 0)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(SELLER_PARAMETER, 0));
 
     assertEquals(MISSING_SELLER, t.processRequest(req));
   }
-
 }

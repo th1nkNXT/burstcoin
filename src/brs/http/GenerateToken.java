@@ -34,7 +34,8 @@ final class GenerateToken extends APIServlet.JsonRequestHandler {
 
     try {
 
-      String tokenString = Token.generateToken(secretPhrase, website.trim(), timeService.getEpochTime());
+      String tokenString =
+          Token.generateToken(secretPhrase, website.trim(), timeService.getEpochTime());
 
       JsonObject response = new JsonObject();
       response.addProperty(TOKEN, tokenString);
@@ -44,12 +45,10 @@ final class GenerateToken extends APIServlet.JsonRequestHandler {
     } catch (RuntimeException e) {
       return INCORRECT_WEBSITE;
     }
-
   }
 
   @Override
   boolean requirePost() {
     return true;
   }
-
 }

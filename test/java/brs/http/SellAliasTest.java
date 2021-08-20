@@ -49,10 +49,10 @@ public class SellAliasTest extends AbstractTransactionTest {
     final int priceParameter = 10;
     final int recipientId = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, priceParameter),
-        new MockParam(RECIPIENT_PARAMETER, recipientId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, priceParameter),
+            new MockParam(RECIPIENT_PARAMETER, recipientId));
 
     final long aliasAccountId = 1L;
     final Alias mockAlias = mock(Alias.class);
@@ -65,10 +65,13 @@ public class SellAliasTest extends AbstractTransactionTest {
     when(parameterServiceMock.getAlias(req)).thenReturn(mockAlias);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.MessagingAliasSell attachment = (Attachment.MessagingAliasSell) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.MessagingAliasSell attachment =
+        (Attachment.MessagingAliasSell)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ALIAS_SELL, attachment.getTransactionType());
@@ -84,27 +87,24 @@ public class SellAliasTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_incorrectPrice_unParsable() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(PRICE_NQT_PARAMETER, "unParsable")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, "unParsable"));
 
     assertEquals(INCORRECT_PRICE, t.processRequest(req));
   }
 
   @Test(expected = ParameterException.class)
   public void processRequest_incorrectPrice_negative() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, -10)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, -10));
 
     t.processRequest(req);
   }
 
   @Test(expected = ParameterException.class)
   public void processRequest_incorrectPrice_overMaxBalance() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, MAX_BALANCE_NQT + 1)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, MAX_BALANCE_NQT + 1));
 
     t.processRequest(req);
   }
@@ -113,10 +113,10 @@ public class SellAliasTest extends AbstractTransactionTest {
   public void processRequest_incorrectRecipient_unparsable() throws BurstException {
     final int price = 10;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, price),
-        new MockParam(RECIPIENT_PARAMETER, "unParsable")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, price),
+            new MockParam(RECIPIENT_PARAMETER, "unParsable"));
 
     assertEquals(INCORRECT_RECIPIENT, t.processRequest(req));
   }
@@ -126,10 +126,10 @@ public class SellAliasTest extends AbstractTransactionTest {
     final int price = 10;
     final int recipientId = 0;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, price),
-        new MockParam(RECIPIENT_PARAMETER, recipientId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, price),
+            new MockParam(RECIPIENT_PARAMETER, recipientId));
 
     assertEquals(INCORRECT_RECIPIENT, t.processRequest(req));
   }
@@ -139,10 +139,10 @@ public class SellAliasTest extends AbstractTransactionTest {
     final int price = 10;
     final int recipientId = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, price),
-        new MockParam(RECIPIENT_PARAMETER, recipientId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, price),
+            new MockParam(RECIPIENT_PARAMETER, recipientId));
 
     final long aliasAccountId = 1L;
     final Alias mockAlias = mock(Alias.class);
@@ -157,5 +157,4 @@ public class SellAliasTest extends AbstractTransactionTest {
 
     assertEquals(INCORRECT_ALIAS_OWNER, t.processRequest(req));
   }
-
 }

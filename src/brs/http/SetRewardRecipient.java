@@ -21,13 +21,20 @@ public final class SetRewardRecipient extends CreateTransaction {
   private final Blockchain blockchain;
   private final AccountService accountService;
 
-  public SetRewardRecipient(ParameterService parameterService, Blockchain blockchain, AccountService accountService, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.ACCOUNTS, APITag.MINING, APITag.CREATE_TRANSACTION}, apiTransactionManager, RECIPIENT_PARAMETER);
+  public SetRewardRecipient(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AccountService accountService,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.ACCOUNTS, APITag.MINING, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        RECIPIENT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
   }
-	
+
   @Override
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
     final Account account = parameterService.getSenderAccount(req);
@@ -36,11 +43,12 @@ public final class SetRewardRecipient extends CreateTransaction {
     if (recipientAccount == null || recipientAccount.getPublicKey() == null) {
       JsonObject response = new JsonObject();
       response.addProperty(ERROR_CODE_RESPONSE, 8);
-      response.addProperty(ERROR_DESCRIPTION_RESPONSE, "recipient account does not have public key");
+      response.addProperty(
+          ERROR_DESCRIPTION_RESPONSE, "recipient account does not have public key");
       return response;
     }
-    Attachment attachment = new Attachment.BurstMiningRewardRecipientAssignment(blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.BurstMiningRewardRecipientAssignment(blockchain.getHeight());
     return createTransaction(req, account, recipient, 0, attachment);
   }
-
 }

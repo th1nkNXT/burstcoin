@@ -19,23 +19,23 @@ import java.util.List;
 public final class FullReset extends APIServlet.JsonRequestHandler {
 
   private final BlockchainProcessor blockchainProcessor;
-  
+
   private final List<String> apiAdminKeyList;
 
   FullReset(BlockchainProcessor blockchainProcessor, PropertyService propertyService) {
-    super(new APITag[]{APITag.ADMIN}, API_KEY_PARAMETER);
+    super(new APITag[] {APITag.ADMIN}, API_KEY_PARAMETER);
     this.blockchainProcessor = blockchainProcessor;
-    
+
     apiAdminKeyList = propertyService.getStringList(Props.API_ADMIN_KEY_LIST);
   }
 
   @Override
   JsonElement processRequest(HttpServletRequest req) {
     String apiKey = req.getParameter(API_KEY_PARAMETER);
-    if(!apiAdminKeyList.contains(apiKey)) {
+    if (!apiAdminKeyList.contains(apiKey)) {
       return ERROR_NOT_ALLOWED;
     }
-    
+
     JsonObject response = new JsonObject();
     try {
       blockchainProcessor.fullReset();
@@ -50,5 +50,4 @@ public final class FullReset extends APIServlet.JsonRequestHandler {
   final boolean requirePost() {
     return true;
   }
-
 }

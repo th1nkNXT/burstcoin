@@ -16,9 +16,17 @@ public final class IssueAsset extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  IssueAsset(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.AE, APITag.CREATE_TRANSACTION}, apiTransactionManager,
-        NAME_PARAMETER, DESCRIPTION_PARAMETER, QUANTITY_QNT_PARAMETER, DECIMALS_PARAMETER);
+  IssueAsset(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        NAME_PARAMETER,
+        DESCRIPTION_PARAMETER,
+        QUANTITY_QNT_PARAMETER,
+        DECIMALS_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -35,7 +43,8 @@ public final class IssueAsset extends CreateTransaction {
     }
 
     name = name.trim();
-    if (name.length() < Constants.MIN_ASSET_NAME_LENGTH || name.length() > Constants.MAX_ASSET_NAME_LENGTH) {
+    if (name.length() < Constants.MIN_ASSET_NAME_LENGTH
+        || name.length() > Constants.MAX_ASSET_NAME_LENGTH) {
       return INCORRECT_ASSET_NAME_LENGTH;
     }
 
@@ -61,9 +70,9 @@ public final class IssueAsset extends CreateTransaction {
 
     long quantityQNT = ParameterParser.getQuantityQNT(req);
     Account account = parameterService.getSenderAccount(req);
-    Attachment attachment = new Attachment.ColoredCoinsAssetIssuance(name, description, quantityQNT, decimals, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.ColoredCoinsAssetIssuance(
+            name, description, quantityQNT, decimals, blockchain.getHeight());
     return createTransaction(req, account, attachment);
-
   }
-
 }

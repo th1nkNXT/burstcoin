@@ -36,42 +36,66 @@ class ReservedBalanceCache {
     Account senderAccount = null;
 
     if (transaction.getSenderId() != 0) {
-      senderAccount = accountStore.getAccountTable().get(accountStore.getAccountKeyFactory().newKey(transaction.getSenderId()));
+      senderAccount =
+          accountStore
+              .getAccountTable()
+              .get(accountStore.getAccountKeyFactory().newKey(transaction.getSenderId()));
     }
 
-    final Long amountNQT = Convert.safeAdd(
-        reservedBalanceCache.getOrDefault(transaction.getSenderId(), 0L),
-        transaction.getType().calculateTotalAmountNQT(transaction)
-    );
+    final Long amountNQT =
+        Convert.safeAdd(
+            reservedBalanceCache.getOrDefault(transaction.getSenderId(), 0L),
+            transaction.getType().calculateTotalAmountNQT(transaction));
 
     if (senderAccount == null) {
       if (LOGGER.isInfoEnabled()) {
-        LOGGER.info(String.format("Transaction %d: Account %d does not exist and has no balance. Required funds: %d", transaction.getId(), transaction.getSenderId(), amountNQT));
+        LOGGER.info(
+            String.format(
+                "Transaction %d: Account %d does not exist and has no balance. Required funds: %d",
+                transaction.getId(), transaction.getSenderId(), amountNQT));
       }
 
       throw new BurstException.NotCurrentlyValidException("Account unknown");
     }
 
-    if ( amountNQT > senderAccount.getUnconfirmedBalanceNQT() ) {
+    if (amountNQT > senderAccount.getUnconfirmedBalanceNQT()) {
       if (LOGGER.isInfoEnabled()) {
-        LOGGER.debug(String.format("Transaction %d: Account %d balance too low. You have  %d > %d Balance", transaction.getId(), transaction.getSenderId(), amountNQT, senderAccount.getUnconfirmedBalanceNQT()));
+        LOGGER.debug(
+            String.format(
+                "Transaction %d: Account %d balance too low. You have  %d > %d Balance",
+                transaction.getId(),
+                transaction.getSenderId(),
+                amountNQT,
+                senderAccount.getUnconfirmedBalanceNQT()));
       }
       throw new BurstException.NotCurrentlyValidException("Insufficient funds");
     }
 
-    if(transaction.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
+    if (transaction.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
       CommitmentRemove commitmentRemove = (CommitmentRemove) transaction.getAttachment();
       long totalAmountNQT = commitmentRemove.getAmountNQT();
 
       Blockchain blockchain = Burst.getBlockchain();
-      int nBlocksMined = blockchain.getBlocksCount(senderAccount, blockchain.getHeight() - Constants.MAX_ROLLBACK, blockchain.getHeight());
-      long amountCommitted = blockchain.getCommittedAmount(senderAccount, blockchain.getHeight(), blockchain.getHeight(), transaction);
-      if (nBlocksMined > 0 || amountCommitted < totalAmountNQT ) {
+      int nBlocksMined =
+          blockchain.getBlocksCount(
+              senderAccount,
+              blockchain.getHeight() - Constants.MAX_ROLLBACK,
+              blockchain.getHeight());
+      long amountCommitted =
+          blockchain.getCommittedAmount(
+              senderAccount, blockchain.getHeight(), blockchain.getHeight(), transaction);
+      if (nBlocksMined > 0 || amountCommitted < totalAmountNQT) {
         if (LOGGER.isInfoEnabled()) {
-          LOGGER.debug("Transaction {}: Account {} commitment remove not allowed. Blocks mined {}, amount commitment {}, amount removing {}",
-              transaction.getId(), transaction.getSenderId(), nBlocksMined, amountCommitted, totalAmountNQT);
+          LOGGER.debug(
+              "Transaction {}: Account {} commitment remove not allowed. Blocks mined {}, amount"
+                  + " commitment {}, amount removing {}",
+              transaction.getId(),
+              transaction.getSenderId(),
+              nBlocksMined,
+              amountCommitted,
+              totalAmountNQT);
         }
-        throw new BurstException.NotCurrentlyValidException("Commitment remove not allowed");        
+        throw new BurstException.NotCurrentlyValidException("Commitment remove not allowed");
       }
     }
 
@@ -79,10 +103,10 @@ class ReservedBalanceCache {
   }
 
   void refundBalance(Transaction transaction) {
-    Long amountNQT = Convert.safeSubtract(
-        reservedBalanceCache.getOrDefault(transaction.getSenderId(), 0L),
-        transaction.getType().calculateTotalAmountNQT(transaction)
-    );
+    Long amountNQT =
+        Convert.safeSubtract(
+            reservedBalanceCache.getOrDefault(transaction.getSenderId(), 0L),
+            transaction.getType().calculateTotalAmountNQT(transaction));
 
     if (amountNQT > 0) {
       reservedBalanceCache.put(transaction.getSenderId(), amountNQT);
@@ -96,7 +120,7 @@ class ReservedBalanceCache {
 
     final List<Transaction> insufficientFundsTransactions = new ArrayList<>();
 
-    for(Transaction t : transactions) {
+    for (Transaction t : transactions) {
       try {
         this.reserveBalanceAndPut(t);
       } catch (ValidationException e) {
@@ -110,5 +134,4 @@ class ReservedBalanceCache {
   public void clear() {
     reservedBalanceCache.clear();
   }
-
 }

@@ -30,5 +30,4 @@ public final class GetBidOrder extends APIServlet.JsonRequestHandler {
 
     return JSONData.bidOrder(bidOrder);
   }
-
 }

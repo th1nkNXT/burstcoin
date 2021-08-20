@@ -20,7 +20,12 @@ public final class GetAccountBlockIds extends APIServlet.JsonRequestHandler {
   private final Blockchain blockchain;
 
   GetAccountBlockIds(ParameterService parameterService, Blockchain blockchain) {
-    super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER, TIMESTAMP_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(
+        new APITag[] {APITag.ACCOUNTS},
+        ACCOUNT_PARAMETER,
+        TIMESTAMP_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -43,5 +48,4 @@ public final class GetAccountBlockIds extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

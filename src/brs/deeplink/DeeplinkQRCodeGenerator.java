@@ -17,13 +17,20 @@ import java.util.Map;
 public class DeeplinkQRCodeGenerator {
 
   private final QRCodeWriter qrCodeWriter = new QRCodeWriter();
-  private final Map<EncodeHintType, ErrorCorrectionLevel> hints = new EnumMap<>(EncodeHintType.class);
+  private final Map<EncodeHintType, ErrorCorrectionLevel> hints =
+      new EnumMap<>(EncodeHintType.class);
 
   public DeeplinkQRCodeGenerator() {
     hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
   }
 
-  public BufferedImage generateRequestBurstDeepLinkQRCode(String receiverId, long amountNQT, FeeSuggestionType feeSuggestionType, Long feeNQT, String message, boolean immutable)
+  public BufferedImage generateRequestBurstDeepLinkQRCode(
+      String receiverId,
+      long amountNQT,
+      FeeSuggestionType feeSuggestionType,
+      Long feeNQT,
+      String message,
+      boolean immutable)
       throws WriterException {
     final StringBuilder deeplinkBuilder = new StringBuilder("burst://requestBurst");
 
@@ -46,6 +53,8 @@ public class DeeplinkQRCodeGenerator {
   }
 
   private BufferedImage generateBurstQRCode(String url) throws WriterException {
-    return MatrixToImageWriter.toBufferedImage(qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 350, 350, hints), new MatrixToImageConfig());
+    return MatrixToImageWriter.toBufferedImage(
+        qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 350, 350, hints),
+        new MatrixToImageConfig());
   }
 }

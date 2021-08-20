@@ -10,25 +10,32 @@ import org.jooq.impl.TableImpl;
 
 import java.util.*;
 
-public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySqlTable<T> implements VersionedBatchEntityTable<T> {
+public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySqlTable<T>
+    implements VersionedBatchEntityTable<T> {
 
   private final DBCacheManagerImpl dbCacheManager;
   private final Class<T> tClass;
 
-  VersionedBatchEntitySqlTable(String table, TableImpl<?> tableClass, DbKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager, DBCacheManagerImpl dbCacheManager, Class<T> tClass) {
+  VersionedBatchEntitySqlTable(
+      String table,
+      TableImpl<?> tableClass,
+      DbKey.Factory<T> dbKeyFactory,
+      DerivedTableManager derivedTableManager,
+      DBCacheManagerImpl dbCacheManager,
+      Class<T> tClass) {
     super(table, tableClass, dbKeyFactory, derivedTableManager);
     this.dbCacheManager = dbCacheManager;
     this.tClass = tClass;
   }
-  
+
   private void assertInTransaction() {
-    if(Db.isInTransaction()) {
+    if (Db.isInTransaction()) {
       throw new IllegalStateException("Cannot use in batch table transaction");
     }
   }
 
   private void assertNotInTransaction() {
-    if(!Db.isInTransaction()) {
+    if (!Db.isInTransaction()) {
       throw new IllegalStateException("Not in transaction");
     }
   }
@@ -38,7 +45,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   @Override
   public boolean delete(T t) {
     assertNotInTransaction();
-    DbKey dbKey = (DbKey)dbKeyFactory.newKey(t);
+    DbKey dbKey = (DbKey) dbKeyFactory.newKey(t);
     getCache().remove(dbKey);
     getBatch().remove(dbKey);
     return true;
@@ -48,8 +55,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   public T get(BurstKey dbKey) {
     if (getCache().containsKey(dbKey)) {
       return getCache().get(dbKey);
-    }
-    else if (Db.isInTransaction() && getBatch().containsKey(dbKey)) {
+    } else if (Db.isInTransaction() && getBatch().containsKey(dbKey)) {
       return getBatch().get(dbKey);
     }
     T item = super.get(dbKey);
@@ -75,28 +81,29 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
       return;
     }
 
-    Db.useDSLContext(ctx -> {
-      UpdateQuery updateQuery = ctx.updateQuery(tableClass);
-      updateQuery.addValue(latestField, false);
-      for (String idColumn : dbKeyFactory.getPKColumns()) {
-        updateQuery.addConditions(tableClass.field(idColumn, Long.class).eq(0L));
-      }
-      updateQuery.addConditions(latestField.isTrue());
+    Db.useDSLContext(
+        ctx -> {
+          UpdateQuery updateQuery = ctx.updateQuery(tableClass);
+          updateQuery.addValue(latestField, false);
+          for (String idColumn : dbKeyFactory.getPKColumns()) {
+            updateQuery.addConditions(tableClass.field(idColumn, Long.class).eq(0L));
+          }
+          updateQuery.addConditions(latestField.isTrue());
 
-      BatchBindStep updateBatch = ctx.batch(updateQuery);
-      for (BurstKey dbKey : keySet) {
-        List<Object> bindArgs = new ArrayList<>();
-        bindArgs.add(false);
-        for (long pkValue : dbKey.getPKValues()) {
-          bindArgs.add(pkValue);
-        }
-        updateBatch.bind(bindArgs.toArray());
-      }
-      updateBatch.execute();
+          BatchBindStep updateBatch = ctx.batch(updateQuery);
+          for (BurstKey dbKey : keySet) {
+            List<Object> bindArgs = new ArrayList<>();
+            bindArgs.add(false);
+            for (long pkValue : dbKey.getPKValues()) {
+              bindArgs.add(pkValue);
+            }
+            updateBatch.bind(bindArgs.toArray());
+          }
+          updateBatch.execute();
 
-      bulkInsert(ctx, getBatch().values());
-      getBatch().clear();
-    });
+          bulkInsert(ctx, getBatch().values());
+          getBatch().clear();
+        });
   }
 
   @Override
@@ -136,13 +143,15 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   }
 
   @Override
-  public Collection<T> getManyBy(Condition condition, int height, int from, int to, List<SortField<?>> sort) {
+  public Collection<T> getManyBy(
+      Condition condition, int height, int from, int to, List<SortField<?>> sort) {
     assertInTransaction();
     return super.getManyBy(condition, height, from, to, sort);
   }
 
   @Override
-  public Collection<T> getManyBy(DSLContext ctx, SelectQuery<? extends Record> query, boolean cache) {
+  public Collection<T> getManyBy(
+      DSLContext ctx, SelectQuery<? extends Record> query, boolean cache) {
     assertInTransaction();
     return super.getManyBy(ctx, query, cache);
   }

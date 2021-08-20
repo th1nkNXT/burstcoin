@@ -36,12 +36,12 @@ public final class GetDGSPendingPurchases extends APIServlet.JsonRequestHandler 
     JsonObject response = new JsonObject();
     JsonArray purchasesJSON = new JsonArray();
 
-    for (DigitalGoodsStore.Purchase purchase : dgsGoodStoreService.getPendingSellerPurchases(sellerId, firstIndex, lastIndex)) {
+    for (DigitalGoodsStore.Purchase purchase :
+        dgsGoodStoreService.getPendingSellerPurchases(sellerId, firstIndex, lastIndex)) {
       purchasesJSON.add(JSONData.purchase(purchase));
     }
 
     response.add(PURCHASES_RESPONSE, purchasesJSON);
     return response;
   }
-
 }

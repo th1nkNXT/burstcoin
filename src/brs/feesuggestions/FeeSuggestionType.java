@@ -3,7 +3,9 @@ package brs.feesuggestions;
 import java.util.Arrays;
 
 public enum FeeSuggestionType {
-  CHEAP("cheap"), STANDARD("standard"), PRIORITY("priority");
+  CHEAP("cheap"),
+  STANDARD("standard"),
+  PRIORITY("priority");
 
   private final String type;
 

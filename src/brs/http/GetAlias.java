@@ -29,5 +29,4 @@ public final class GetAlias extends APIServlet.JsonRequestHandler {
 
     return JSONData.alias(alias, offer);
   }
-
 }

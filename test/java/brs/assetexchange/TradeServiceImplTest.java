@@ -39,7 +39,8 @@ public class TradeServiceImplTest extends AbstractUnitTest {
 
     final Collection<Trade> mockTradesIterator = mock(Collection.class);
 
-    when(mockTradeStore.getAssetTrades(eq(assetId), eq(from), eq(to))).thenReturn(mockTradesIterator);
+    when(mockTradeStore.getAssetTrades(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockTradesIterator);
 
     assertEquals(mockTradesIterator, t.getAssetTrades(assetId, from, to));
   }
@@ -53,9 +54,11 @@ public class TradeServiceImplTest extends AbstractUnitTest {
 
     final Collection<Trade> mockAccountAssetTradesIterator = mock(Collection.class);
 
-    when(mockTradeStore.getAccountAssetTrades(eq(accountId), eq(assetId), eq(from), eq(to))).thenReturn(mockAccountAssetTradesIterator);
+    when(mockTradeStore.getAccountAssetTrades(eq(accountId), eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountAssetTradesIterator);
 
-    assertEquals(mockAccountAssetTradesIterator, t.getAccountAssetTrades(accountId, assetId, from, to));
+    assertEquals(
+        mockAccountAssetTradesIterator, t.getAccountAssetTrades(accountId, assetId, from, to));
   }
 
   @Test
@@ -66,7 +69,8 @@ public class TradeServiceImplTest extends AbstractUnitTest {
 
     final Collection<Trade> mockTradesIterator = mock(Collection.class);
 
-    when(mockTradeStore.getAccountTrades(eq(accountId), eq(from), eq(to))).thenReturn(mockTradesIterator);
+    when(mockTradeStore.getAccountTrades(eq(accountId), eq(from), eq(to)))
+        .thenReturn(mockTradesIterator);
 
     assertEquals(mockTradesIterator, t.getAccountTrades(accountId, from, to));
   }

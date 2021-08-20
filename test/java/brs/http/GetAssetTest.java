@@ -41,9 +41,8 @@ public class GetAssetTest extends AbstractUnitTest {
   public void processRequest() throws BurstException {
     final long assetId = 4;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ASSET_PARAMETER, assetId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ASSET_PARAMETER, assetId));
 
     final Asset asset = mock(Asset.class);
     when(asset.getId()).thenReturn(assetId);

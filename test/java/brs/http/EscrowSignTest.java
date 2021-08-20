@@ -47,7 +47,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     escrowServiceMock = mock(EscrowService.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new EscrowSign(parameterServiceMock, blockchainMock, escrowServiceMock, apiTransactionManagerMock);
+    t =
+        new EscrowSign(
+            parameterServiceMock, blockchainMock, escrowServiceMock, apiTransactionManagerMock);
   }
 
   @Test
@@ -55,10 +57,10 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "release")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId),
+            new MockParam(DECISION_PARAMETER, "release"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getSenderId()).thenReturn(senderId);
@@ -68,14 +70,16 @@ public class EscrowSignTest extends AbstractTransactionTest {
     when(sender.getId()).thenReturn(senderId);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     when(escrowServiceMock.getEscrowTransaction(eq(escrowId))).thenReturn(escrow);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sender);
 
-    final Attachment.AdvancedPaymentEscrowSign attachment = (brs.Attachment.AdvancedPaymentEscrowSign) attachmentCreatedTransaction(() -> t.processRequest(req),
-        apiTransactionManagerMock);
+    final Attachment.AdvancedPaymentEscrowSign attachment =
+        (brs.Attachment.AdvancedPaymentEscrowSign)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ESCROW_SIGN, attachment.getTransactionType());
@@ -87,10 +91,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "refund")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId), new MockParam(DECISION_PARAMETER, "refund"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getSenderId()).thenReturn(1L);
@@ -103,11 +106,13 @@ public class EscrowSignTest extends AbstractTransactionTest {
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sender);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.AdvancedPaymentEscrowSign attachment = (brs.Attachment.AdvancedPaymentEscrowSign) attachmentCreatedTransaction(() -> t.processRequest(req),
-        apiTransactionManagerMock);
+    final Attachment.AdvancedPaymentEscrowSign attachment =
+        (brs.Attachment.AdvancedPaymentEscrowSign)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ESCROW_SIGN, attachment.getTransactionType());
@@ -119,10 +124,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "refund")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId), new MockParam(DECISION_PARAMETER, "refund"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getRecipientId()).thenReturn(1L);
@@ -132,7 +136,8 @@ public class EscrowSignTest extends AbstractTransactionTest {
     when(sender.getId()).thenReturn(senderId);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     when(escrowServiceMock.isIdSigner(eq(senderId), eq(escrow))).thenReturn(true);
@@ -140,8 +145,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     when(escrowServiceMock.getEscrowTransaction(eq(escrowId))).thenReturn(escrow);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sender);
 
-    final Attachment.AdvancedPaymentEscrowSign attachment = (brs.Attachment.AdvancedPaymentEscrowSign) attachmentCreatedTransaction(() -> t.processRequest(req),
-        apiTransactionManagerMock);
+    final Attachment.AdvancedPaymentEscrowSign attachment =
+        (brs.Attachment.AdvancedPaymentEscrowSign)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ESCROW_SIGN, attachment.getTransactionType());
@@ -150,9 +156,8 @@ public class EscrowSignTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_invalidEscrowId() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, "NotANumber")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ESCROW_PARAMETER, "NotANumber"));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -163,9 +168,8 @@ public class EscrowSignTest extends AbstractTransactionTest {
   public void processRequest_escrowNotFound() throws BurstException {
     final long escrowId = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ESCROW_PARAMETER, escrowId));
 
     when(escrowServiceMock.getEscrowTransaction(eq(escrowId))).thenReturn(null);
 
@@ -178,10 +182,10 @@ public class EscrowSignTest extends AbstractTransactionTest {
   public void processRequest_invalidDecisionType() throws BurstException {
     final long escrowId = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "notADecisionValue")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId),
+            new MockParam(DECISION_PARAMETER, "notADecisionValue"));
 
     final Escrow escrow = mock(Escrow.class);
 
@@ -197,10 +201,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "refund")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId), new MockParam(DECISION_PARAMETER, "refund"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getSenderId()).thenReturn(1L);
@@ -224,10 +227,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "refund")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId), new MockParam(DECISION_PARAMETER, "refund"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getSenderId()).thenReturn(senderId);
@@ -248,10 +250,10 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final long escrowId = 5;
     final long senderId = 6;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ESCROW_PARAMETER, escrowId),
-        new MockParam(DECISION_PARAMETER, "release")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ESCROW_PARAMETER, escrowId),
+            new MockParam(DECISION_PARAMETER, "release"));
 
     final Escrow escrow = mock(Escrow.class);
     when(escrow.getRecipientId()).thenReturn(senderId);

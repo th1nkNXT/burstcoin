@@ -58,17 +58,29 @@ final class ReadMessage extends APIServlet.JsonRequestHandler {
       return NO_MESSAGE;
     }
     if (message != null) {
-      response.addProperty("message", message.isText() ? Convert.toString(message.getMessageBytes()) : Convert.toHexString(message.getMessageBytes()));
+      response.addProperty(
+          "message",
+          message.isText()
+              ? Convert.toString(message.getMessageBytes())
+              : Convert.toHexString(message.getMessageBytes()));
     }
     String secretPhrase = Convert.emptyToNull(req.getParameter(SECRET_PHRASE_PARAMETER));
     if (secretPhrase != null) {
       if (encryptedMessage != null) {
         long readerAccountId = Account.getId(Crypto.getPublicKey(secretPhrase));
-        Account account = senderAccount.getId() == readerAccountId ? accountService.getAccount(transaction.getRecipientId()) : senderAccount;
+        Account account =
+            senderAccount.getId() == readerAccountId
+                ? accountService.getAccount(transaction.getRecipientId())
+                : senderAccount;
         if (account != null) {
           try {
-            byte[] decrypted = account.decryptFrom(encryptedMessage.getEncryptedData(), secretPhrase);
-            response.addProperty("decryptedMessage", encryptedMessage.isText() ? Convert.toString(decrypted) : Convert.toHexString(decrypted));
+            byte[] decrypted =
+                account.decryptFrom(encryptedMessage.getEncryptedData(), secretPhrase);
+            response.addProperty(
+                "decryptedMessage",
+                encryptedMessage.isText()
+                    ? Convert.toString(decrypted)
+                    : Convert.toHexString(decrypted));
           } catch (RuntimeException e) {
             logger.debug("Decryption of message to recipient failed: {}", e);
           }
@@ -78,8 +90,13 @@ final class ReadMessage extends APIServlet.JsonRequestHandler {
         Account account = accountService.getAccount(Crypto.getPublicKey(secretPhrase));
         if (account != null) {
           try {
-            byte[] decrypted = account.decryptFrom(encryptToSelfMessage.getEncryptedData(), secretPhrase);
-            response.addProperty("decryptedMessageToSelf", encryptToSelfMessage.isText() ? Convert.toString(decrypted) : Convert.toHexString(decrypted));
+            byte[] decrypted =
+                account.decryptFrom(encryptToSelfMessage.getEncryptedData(), secretPhrase);
+            response.addProperty(
+                "decryptedMessageToSelf",
+                encryptToSelfMessage.isText()
+                    ? Convert.toString(decrypted)
+                    : Convert.toHexString(decrypted));
           } catch (RuntimeException e) {
             logger.debug("Decryption of message to self failed: {}", e);
           }
@@ -88,5 +105,4 @@ final class ReadMessage extends APIServlet.JsonRequestHandler {
     }
     return response;
   }
-
 }

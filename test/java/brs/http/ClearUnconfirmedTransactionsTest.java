@@ -29,14 +29,14 @@ public class ClearUnconfirmedTransactionsTest {
 
   private TransactionProcessor transactionProcessorMock;
   private PropertyService propertyService;
-  
+
   private static final String KEY = "abc";
 
   @Before
   public void init() {
     transactionProcessorMock = mock(TransactionProcessor.class);
     propertyService = mock(PropertyService.class);
-    
+
     ArrayList<String> keys = new ArrayList<>();
     keys.add(KEY);
     doReturn(keys).when(propertyService).getStringList(Props.API_ADMIN_KEY_LIST);
@@ -47,18 +47,18 @@ public class ClearUnconfirmedTransactionsTest {
   @Test
   public void processRequest() {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    
+
     doReturn(KEY).when(req).getParameter(API_KEY_PARAMETER);
 
     final JsonObject result = ((JsonObject) t.processRequest(req));
 
     assertEquals(true, JSON.getAsBoolean(result.get(DONE_RESPONSE)));
   }
-  
+
   @Test
   public void processRequestNotAllowed() {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    
+
     doReturn("").when(req).getParameter(API_KEY_PARAMETER);
 
     final JsonObject result = ((JsonObject) t.processRequest(req));
@@ -69,14 +69,17 @@ public class ClearUnconfirmedTransactionsTest {
   @Test
   public void processRequest_runtimeExceptionOccurs() {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    
+
     doReturn(KEY).when(req).getParameter(API_KEY_PARAMETER);
 
-    doThrow(new RuntimeException("errorMessage")).when(transactionProcessorMock).clearUnconfirmedTransactions();
+    doThrow(new RuntimeException("errorMessage"))
+        .when(transactionProcessorMock)
+        .clearUnconfirmedTransactions();
 
     final JsonObject result = ((JsonObject) t.processRequest(req));
 
-    assertEquals("java.lang.RuntimeException: errorMessage", JSON.getAsString(result.get(ERROR_RESPONSE)));
+    assertEquals(
+        "java.lang.RuntimeException: errorMessage", JSON.getAsString(result.get(ERROR_RESPONSE)));
   }
 
   @Test

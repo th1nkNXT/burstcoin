@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAliasesTest extends AbstractUnitTest {
@@ -59,7 +58,8 @@ public class GetAliasesTest extends AbstractUnitTest {
 
     when(mockParameterService.getAccount(eq(req))).thenReturn(mockAccount);
 
-    when(mockAliasService.getAliasesByOwner(eq(accountId), eq(0), eq(-1))).thenReturn(mockAliasIterator);
+    when(mockAliasService.getAliasesByOwner(eq(accountId), eq(0), eq(-1)))
+        .thenReturn(mockAliasIterator);
     when(mockAliasService.getOffer(eq(mockAlias))).thenReturn(mockOffer);
 
     final JsonObject resultOverview = (JsonObject) t.processRequest(req);
@@ -71,8 +71,7 @@ public class GetAliasesTest extends AbstractUnitTest {
 
     final JsonObject result = (JsonObject) resultList.get(0);
     assertNotNull(result);
-    assertEquals("" +mockAlias.getId(), JSON.getAsString(result.get(ALIAS_RESPONSE)));
+    assertEquals("" + mockAlias.getId(), JSON.getAsString(result.get(ALIAS_RESPONSE)));
     assertEquals("" + mockOffer.getPriceNQT(), JSON.getAsString(result.get(PRICE_NQT_RESPONSE)));
   }
-
 }

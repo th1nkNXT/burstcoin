@@ -29,16 +29,24 @@ public class TransactionDuplicatesCheckerImpl {
 
     duplicates.computeIfAbsent(transactionDuplicateKey.transactionType, n -> new HashMap<>());
 
-    final HashMap<String, Transaction> transactionOverview = duplicates.get(transactionDuplicateKey.transactionType);
+    final HashMap<String, Transaction> transactionOverview =
+        duplicates.get(transactionDuplicateKey.transactionType);
 
-    final Transaction possiblyExistingTransaction = transactionOverview.get(transactionDuplicateKey.key);
+    final Transaction possiblyExistingTransaction =
+        transactionOverview.get(transactionDuplicateKey.key);
 
-    if (possiblyExistingTransaction != null && possiblyExistingTransaction.getFeeNQT() >= transaction.getFeeNQT()) {
-      logger.debug("Transaction {}: is a duplicate of {} (Type: {})", transaction.getId(), possiblyExistingTransaction.getId(), transaction.getType());
+    if (possiblyExistingTransaction != null
+        && possiblyExistingTransaction.getFeeNQT() >= transaction.getFeeNQT()) {
+      logger.debug(
+          "Transaction {}: is a duplicate of {} (Type: {})",
+          transaction.getId(),
+          possiblyExistingTransaction.getId(),
+          transaction.getType());
       return new TransactionDuplicationResult(true, transaction);
     } else {
       transactionOverview.put(transactionDuplicateKey.key, transaction);
-      return new TransactionDuplicationResult(possiblyExistingTransaction != null, possiblyExistingTransaction);
+      return new TransactionDuplicationResult(
+          possiblyExistingTransaction != null, possiblyExistingTransaction);
     }
   }
 
@@ -53,7 +61,8 @@ public class TransactionDuplicatesCheckerImpl {
 
     duplicates.computeIfAbsent(transactionDuplicateKey.transactionType, n -> new HashMap<>());
 
-    final HashMap<String, Transaction> transactionOverview = duplicates.get(transactionDuplicateKey.transactionType);
+    final HashMap<String, Transaction> transactionOverview =
+        duplicates.get(transactionDuplicateKey.transactionType);
 
     if (transactionOverview.containsKey(transactionDuplicateKey.key)) {
       return true;
@@ -66,7 +75,14 @@ public class TransactionDuplicatesCheckerImpl {
   public void removeTransaction(Transaction transaction) {
     final TransactionDuplicationKey transactionDuplicateKey = transaction.getDuplicationKey();
 
-    if (!transactionDuplicateKey.equals(TransactionDuplicationKey.IS_ALWAYS_DUPLICATE) && !transactionDuplicateKey.equals(TransactionDuplicationKey.IS_NEVER_DUPLICATE) && duplicates.containsKey(transactionDuplicateKey.transactionType) && Objects.equals(duplicates.get(transactionDuplicateKey.transactionType).get(transactionDuplicateKey.key), transaction)) {
+    if (!transactionDuplicateKey.equals(TransactionDuplicationKey.IS_ALWAYS_DUPLICATE)
+        && !transactionDuplicateKey.equals(TransactionDuplicationKey.IS_NEVER_DUPLICATE)
+        && duplicates.containsKey(transactionDuplicateKey.transactionType)
+        && Objects.equals(
+            duplicates
+                .get(transactionDuplicateKey.transactionType)
+                .get(transactionDuplicateKey.key),
+            transaction)) {
       duplicates.get(transactionDuplicateKey.transactionType).remove(transactionDuplicateKey.key);
     }
   }

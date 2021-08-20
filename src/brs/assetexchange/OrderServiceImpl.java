@@ -22,7 +22,8 @@ class OrderServiceImpl {
   private final AccountService accountService;
   private final TradeServiceImpl tradeService;
 
-  public OrderServiceImpl(OrderStore orderStore, AccountService accountService, TradeServiceImpl tradeService) {
+  public OrderServiceImpl(
+      OrderStore orderStore, AccountService accountService, TradeServiceImpl tradeService) {
     this.orderStore = orderStore;
     this.askOrderTable = orderStore.getAskOrderTable();
     this.askOrderDbKeyFactory = orderStore.getAskOrderDbKeyFactory();
@@ -57,7 +58,8 @@ class OrderServiceImpl {
     return orderStore.getAskOrdersByAccount(accountId, from, to);
   }
 
-  public Collection<Ask> getAskOrdersByAccountAsset(final long accountId, final long assetId, int from, int to) {
+  public Collection<Ask> getAskOrdersByAccountAsset(
+      final long accountId, final long assetId, int from, int to) {
     return orderStore.getAskOrdersByAccountAsset(accountId, assetId, from, to);
   }
 
@@ -77,7 +79,8 @@ class OrderServiceImpl {
     return orderStore.getBidOrdersByAccount(accountId, from, to);
   }
 
-  public Collection<Bid> getBidOrdersByAccountAsset(final long accountId, final long assetId, int from, int to) {
+  public Collection<Bid> getBidOrdersByAccountAsset(
+      final long accountId, final long assetId, int from, int to) {
     return orderStore.getBidOrdersByAccountAsset(accountId, assetId, from, to);
   }
 
@@ -89,14 +92,16 @@ class OrderServiceImpl {
     askOrderTable.delete(getAskOrder(orderId));
   }
 
-  public void addAskOrder(Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
+  public void addAskOrder(
+      Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
     BurstKey dbKey = askOrderDbKeyFactory.newKey(transaction.getId());
     Ask order = new Ask(dbKey, transaction, attachment);
     askOrderTable.insert(order);
     matchOrders(attachment.getAssetId());
   }
 
-  public void addBidOrder(Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
+  public void addBidOrder(
+      Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
     BurstKey dbKey = bidOrderDbKeyFactory.newKey(transaction.getId());
     Bid order = new Bid(dbKey, transaction, attachment);
     bidOrderTable.insert(order);
@@ -123,22 +128,28 @@ class OrderServiceImpl {
         break;
       }
 
+      Trade trade =
+          tradeService.addTrade(assetId, Burst.getBlockchain().getLastBlock(), askOrder, bidOrder);
 
-      Trade trade = tradeService.addTrade(assetId, Burst.getBlockchain().getLastBlock(), askOrder, bidOrder);
-
-      askOrderUpdateQuantityQNT(askOrder, Convert.safeSubtract(askOrder.getQuantityQNT(), trade.getQuantityQNT()));
+      askOrderUpdateQuantityQNT(
+          askOrder, Convert.safeSubtract(askOrder.getQuantityQNT(), trade.getQuantityQNT()));
       Account askAccount = accountService.getAccount(askOrder.getAccountId());
-      accountService.addToBalanceAndUnconfirmedBalanceNQT(askAccount, Convert.safeMultiply(trade.getQuantityQNT(), trade.getPriceNQT()));
+      accountService.addToBalanceAndUnconfirmedBalanceNQT(
+          askAccount, Convert.safeMultiply(trade.getQuantityQNT(), trade.getPriceNQT()));
       accountService.addToAssetBalanceQNT(askAccount, assetId, -trade.getQuantityQNT());
 
-      bidOrderUpdateQuantityQNT(bidOrder, Convert.safeSubtract(bidOrder.getQuantityQNT(), trade.getQuantityQNT()));
+      bidOrderUpdateQuantityQNT(
+          bidOrder, Convert.safeSubtract(bidOrder.getQuantityQNT(), trade.getQuantityQNT()));
       Account bidAccount = accountService.getAccount(bidOrder.getAccountId());
-      accountService.addToAssetAndUnconfirmedAssetBalanceQNT(bidAccount, assetId, trade.getQuantityQNT());
-      accountService.addToBalanceNQT(bidAccount, -Convert.safeMultiply(trade.getQuantityQNT(), trade.getPriceNQT()));
-      accountService.addToUnconfirmedBalanceNQT(bidAccount, Convert.safeMultiply(trade.getQuantityQNT(), (bidOrder.getPriceNQT() - trade.getPriceNQT())));
-
+      accountService.addToAssetAndUnconfirmedAssetBalanceQNT(
+          bidAccount, assetId, trade.getQuantityQNT());
+      accountService.addToBalanceNQT(
+          bidAccount, -Convert.safeMultiply(trade.getQuantityQNT(), trade.getPriceNQT()));
+      accountService.addToUnconfirmedBalanceNQT(
+          bidAccount,
+          Convert.safeMultiply(
+              trade.getQuantityQNT(), (bidOrder.getPriceNQT() - trade.getPriceNQT())));
     }
-
   }
 
   private void askOrderUpdateQuantityQNT(Ask askOrder, long quantityQNT) {
@@ -148,8 +159,11 @@ class OrderServiceImpl {
     } else if (quantityQNT == 0) {
       askOrderTable.delete(askOrder);
     } else {
-      throw new IllegalArgumentException("Negative quantity: " + quantityQNT
-          + " for order: " + Convert.toUnsignedLong(askOrder.getId()));
+      throw new IllegalArgumentException(
+          "Negative quantity: "
+              + quantityQNT
+              + " for order: "
+              + Convert.toUnsignedLong(askOrder.getId()));
     }
   }
 
@@ -160,10 +174,11 @@ class OrderServiceImpl {
     } else if (quantityQNT == 0) {
       bidOrderTable.delete(bidOrder);
     } else {
-      throw new IllegalArgumentException("Negative quantity: " + quantityQNT
-          + " for order: " + Convert.toUnsignedLong(bidOrder.getId()));
+      throw new IllegalArgumentException(
+          "Negative quantity: "
+              + quantityQNT
+              + " for order: "
+              + Convert.toUnsignedLong(bidOrder.getId()));
     }
   }
-
-
 }

@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAskOrdersTest extends AbstractUnitTest {
@@ -48,11 +47,11 @@ public class GetAskOrdersTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ASSET_PARAMETER, assetIndex),
-      new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-      new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetIndex),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Asset asset = mock(Asset.class);
     when(asset.getId()).thenReturn(assetIndex);
@@ -71,7 +70,8 @@ public class GetAskOrdersTest extends AbstractUnitTest {
 
     final Collection<Ask> askIterator = this.mockCollection(askOrder1, askOrder2);
 
-    when(assetExchangeMock.getSortedAskOrders(eq(assetIndex), eq(firstIndex), eq(lastIndex))).thenReturn(askIterator);
+    when(assetExchangeMock.getSortedAskOrders(eq(assetIndex), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(askIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -84,9 +84,13 @@ public class GetAskOrdersTest extends AbstractUnitTest {
     final JsonObject askOrder1Result = (JsonObject) orders.get(0);
 
     assertEquals("" + askOrder1.getId(), JSON.getAsString(askOrder1Result.get(ORDER_RESPONSE)));
-    assertEquals("" + askOrder1.getAssetId(), JSON.getAsString(askOrder1Result.get(ASSET_RESPONSE)));
-    assertEquals("" + askOrder1.getQuantityQNT(), JSON.getAsString(askOrder1Result.get(QUANTITY_QNT_RESPONSE)));
-    assertEquals("" + askOrder1.getPriceNQT(), JSON.getAsString(askOrder1Result.get(PRICE_NQT_RESPONSE)));
+    assertEquals(
+        "" + askOrder1.getAssetId(), JSON.getAsString(askOrder1Result.get(ASSET_RESPONSE)));
+    assertEquals(
+        "" + askOrder1.getQuantityQNT(),
+        JSON.getAsString(askOrder1Result.get(QUANTITY_QNT_RESPONSE)));
+    assertEquals(
+        "" + askOrder1.getPriceNQT(), JSON.getAsString(askOrder1Result.get(PRICE_NQT_RESPONSE)));
     assertEquals(askOrder1.getHeight(), JSON.getAsInt(askOrder1Result.get(HEIGHT_RESPONSE)));
   }
 }

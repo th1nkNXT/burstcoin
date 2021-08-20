@@ -2,7 +2,6 @@ package it.common;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 ;
 
 public class BlockMessageBuilder {
@@ -78,7 +77,7 @@ public class BlockMessageBuilder {
   }
 
   public BlockMessageBuilder transactions(JsonArray transactions) {
-    if(transactions == null) {
+    if (transactions == null) {
       this.transactions = new JsonArray();
     } else {
       this.transactions = transactions;

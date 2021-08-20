@@ -49,8 +49,8 @@ public abstract class AbstractIT {
 
     props.setProperty(Props.API_SERVER.getName(), "on");
     props.setProperty(Props.API_LISTEN.getName(), "127.0.0.1");
-    props.setProperty(Props.DEV_API_PORT.getName(),   "" + TestInfrastructure.TEST_API_PORT);
-    props.setProperty(Props.API_ALLOWED.getName(),   "*");
+    props.setProperty(Props.DEV_API_PORT.getName(), "" + TestInfrastructure.TEST_API_PORT);
+    props.setProperty(Props.API_ALLOWED.getName(), "*");
     props.setProperty(Props.API_UI_DIR.getName(), "html/ui");
 
     return props;

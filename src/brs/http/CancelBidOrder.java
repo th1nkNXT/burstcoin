@@ -16,8 +16,15 @@ public final class CancelBidOrder extends CreateTransaction {
   private final Blockchain blockchain;
   private final AssetExchange assetExchange;
 
-  public CancelBidOrder(ParameterService parameterService, Blockchain blockchain, AssetExchange assetExchange, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION}, apiTransactionManager, ORDER_PARAMETER);
+  public CancelBidOrder(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AssetExchange assetExchange,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        ORDER_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.assetExchange = assetExchange;
@@ -31,8 +38,8 @@ public final class CancelBidOrder extends CreateTransaction {
     if (orderData == null || orderData.getAccountId() != account.getId()) {
       return UNKNOWN_ORDER;
     }
-    Attachment attachment = new Attachment.ColoredCoinsBidOrderCancellation(orderId, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.ColoredCoinsBidOrderCancellation(orderId, blockchain.getHeight());
     return createTransaction(req, account, attachment);
   }
-
 }

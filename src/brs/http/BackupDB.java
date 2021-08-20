@@ -22,7 +22,7 @@ final class BackupDB extends APIServlet.JsonRequestHandler {
 
   BackupDB(PropertyService propertyService) {
     super(new APITag[] {APITag.ADMIN}, FILENAME_PARAMETER, API_KEY_PARAMETER);
-    
+
     apiAdminKeyList = propertyService.getStringList(Props.API_ADMIN_KEY_LIST);
   }
 
@@ -32,24 +32,23 @@ final class BackupDB extends APIServlet.JsonRequestHandler {
     JsonObject response = new JsonObject();
     String filename = req.getParameter(FILENAME_PARAMETER);
     String apiKey = req.getParameter(API_KEY_PARAMETER);
-    
-    if(!apiAdminKeyList.contains(apiKey)) {
+
+    if (!apiAdminKeyList.contains(apiKey)) {
       return ERROR_NOT_ALLOWED;
     }
 
-    if(filename == null || filename.length() == 0) {
+    if (filename == null || filename.length() == 0) {
       response.addProperty(ERROR_RESPONSE, "invalid filename");
       return response;
     }
-    
+
     Db.backup(filename);
-    
+
     return response;
   }
-  
+
   @Override
   final boolean requirePost() {
     return true;
   }
-
 }

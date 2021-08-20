@@ -38,9 +38,8 @@ public class GetBlockTest {
   public void processRequest_withBlockId() {
     long blockId = 2L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(BLOCK_PARAMETER, blockId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(BLOCK_PARAMETER, blockId));
 
     final Block mockBlock = mock(Block.class);
 
@@ -53,9 +52,8 @@ public class GetBlockTest {
 
   @Test
   public void processRequest_withBlockId_incorrectBlock() {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(BLOCK_PARAMETER, "notALong")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(BLOCK_PARAMETER, "notALong"));
 
     assertEquals(INCORRECT_BLOCK, t.processRequest(req));
   }
@@ -64,9 +62,8 @@ public class GetBlockTest {
   public void processRequest_withHeight() {
     int blockHeight = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(HEIGHT_PARAMETER, blockHeight)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, blockHeight));
 
     final Block mockBlock = mock(Block.class);
 
@@ -80,9 +77,8 @@ public class GetBlockTest {
 
   @Test
   public void processRequest_withHeight_incorrectHeight_unParsable() {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(HEIGHT_PARAMETER, "unParsable")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "unParsable"));
 
     assertEquals(INCORRECT_HEIGHT, t.processRequest(req));
   }
@@ -91,9 +87,8 @@ public class GetBlockTest {
   public void processRequest_withHeight_incorrectHeight_isNegative() {
     final long heightValue = -1L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(HEIGHT_PARAMETER, heightValue)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, heightValue));
 
     assertEquals(INCORRECT_HEIGHT, t.processRequest(req));
   }
@@ -102,9 +97,8 @@ public class GetBlockTest {
   public void processRequest_withHeight_incorrectHeight_overCurrentBlockHeight() {
     final long heightValue = 10L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(HEIGHT_PARAMETER, heightValue)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, heightValue));
 
     when(blockchainMock.getHeight()).thenReturn(5);
 
@@ -115,9 +109,8 @@ public class GetBlockTest {
   public void processRequest_withTimestamp() {
     int timestamp = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(TIMESTAMP_PARAMETER, timestamp)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(TIMESTAMP_PARAMETER, timestamp));
 
     final Block mockBlock = mock(Block.class);
 
@@ -130,9 +123,8 @@ public class GetBlockTest {
 
   @Test
   public void processRequest_withTimestamp_incorrectTimeStamp_unParsable() {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(TIMESTAMP_PARAMETER, "unParsable")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(TIMESTAMP_PARAMETER, "unParsable"));
 
     assertEquals(INCORRECT_TIMESTAMP, t.processRequest(req));
   }
@@ -141,13 +133,11 @@ public class GetBlockTest {
   public void processRequest_withTimestamp_incorrectTimeStamp_negative() {
     final int timestamp = -1;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(TIMESTAMP_PARAMETER, timestamp)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(TIMESTAMP_PARAMETER, timestamp));
 
     assertEquals(INCORRECT_TIMESTAMP, t.processRequest(req));
   }
-
 
   @Test
   public void processRequest_unknownBlock() {
@@ -155,5 +145,4 @@ public class GetBlockTest {
 
     assertEquals(UNKNOWN_BLOCK, t.processRequest(req));
   }
-
 }

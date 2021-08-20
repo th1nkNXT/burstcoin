@@ -54,5 +54,4 @@ public class GetAliasTest {
     assertEquals("" + mockOffer.getPriceNQT(), JSON.getAsString(result.get(PRICE_NQT_RESPONSE)));
     assertEquals("" + mockOffer.getBuyerId(), JSON.getAsString(result.get(BUYER_RESPONSE)));
   }
-
 }

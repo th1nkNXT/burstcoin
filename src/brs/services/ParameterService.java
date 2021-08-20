@@ -24,7 +24,8 @@ public interface ParameterService {
 
   DigitalGoodsStore.Purchase getPurchase(HttpServletRequest req) throws ParameterException;
 
-  EncryptedData getEncryptedMessage(HttpServletRequest req, Account recipientAccount, byte[] publicKey) throws ParameterException;
+  EncryptedData getEncryptedMessage(
+      HttpServletRequest req, Account recipientAccount, byte[] publicKey) throws ParameterException;
 
   EncryptedData getEncryptToSelfMessage(HttpServletRequest req) throws ParameterException;
 
@@ -34,12 +35,13 @@ public interface ParameterService {
 
   int getHeight(HttpServletRequest req) throws ParameterException;
 
-  Transaction parseTransaction(String transactionBytes, String transactionJSON) throws ParameterException;
+  Transaction parseTransaction(String transactionBytes, String transactionJSON)
+      throws ParameterException;
 
   AT getAT(HttpServletRequest req) throws ParameterException;
 
   boolean getIncludeIndirect(HttpServletRequest req);
-  
+
   boolean getEstimateCommitment(HttpServletRequest req);
 
   boolean getAmountCommitted(HttpServletRequest req);

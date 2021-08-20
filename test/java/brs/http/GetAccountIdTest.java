@@ -29,10 +29,10 @@ public class GetAccountIdTest {
 
   @Test
   public void processRequest() {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(PUBLIC_KEY_PARAMETER, TEST_PUBLIC_KEY)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(PUBLIC_KEY_PARAMETER, TEST_PUBLIC_KEY));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -42,9 +42,8 @@ public class GetAccountIdTest {
 
   @Test
   public void processRequest_missingSecretPhraseUsesPublicKey() {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PUBLIC_KEY_PARAMETER, TEST_PUBLIC_KEY)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, TEST_PUBLIC_KEY));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -54,7 +53,8 @@ public class GetAccountIdTest {
 
   @Test
   public void processRequest_missingSecretPhraseAndPublicKey() {
-    assertEquals(MISSING_SECRET_PHRASE_OR_PUBLIC_KEY, t.processRequest(QuickMocker.httpServletRequest()));
+    assertEquals(
+        MISSING_SECRET_PHRASE_OR_PUBLIC_KEY, t.processRequest(QuickMocker.httpServletRequest()));
   }
 
   @Test

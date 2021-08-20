@@ -41,7 +41,8 @@ public interface DbKey extends BurstKey {
       return pkVariables;
     }
 
-    public abstract void applySelfJoin(SelectQuery<Record> query, Table<?> queryTable, Table<?> otherTable);
+    public abstract void applySelfJoin(
+        SelectQuery<Record> query, Table<?> queryTable, Table<?> otherTable);
   }
 
   Collection<Condition> getPKConditions(Table<?> tableClass);
@@ -53,9 +54,10 @@ public interface DbKey extends BurstKey {
     private final Field<Long> idColumn;
 
     public LongKeyFactory(Field<Long> idColumn) {
-      super(" WHERE " + idColumn.getName() + " = ? ",
-            new String[] {idColumn.getName()},
-            " a." + idColumn.getName() + " = b." + idColumn.getName() + " ");
+      super(
+          " WHERE " + idColumn.getName() + " = ? ",
+          new String[] {idColumn.getName()},
+          " a." + idColumn.getName() + " = b." + idColumn.getName() + " ");
       this.idColumn = idColumn;
     }
 
@@ -72,10 +74,9 @@ public interface DbKey extends BurstKey {
     @Override
     public void applySelfJoin(SelectQuery<Record> query, Table<?> queryTable, Table<?> otherTable) {
       query.addConditions(
-        queryTable.field(idColumn.getName(), Long.class).eq(
-          otherTable.field(idColumn.getName(), Long.class)
-        )
-      );
+          queryTable
+              .field(idColumn.getName(), Long.class)
+              .eq(otherTable.field(idColumn.getName(), Long.class)));
     }
   }
 
@@ -85,16 +86,19 @@ public interface DbKey extends BurstKey {
     private final String idColumnB;
 
     public LinkKeyFactory(String idColumnA, String idColumnB) {
-      super(" WHERE " + idColumnA + " = ? AND " + idColumnB + " = ? ",
-            new String[] {idColumnA,idColumnB},
-            " a." + idColumnA + " = b." + idColumnA + " AND a." + idColumnB + " = b." + idColumnB + " ");
+      super(
+          " WHERE " + idColumnA + " = ? AND " + idColumnB + " = ? ",
+          new String[] {idColumnA, idColumnB},
+          " a." + idColumnA + " = b." + idColumnA + " AND a." + idColumnB + " = b." + idColumnB
+              + " ");
       this.idColumnA = idColumnA;
       this.idColumnB = idColumnB;
     }
 
     @Override
     public DbKey newKey(Record rs) {
-      return new LinkKey(rs.get(idColumnA, Long.class), rs.get(idColumnB, Long.class), idColumnA, idColumnB);
+      return new LinkKey(
+          rs.get(idColumnA, Long.class), rs.get(idColumnB, Long.class), idColumnA, idColumnB);
     }
 
     public DbKey newKey(long idA, long idB) {
@@ -104,15 +108,9 @@ public interface DbKey extends BurstKey {
     @Override
     public void applySelfJoin(SelectQuery<Record> query, Table<?> queryTable, Table<?> otherTable) {
       query.addConditions(
-        queryTable.field(idColumnA, Long.class).eq(
-          otherTable.field(idColumnA, Long.class)
-        )
-      );
+          queryTable.field(idColumnA, Long.class).eq(otherTable.field(idColumnA, Long.class)));
       query.addConditions(
-        queryTable.field(idColumnB, Long.class).eq(
-          otherTable.field(idColumnB, Long.class)
-        )
-      );
+          queryTable.field(idColumnB, Long.class).eq(otherTable.field(idColumnB, Long.class)));
     }
   }
 
@@ -122,13 +120,13 @@ public interface DbKey extends BurstKey {
     private final String idColumn;
 
     private LongKey(long id, String idColumn) {
-      this.id       = id;
+      this.id = id;
       this.idColumn = idColumn;
     }
 
     @Override
     public long[] getPKValues() {
-        return new long[]{id};
+      return new long[] {id};
     }
 
     @Override
@@ -147,7 +145,6 @@ public interface DbKey extends BurstKey {
       conditions.add(tableClass.field(idColumn, Long.class).eq(id));
       return conditions;
     }
-    
   }
 
   final class LinkKey implements DbKey {
@@ -158,15 +155,15 @@ public interface DbKey extends BurstKey {
     private final String idColumnB;
 
     private LinkKey(long idA, long idB, String idColumnA, String idColumnB) {
-      this.idA       = idA;
-      this.idB       = idB;
+      this.idA = idA;
+      this.idB = idB;
       this.idColumnA = idColumnA;
       this.idColumnB = idColumnB;
     }
 
     @Override
     public long[] getPKValues() {
-        return new long[]{idA, idB};
+      return new long[] {idA, idB};
     }
 
     @Override

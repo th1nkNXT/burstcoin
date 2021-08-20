@@ -15,7 +15,8 @@ public interface AssetTransferStore {
 
   Collection<AssetTransfer> getAccountAssetTransfers(long accountId, int from, int to);
 
-  Collection<AssetTransfer> getAccountAssetTransfers(long accountId, long assetId, int from, int to);
+  Collection<AssetTransfer> getAccountAssetTransfers(
+      long accountId, long assetId, int from, int to);
 
   int getTransferCount(long assetId);
 }

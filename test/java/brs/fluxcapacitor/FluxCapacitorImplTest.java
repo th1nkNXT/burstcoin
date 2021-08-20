@@ -86,7 +86,8 @@ public class FluxCapacitorImplTest {
     assertEquals((Integer) 1020, t.getValue(FluxValues.MAX_NUMBER_TRANSACTIONS));
   }
 
-  @DisplayName("FluxInt on TestNet gives its default value when no historical moments changed it yet")
+  @DisplayName(
+      "FluxInt on TestNet gives its default value when no historical moments changed it yet")
   @Test
   public void fluxIntTestNetDefaultValue() {
     when(propertyServiceMock.getBoolean(eq(Props.DEV_TESTNET))).thenReturn(true);
@@ -112,7 +113,9 @@ public class FluxCapacitorImplTest {
     assertEquals((Integer) 1020, t.getValue(FluxValues.MAX_NUMBER_TRANSACTIONS));
   }
 
-  @DisplayName("FluxInt on TestNet gives a different value because the historical moment configuration is different")
+  @DisplayName(
+      "FluxInt on TestNet gives a different value because the historical moment configuration is"
+          + " different")
   @Test
   public void fluxIntTestNetHistoricalMomentChangedThroughProperty() {
     when(propertyServiceMock.getBoolean(eq(Props.DEV_TESTNET))).thenReturn(true);

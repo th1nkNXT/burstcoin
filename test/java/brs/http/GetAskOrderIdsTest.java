@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAskOrderIdsTest extends AbstractUnitTest {
@@ -47,11 +46,11 @@ public class GetAskOrderIdsTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ASSET_PARAMETER, assetIndex),
-      new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-      new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetIndex),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Asset asset = mock(Asset.class);
     when(asset.getId()).thenReturn(assetIndex);
@@ -65,7 +64,8 @@ public class GetAskOrderIdsTest extends AbstractUnitTest {
 
     final Collection<Ask> askIterator = this.mockCollection(askOrder1, askOrder2);
 
-    when(assetExchangeMock.getSortedAskOrders(eq(assetIndex), eq(firstIndex), eq(lastIndex))).thenReturn(askIterator);
+    when(assetExchangeMock.getSortedAskOrders(eq(assetIndex), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(askIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);

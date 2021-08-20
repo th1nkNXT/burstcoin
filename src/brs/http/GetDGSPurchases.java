@@ -20,7 +20,13 @@ public final class GetDGSPurchases extends APIServlet.JsonRequestHandler {
   private final DGSGoodsStoreService dgsGoodsStoreService;
 
   public GetDGSPurchases(DGSGoodsStoreService dgsGoodsStoreService) {
-    super(new APITag[] {APITag.DGS}, SELLER_PARAMETER, BUYER_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER, COMPLETED_PARAMETER);
+    super(
+        new APITag[] {APITag.DGS},
+        SELLER_PARAMETER,
+        BUYER_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER,
+        COMPLETED_PARAMETER);
     this.dgsGoodsStoreService = dgsGoodsStoreService;
   }
 
@@ -32,13 +38,17 @@ public final class GetDGSPurchases extends APIServlet.JsonRequestHandler {
     int lastIndex = ParameterParser.getLastIndex(req);
     final boolean completed = Parameters.isTrue(req.getParameter(COMPLETED_PARAMETER));
 
-
     JsonObject response = new JsonObject();
     JsonArray purchasesJSON = new JsonArray();
     response.add(PURCHASES_RESPONSE, purchasesJSON);
 
     if (sellerId == 0 && buyerId == 0) {
-      FilteringIterator<DigitalGoodsStore.Purchase> purchaseIterator = new FilteringIterator<>(dgsGoodsStoreService.getAllPurchases(0, -1), purchase -> ! (completed && purchase.isPending()), firstIndex, lastIndex);
+      FilteringIterator<DigitalGoodsStore.Purchase> purchaseIterator =
+          new FilteringIterator<>(
+              dgsGoodsStoreService.getAllPurchases(0, -1),
+              purchase -> !(completed && purchase.isPending()),
+              firstIndex,
+              lastIndex);
       while (purchaseIterator.hasNext()) {
         purchasesJSON.add(JSONData.purchase(purchaseIterator.next()));
       }
@@ -53,7 +63,9 @@ public final class GetDGSPurchases extends APIServlet.JsonRequestHandler {
     } else {
       purchases = dgsGoodsStoreService.getSellerBuyerPurchases(sellerId, buyerId, 0, -1);
     }
-    FilteringIterator<DigitalGoodsStore.Purchase> purchaseIterator = new FilteringIterator<>(purchases, purchase -> ! (completed && purchase.isPending()), firstIndex, lastIndex);
+    FilteringIterator<DigitalGoodsStore.Purchase> purchaseIterator =
+        new FilteringIterator<>(
+            purchases, purchase -> !(completed && purchase.isPending()), firstIndex, lastIndex);
     while (purchaseIterator.hasNext()) {
       purchasesJSON.add(JSONData.purchase(purchaseIterator.next()));
     }

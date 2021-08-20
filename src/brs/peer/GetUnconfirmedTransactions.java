@@ -22,7 +22,8 @@ final class GetUnconfirmedTransactions extends PeerServlet.ExtendedPeerRequestHa
   ExtendedProcessRequest extendedProcessRequest(JsonObject request, Peer peer) {
     JsonObject response = new JsonObject();
 
-    final List<Transaction> unconfirmedTransactions = transactionProcessor.getAllUnconfirmedTransactionsFor(peer);
+    final List<Transaction> unconfirmedTransactions =
+        transactionProcessor.getAllUnconfirmedTransactionsFor(peer);
 
     JsonArray transactionsData = new JsonArray();
     for (Transaction transaction : unconfirmedTransactions) {
@@ -31,7 +32,7 @@ final class GetUnconfirmedTransactions extends PeerServlet.ExtendedPeerRequestHa
 
     response.add(UNCONFIRMED_TRANSACTIONS_RESPONSE, transactionsData);
 
-    return new ExtendedProcessRequest(response, () -> transactionProcessor.markFingerPrintsOf(peer, unconfirmedTransactions));
+    return new ExtendedProcessRequest(
+        response, () -> transactionProcessor.markFingerPrintsOf(peer, unconfirmedTransactions));
   }
-
 }

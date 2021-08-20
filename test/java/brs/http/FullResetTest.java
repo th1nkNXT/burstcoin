@@ -29,14 +29,14 @@ public class FullResetTest {
 
   private BlockchainProcessor blockchainProcessor;
   private PropertyService propertyService;
-  
+
   private static final String KEY = "abc";
 
   @Before
   public void init() {
     blockchainProcessor = mock(BlockchainProcessor.class);
     propertyService = mock(PropertyService.class);
-    
+
     ArrayList<String> keys = new ArrayList<>();
     keys.add(KEY);
     doReturn(keys).when(propertyService).getStringList(Props.API_ADMIN_KEY_LIST);
@@ -53,11 +53,11 @@ public class FullResetTest {
 
     assertTrue(JSON.getAsBoolean(result.get(DONE_RESPONSE)));
   }
-  
+
   @Test
   public void processRequestNotAllowed() {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    
+
     doReturn("").when(req).getParameter(API_KEY_PARAMETER);
 
     final JsonObject result = ((JsonObject) t.processRequest(req));
@@ -74,7 +74,8 @@ public class FullResetTest {
 
     final JsonObject result = ((JsonObject) t.processRequest(req));
 
-    assertEquals("java.lang.RuntimeException: errorMessage", JSON.getAsString(result.get(ERROR_RESPONSE)));
+    assertEquals(
+        "java.lang.RuntimeException: errorMessage", JSON.getAsString(result.get(ERROR_RESPONSE)));
   }
 
   @Test

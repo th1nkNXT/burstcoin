@@ -31,8 +31,17 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
   private final AccountService accountService;
   private final Generator generator;
 
-  GetAccount(ParameterService parameterService, AccountService accountService, Blockchain blockchain, Generator generator) {
-    super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER, HEIGHT_PARAMETER, GET_COMMITTED_AMOUNT_PARAMETER, ESTIMATE_COMMITMENT_PARAMETER);
+  GetAccount(
+      ParameterService parameterService,
+      AccountService accountService,
+      Blockchain blockchain,
+      Generator generator) {
+    super(
+        new APITag[] {APITag.ACCOUNTS},
+        ACCOUNT_PARAMETER,
+        HEIGHT_PARAMETER,
+        GET_COMMITTED_AMOUNT_PARAMETER,
+        ESTIMATE_COMMITMENT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
@@ -45,27 +54,33 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
     Account account = parameterService.getAccount(req);
 
     JsonObject response = JSONData.accountBalance(account);
-    
+
     int height = parameterService.getHeight(req);
-    if(height < 0) {
+    if (height < 0) {
       height = blockchain.getHeight();
     }
-    
-    if(parameterService.getAmountCommitted(req)) {
-      long committedAmount = Burst.getBlockchain().getCommittedAmount(account, height+Constants.COMMITMENT_WAIT, height, null);
+
+    if (parameterService.getAmountCommitted(req)) {
+      long committedAmount =
+          Burst.getBlockchain()
+              .getCommittedAmount(account, height + Constants.COMMITMENT_WAIT, height, null);
       response.addProperty(COMMITTED_NQT_RESPONSE, Convert.toUnsignedLong(committedAmount));
     }
-    
-    if(parameterService.getEstimateCommitment(req)) {
+
+    if (parameterService.getEstimateCommitment(req)) {
       Block block = blockchain.getBlockAtHeight(height);
       long commitment = generator.estimateCommitment(account.getId(), block);
       response.addProperty(COMMITMENT_NQT_RESPONSE, Convert.toUnsignedLong(commitment));
     }
-    
+
     JSONData.putAccount(response, ACCOUNT_RESPONSE, account.getId());
 
     if (account.getPublicKey() != null) {
-      response.addProperty(ACCOUNT_RESPONSE + "RSExtended", BurstCrypto.getInstance().getBurstAddressFromPublic(account.getPublicKey()).getExtendedAddress());
+      response.addProperty(
+          ACCOUNT_RESPONSE + "RSExtended",
+          BurstCrypto.getInstance()
+              .getBurstAddressFromPublic(account.getPublicKey())
+              .getExtendedAddress());
       response.addProperty(PUBLIC_KEY_RESPONSE, Convert.toHexString(account.getPublicKey()));
     }
     if (account.getName() != null) {
@@ -75,7 +90,7 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
       response.addProperty(DESCRIPTION_RESPONSE, account.getDescription());
     }
 
-    if(height == blockchain.getHeight()) {
+    if (height == blockchain.getHeight()) {
       // Only if the height is the latest as we don't handle past asset balances.
       // Returning assets here is needed by the classic wallet, so we keep it.
       JsonArray assetBalances = new JsonArray();
@@ -84,11 +99,15 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
       for (Account.AccountAsset accountAsset : accountService.getAssets(account.getId(), 0, -1)) {
         JsonObject assetBalance = new JsonObject();
         assetBalance.addProperty(ASSET_RESPONSE, Convert.toUnsignedLong(accountAsset.getAssetId()));
-        assetBalance.addProperty(BALANCE_QNT_RESPONSE, String.valueOf(accountAsset.getQuantityQNT()));
+        assetBalance.addProperty(
+            BALANCE_QNT_RESPONSE, String.valueOf(accountAsset.getQuantityQNT()));
         assetBalances.add(assetBalance);
         JsonObject unconfirmedAssetBalance = new JsonObject();
-        unconfirmedAssetBalance.addProperty(ASSET_RESPONSE, Convert.toUnsignedLong(accountAsset.getAssetId()));
-        unconfirmedAssetBalance.addProperty(UNCONFIRMED_BALANCE_QNT_RESPONSE, String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
+        unconfirmedAssetBalance.addProperty(
+            ASSET_RESPONSE, Convert.toUnsignedLong(accountAsset.getAssetId()));
+        unconfirmedAssetBalance.addProperty(
+            UNCONFIRMED_BALANCE_QNT_RESPONSE,
+            String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
         unconfirmedAssetBalances.add(unconfirmedAssetBalance);
       }
 
@@ -102,5 +121,4 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

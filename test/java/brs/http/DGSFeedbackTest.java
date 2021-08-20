@@ -44,7 +44,9 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
     blockchainMock = mock(Blockchain.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new DGSFeedback(parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
+    t =
+        new DGSFeedback(
+            parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
   }
 
   @Test
@@ -68,10 +70,13 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
     when(mockPurchase.getSellerId()).thenReturn(2L);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsFeedback attachment = (Attachment.DigitalGoodsFeedback) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsFeedback attachment =
+        (Attachment.DigitalGoodsFeedback)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(FEEDBACK, attachment.getTransactionType());
@@ -110,5 +115,4 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
 
     assertEquals(GOODS_NOT_DELIVERED, t.processRequest(req));
   }
-
 }

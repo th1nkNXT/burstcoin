@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetDGSPurchasesTest extends AbstractUnitTest {
@@ -39,13 +38,13 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
 
   @Test
   public void processRequest_getAllPurchases() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, 0),
-        new MockParam(BUYER_PARAMETER, 0),
-        new MockParam(FIRST_INDEX_PARAMETER, 0),
-        new MockParam(LAST_INDEX_PARAMETER, -1),
-        new MockParam(COMPLETED_PARAMETER, false)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, 0),
+            new MockParam(BUYER_PARAMETER, 0),
+            new MockParam(FIRST_INDEX_PARAMETER, 0),
+            new MockParam(LAST_INDEX_PARAMETER, -1),
+            new MockParam(COMPLETED_PARAMETER, false));
 
     final Purchase mockPurchase = mock(Purchase.class);
     when(mockPurchase.isPending()).thenReturn(false);
@@ -64,20 +63,21 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
 
   @Test
   public void processRequest_getSellerPurchases() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, 1),
-        new MockParam(BUYER_PARAMETER, 0),
-        new MockParam(FIRST_INDEX_PARAMETER, 0),
-        new MockParam(LAST_INDEX_PARAMETER, -1),
-        new MockParam(COMPLETED_PARAMETER, false)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, 1),
+            new MockParam(BUYER_PARAMETER, 0),
+            new MockParam(FIRST_INDEX_PARAMETER, 0),
+            new MockParam(LAST_INDEX_PARAMETER, -1),
+            new MockParam(COMPLETED_PARAMETER, false));
 
     final Purchase mockPurchase = mock(Purchase.class);
     when(mockPurchase.isPending()).thenReturn(false);
 
     Collection<Purchase> mockGoodsIterator = mockCollection(mockPurchase);
 
-    when(mockDGSGoodsStoreService.getSellerPurchases(eq(1L), eq(0), eq(-1))).thenReturn(mockGoodsIterator);
+    when(mockDGSGoodsStoreService.getSellerPurchases(eq(1L), eq(0), eq(-1)))
+        .thenReturn(mockGoodsIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -89,20 +89,21 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
 
   @Test
   public void processRequest_getBuyerPurchases() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, 0),
-        new MockParam(BUYER_PARAMETER, 1),
-        new MockParam(FIRST_INDEX_PARAMETER, 0),
-        new MockParam(LAST_INDEX_PARAMETER, -1),
-        new MockParam(COMPLETED_PARAMETER, false)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, 0),
+            new MockParam(BUYER_PARAMETER, 1),
+            new MockParam(FIRST_INDEX_PARAMETER, 0),
+            new MockParam(LAST_INDEX_PARAMETER, -1),
+            new MockParam(COMPLETED_PARAMETER, false));
 
     final Purchase mockPurchase = mock(Purchase.class);
     when(mockPurchase.isPending()).thenReturn(false);
 
     Collection<Purchase> mockGoodsIterator = mockCollection(mockPurchase);
 
-    when(mockDGSGoodsStoreService.getBuyerPurchases(eq(1L), eq(0), eq(-1))).thenReturn(mockGoodsIterator);
+    when(mockDGSGoodsStoreService.getBuyerPurchases(eq(1L), eq(0), eq(-1)))
+        .thenReturn(mockGoodsIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -114,20 +115,21 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
 
   @Test
   public void processRequest_getSellerBuyerPurchases() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, 1),
-        new MockParam(BUYER_PARAMETER, 2),
-        new MockParam(FIRST_INDEX_PARAMETER, 0),
-        new MockParam(LAST_INDEX_PARAMETER, -1),
-        new MockParam(COMPLETED_PARAMETER, false)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, 1),
+            new MockParam(BUYER_PARAMETER, 2),
+            new MockParam(FIRST_INDEX_PARAMETER, 0),
+            new MockParam(LAST_INDEX_PARAMETER, -1),
+            new MockParam(COMPLETED_PARAMETER, false));
 
     final Purchase mockPurchase = mock(Purchase.class);
     when(mockPurchase.isPending()).thenReturn(false);
 
     Collection<Purchase> mockGoodsIterator = mockCollection(mockPurchase);
 
-    when(mockDGSGoodsStoreService.getSellerBuyerPurchases(eq(1L), eq(2L), eq(0), eq(-1))).thenReturn(mockGoodsIterator);
+    when(mockDGSGoodsStoreService.getSellerBuyerPurchases(eq(1L), eq(2L), eq(0), eq(-1)))
+        .thenReturn(mockGoodsIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -136,5 +138,4 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
     assertNotNull(purchasesResult);
     assertEquals(1, purchasesResult.size());
   }
-
 }

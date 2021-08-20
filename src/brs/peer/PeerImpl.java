@@ -52,7 +52,7 @@ final class PeerImpl implements Peer {
     } catch (MalformedURLException ignored) {
     }
     this.state.set(State.NON_CONNECTED);
-    this.version.set(Version.EMPTY); //not null
+    this.version.set(Version.EMPTY); // not null
     this.shareAddress.set(true);
   }
 
@@ -79,8 +79,7 @@ final class PeerImpl implements Peer {
     if (this.state.get() == State.NON_CONNECTED) {
       this.state.set(state);
       Peers.notifyListeners(this, Peers.Event.ADDED_ACTIVE_PEER);
-    }
-    else if (state != State.NON_CONNECTED) {
+    } else if (state != State.NON_CONNECTED) {
       this.state.set(state);
       Peers.notifyListeners(this, Peers.Event.CHANGED_ACTIVE_PEER);
     }
@@ -91,10 +90,11 @@ final class PeerImpl implements Peer {
     return downloadedVolume.get();
   }
 
-  public boolean diffLastDownloadedTransactions( byte[] data ) {
+  public boolean diffLastDownloadedTransactions(byte[] data) {
     synchronized (lastDownloadedTransactionsLock) {
       byte[] newDigest = Crypto.sha256().digest(data);
-      if (lastDownloadedTransactionsDigest != null && Arrays.equals(newDigest, lastDownloadedTransactionsDigest)) {
+      if (lastDownloadedTransactionsDigest != null
+          && Arrays.equals(newDigest, lastDownloadedTransactionsDigest)) {
         return false;
       }
       lastDownloadedTransactionsDigest = newDigest;
@@ -136,14 +136,17 @@ final class PeerImpl implements Peer {
   public boolean isAtLeastMyVersion() {
     return isHigherOrEqualVersionThan(Burst.VERSION);
   }
-  
+
   void setVersion(String version) {
     this.version.set(Version.EMPTY);
     isOldVersion.set(false);
     if (Burst.APPLICATION.equals(getApplication()) && version != null) {
       try {
         this.version.set(Version.parse(version));
-        isOldVersion.set(Burst.getFluxCapacitor().getValue(FluxValues.MIN_PEER_VERSION).isGreaterThan(this.version.get()));
+        isOldVersion.set(
+            Burst.getFluxCapacitor()
+                .getValue(FluxValues.MIN_PEER_VERSION)
+                .isGreaterThan(this.version.get()));
       } catch (IllegalArgumentException e) {
         isOldVersion.set(true);
       }
@@ -171,8 +174,11 @@ final class PeerImpl implements Peer {
   @Override
   public String getSoftware() {
     return Convert.truncate(application.get(), "?", 10, false)
-        + " (" + Convert.truncate(version.toString(), "?", 10, false) + ")"
-        + " @ " + Convert.truncate(platform.get(), "?", 10, false);
+        + " ("
+        + Convert.truncate(version.toString(), "?", 10, false)
+        + ")"
+        + " @ "
+        + Convert.truncate(platform.get(), "?", 10, false);
   }
 
   @Override
@@ -212,27 +218,32 @@ final class PeerImpl implements Peer {
 
   @Override
   public boolean isRebroadcastTarget() {
-    return announcedAddress.get() != null && Peers.rebroadcastPeers.contains(announcedAddress.get());
+    return announcedAddress.get() != null
+        && Peers.rebroadcastPeers.contains(announcedAddress.get());
   }
 
   @Override
   public boolean isBlacklisted() {
-    return blacklistingTime.get() > 0 || isOldVersion.get() || Peers.knownBlacklistedPeers.contains(peerAddress);
+    return blacklistingTime.get() > 0
+        || isOldVersion.get()
+        || Peers.knownBlacklistedPeers.contains(peerAddress);
   }
 
   @Override
   public void blacklist(Exception cause, String description) {
-    if (cause instanceof BurstException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
-        || cause instanceof SQLException || cause.getCause() instanceof SQLException) {
-      // don't blacklist peers just because a feature is not yet enabled, or because of database timeouts
+    if (cause instanceof BurstException.NotCurrentlyValidException
+        || cause instanceof BlockchainProcessor.BlockOutOfOrderException
+        || cause instanceof SQLException
+        || cause.getCause() instanceof SQLException) {
+      // don't blacklist peers just because a feature is not yet enabled, or because of database
+      // timeouts
       // prevents erroneous blacklisting during loading of blockchain from scratch
       return;
     }
-    if ( (cause instanceof IOException) ) {
+    if ((cause instanceof IOException)) {
       // don't trigger verbose logging, if we had an IO Exception (eg. network stuff)
       blacklist();
-    }
-    else {
+    } else {
       boolean alreadyBlacklisted = isBlacklisted();
       logger.error("Reason for following blacklist: " + cause.getMessage(), cause);
       blacklist(description); // refresh blacklist expiry
@@ -244,7 +255,7 @@ final class PeerImpl implements Peer {
 
   @Override
   public void blacklist(String description) {
-    if (! isBlacklisted() ) {
+    if (!isBlacklisted()) {
       if (logger.isInfoEnabled()) {
         logger.info("Blacklisting {} ({}) because of: {}", peerAddress, getVersion(), description);
       }
@@ -268,7 +279,8 @@ final class PeerImpl implements Peer {
 
   @Override
   public void updateBlacklistedStatus(long curTime) {
-    if (blacklistingTime.get() > 0 && blacklistingTime.get() + Peers.blacklistingPeriod <= curTime) {
+    if (blacklistingTime.get() > 0
+        && blacklistingTime.get() + Peers.blacklistingPeriod <= curTime) {
       unBlacklist();
     }
   }
@@ -283,6 +295,7 @@ final class PeerImpl implements Peer {
   public int getLastUpdated() {
     return lastUpdated.get();
   }
+
   void setLastUpdated(int lastUpdated) {
     this.lastUpdated.set(lastUpdated);
   }
@@ -309,7 +322,10 @@ final class PeerImpl implements Peer {
       buf.append(address);
       if (port.get() <= 0) {
         buf.append(':');
-        buf.append(Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Constants.PEER_TESTNET_PORT : Constants.PEER_DEFAULT_PORT);
+        buf.append(
+            Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)
+                ? Constants.PEER_TESTNET_PORT
+                : Constants.PEER_DEFAULT_PORT);
       }
       buf.append("/burst");
       URL url = new URL(buf.toString());
@@ -320,7 +336,7 @@ final class PeerImpl implements Peer {
         log = "\"" + url.toString() + "\": " + stringWriter.toString();
       }
 
-      connection = (HttpURLConnection)url.openConnection();
+      connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("POST");
       connection.setDoOutput(true);
       connection.setConnectTimeout(Peers.connectTimeout);
@@ -330,7 +346,8 @@ final class PeerImpl implements Peer {
       connection.setRequestProperty("Connection", "close");
 
       CountingOutputStream cos = new CountingOutputStream(connection.getOutputStream());
-      try (Writer writer = new BufferedWriter(new OutputStreamWriter(cos, StandardCharsets.UTF_8))) {
+      try (Writer writer =
+          new BufferedWriter(new OutputStreamWriter(cos, StandardCharsets.UTF_8))) {
         JSON.writeTo(request, writer);
       } // rico666: no catch?
       updateUploadedVolume(cos.getCount());
@@ -351,21 +368,23 @@ final class PeerImpl implements Peer {
             }
           }
           String responseValue = byteArrayOutputStream.toString("UTF-8");
-          if (! responseValue.isEmpty() && responseStream instanceof GZIPInputStream) {
-            log += String.format("[length: %d, compression ratio: %.2f]", cis.getCount(), (double)cis.getCount() / (double)responseValue.length());
+          if (!responseValue.isEmpty() && responseStream instanceof GZIPInputStream) {
+            log +=
+                String.format(
+                    "[length: %d, compression ratio: %.2f]",
+                    cis.getCount(), (double) cis.getCount() / (double) responseValue.length());
           }
           log += " >>> " + responseValue;
           showLog = true;
           response = JSON.getAsJsonObject(JSON.parse(responseValue));
-        }
-        else {
-          try (Reader reader = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
+        } else {
+          try (Reader reader =
+              new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
             response = JSON.getAsJsonObject(JSON.parse(reader));
           }
         }
         updateDownloadedVolume(cis.getCount());
-      }
-      else {
+      } else {
 
         if ((Peers.communicationLoggingMask & Peers.LOGGING_MASK_NON200_RESPONSES) != 0) {
           log += " >>> Peer responded with HTTP " + connection.getResponseCode() + " code!";
@@ -379,7 +398,7 @@ final class PeerImpl implements Peer {
         response = error("Peer responded with HTTP " + connection.getResponseCode());
       }
 
-    } catch (RuntimeException|IOException e) {
+    } catch (RuntimeException | IOException e) {
       if (!isConnectionException(e)) {
         logger.debug("Error sending JSON request", e);
       }
@@ -390,7 +409,12 @@ final class PeerImpl implements Peer {
       if (state.get() == State.CONNECTED) {
         setState(State.DISCONNECTED);
       }
-      response = error("Error getting response from peer: " + e.getClass().toString() + ": " + e.getMessage());
+      response =
+          error(
+              "Error getting response from peer: "
+                  + e.getClass().toString()
+                  + ": "
+                  + e.getMessage());
     }
 
     if (showLog) {
@@ -402,11 +426,12 @@ final class PeerImpl implements Peer {
     }
 
     return response;
-
   }
 
   private boolean isConnectionException(Throwable e) {
-    if (e instanceof UnknownHostException || e instanceof SocketTimeoutException || e instanceof SocketException) return true;
+    if (e instanceof UnknownHostException
+        || e instanceof SocketTimeoutException
+        || e instanceof SocketException) return true;
     if (e.getCause() == null) return false;
     return isConnectionException(e.getCause());
   }
@@ -425,8 +450,9 @@ final class PeerImpl implements Peer {
       setVersion(JSON.getAsString(response.get("version")));
       platform.set(JSON.getAsString(response.get("platform")));
       shareAddress.set(Boolean.TRUE.equals(JSON.getAsBoolean(response.get("shareAddress"))));
-      String newAnnouncedAddress = Convert.emptyToNull(JSON.getAsString(response.get("announcedAddress")));
-      if (newAnnouncedAddress != null && ! newAnnouncedAddress.equals(announcedAddress.get())) {
+      String newAnnouncedAddress =
+          Convert.emptyToNull(JSON.getAsString(response.get("announcedAddress")));
+      if (newAnnouncedAddress != null && !newAnnouncedAddress.equals(announcedAddress.get())) {
         // force verification of changed announced address
         setState(Peer.State.NON_CONNECTED);
         setAnnouncedAddress(newAnnouncedAddress);
@@ -440,10 +466,8 @@ final class PeerImpl implements Peer {
       Peers.updateAddress(this);
       lastUpdated.set(currentTime);
       logger.debug("Connected to {}", peerAddress);
-    }
-    else {
+    } else {
       setState(State.NON_CONNECTED);
     }
   }
-
 }

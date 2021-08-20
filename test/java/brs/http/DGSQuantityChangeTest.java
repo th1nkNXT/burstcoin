@@ -46,9 +46,9 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   @Test
   public void processRequest() throws BurstException {
     final int deltaQualityParameter = 5;
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DELTA_QUANTITY_PARAMETER, deltaQualityParameter)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(DELTA_QUANTITY_PARAMETER, deltaQualityParameter));
 
     final long mockGoodsID = 123l;
     final Goods mockGoods = mock(Goods.class);
@@ -63,10 +63,13 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
     when(mockParameterService.getGoods(eq(req))).thenReturn(mockGoods);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsQuantityChange attachment = (Attachment.DigitalGoodsQuantityChange) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsQuantityChange attachment =
+        (Attachment.DigitalGoodsQuantityChange)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     attachment.getTransactionType();
@@ -108,9 +111,8 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_missingDeltaQuantity() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DELTA_QUANTITY_PARAMETER, null)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DELTA_QUANTITY_PARAMETER, null));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -127,9 +129,8 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_deltaQuantityWrongFormat() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DELTA_QUANTITY_PARAMETER, "Bob")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DELTA_QUANTITY_PARAMETER, "Bob"));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -146,9 +147,8 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_deltaQuantityOverMaxIncorrectDeltaQuantity() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MIN_VALUE)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MIN_VALUE));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -164,10 +164,10 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_deltaQuantityLowerThanNegativeMaxIncorrectDeltaQuantity() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MAX_VALUE)
-    );
+  public void processRequest_deltaQuantityLowerThanNegativeMaxIncorrectDeltaQuantity()
+      throws BurstException {
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MAX_VALUE));
 
     final Goods mockGoods = mock(Goods.class);
     when(mockGoods.isDelisted()).thenReturn(false);
@@ -181,5 +181,4 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
 
     assertEquals(INCORRECT_DELTA_QUANTITY, t.processRequest(req));
   }
-
 }

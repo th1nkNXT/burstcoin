@@ -14,7 +14,6 @@ final class ProcessTransactions implements PeerServlet.PeerRequestHandler {
     this.transactionProcessor = transactionProcessor;
   }
 
-
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
 

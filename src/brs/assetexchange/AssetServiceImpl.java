@@ -19,7 +19,11 @@ class AssetServiceImpl {
 
   private final BurstKey.LongKeyFactory<Asset> assetDbKeyFactory;
 
-  public AssetServiceImpl(AssetAccountServiceImpl assetAccountService, TradeServiceImpl tradeService, AssetStore assetStore, AssetTransferServiceImpl assetTransferService) {
+  public AssetServiceImpl(
+      AssetAccountServiceImpl assetAccountService,
+      TradeServiceImpl tradeService,
+      AssetStore assetStore,
+      AssetTransferServiceImpl assetTransferService) {
     this.assetAccountService = assetAccountService;
     this.tradeService = tradeService;
     this.assetStore = assetStore;
@@ -67,5 +71,4 @@ class AssetServiceImpl {
     final BurstKey dbKey = assetDbKeyFactory.newKey(transaction.getId());
     assetTable.insert(new Asset(dbKey, transaction, attachment));
   }
-
 }

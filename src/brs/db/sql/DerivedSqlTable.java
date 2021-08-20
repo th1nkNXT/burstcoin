@@ -16,7 +16,7 @@ public abstract class DerivedSqlTable implements DerivedTable {
   final Field<Boolean> latestField;
 
   DerivedSqlTable(String table, TableImpl<?> tableClass, DerivedTableManager derivedTableManager) {
-    this.table      = table;
+    this.table = table;
     this.tableClass = tableClass;
     logger.trace("Creating derived table for {}", table);
     derivedTableManager.registerDerivedTable(this);
@@ -29,9 +29,10 @@ public abstract class DerivedSqlTable implements DerivedTable {
     if (!Db.isInTransaction()) {
       throw new IllegalStateException("Not in transaction");
     }
-    Db.useDSLContext(ctx -> {
-      ctx.delete(tableClass).where(heightField.gt(height)).execute();
-    });
+    Db.useDSLContext(
+        ctx -> {
+          ctx.delete(tableClass).where(heightField.gt(height)).execute();
+        });
   }
 
   @Override
@@ -39,20 +40,19 @@ public abstract class DerivedSqlTable implements DerivedTable {
     if (!Db.isInTransaction()) {
       throw new IllegalStateException("Not in transaction");
     }
-    Db.useDSLContext(ctx -> {
-      ctx.delete(tableClass).execute();
-    });
+    Db.useDSLContext(
+        ctx -> {
+          ctx.delete(tableClass).execute();
+        });
   }
 
   @Override
   public void trim(int height) {
-    //nothing to trim
+    // nothing to trim
   }
 
   @Override
-  public void finish() {
-
-  }
+  public void finish() {}
 
   @Override
   public void optimize() {

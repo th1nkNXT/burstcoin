@@ -7,18 +7,20 @@ import brs.grpc.proto.BrsApi;
 import brs.grpc.proto.ProtoBuilder;
 import brs.services.DGSGoodsStoreService;
 
-public class GetDgsPurchaseHandler implements GrpcApiHandler<BrsApi.GetByIdRequest, BrsApi.DgsPurchase> {
+public class GetDgsPurchaseHandler
+    implements GrpcApiHandler<BrsApi.GetByIdRequest, BrsApi.DgsPurchase> {
 
-    private final DGSGoodsStoreService digitalGoodsStoreService;
+  private final DGSGoodsStoreService digitalGoodsStoreService;
 
-    public GetDgsPurchaseHandler(DGSGoodsStoreService digitalGoodsStoreService) {
-        this.digitalGoodsStoreService = digitalGoodsStoreService;
-    }
+  public GetDgsPurchaseHandler(DGSGoodsStoreService digitalGoodsStoreService) {
+    this.digitalGoodsStoreService = digitalGoodsStoreService;
+  }
 
-    @Override
-    public BrsApi.DgsPurchase handleRequest(BrsApi.GetByIdRequest request) throws Exception {
-        DigitalGoodsStore.Purchase purchase = digitalGoodsStoreService.getPurchase(request.getId());
-        if (purchase == null) throw new ApiException("Could not find purchase");
-        return ProtoBuilder.buildPurchase(purchase, digitalGoodsStoreService.getGoods(purchase.getGoodsId()));
-    }
+  @Override
+  public BrsApi.DgsPurchase handleRequest(BrsApi.GetByIdRequest request) throws Exception {
+    DigitalGoodsStore.Purchase purchase = digitalGoodsStoreService.getPurchase(request.getId());
+    if (purchase == null) throw new ApiException("Could not find purchase");
+    return ProtoBuilder.buildPurchase(
+        purchase, digitalGoodsStoreService.getGoods(purchase.getGoodsId()));
+  }
 }

@@ -18,6 +18,7 @@ public final class ProcessBlock implements PeerServlet.PeerRequestHandler {
   }
 
   private static final JsonElement ACCEPTED;
+
   static {
     JsonObject response = new JsonObject();
     response.addProperty("accepted", true);
@@ -25,6 +26,7 @@ public final class ProcessBlock implements PeerServlet.PeerRequestHandler {
   }
 
   private static final JsonElement NOT_ACCEPTED;
+
   static {
     JsonObject response = new JsonObject();
     response.addProperty("accepted", false);
@@ -36,7 +38,10 @@ public final class ProcessBlock implements PeerServlet.PeerRequestHandler {
 
     try {
 
-      if (! blockchain.getLastBlock().getStringId().equals(JSON.getAsString(request.get("previousBlock")))) {
+      if (!blockchain
+          .getLastBlock()
+          .getStringId()
+          .equals(JSON.getAsString(request.get("previousBlock")))) {
         // do this check first to avoid validation failures of future blocks and transactions
         // when loading blockchain from scratch
         return NOT_ACCEPTED;
@@ -44,13 +49,11 @@ public final class ProcessBlock implements PeerServlet.PeerRequestHandler {
       blockchainProcessor.processPeerBlock(request, peer);
       return ACCEPTED;
 
-    } catch (BurstException|RuntimeException e) {
+    } catch (BurstException | RuntimeException e) {
       if (peer != null) {
         peer.blacklist(e, "received invalid data via requestType=processBlock");
       }
       return NOT_ACCEPTED;
     }
-
   }
-
 }

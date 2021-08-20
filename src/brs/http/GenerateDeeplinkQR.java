@@ -24,7 +24,7 @@ public class GenerateDeeplinkQR extends HttpRequestHandler {
   public static final GenerateDeeplinkQR instance = new GenerateDeeplinkQR();
 
   private GenerateDeeplinkQR() {
-    super(new APITag[]{APITag.UTILS}, DOMAIN_PARAMETER, ACTION_PARAMETER, PAYLOAD_PARAMETER);
+    super(new APITag[] {APITag.UTILS}, DOMAIN_PARAMETER, ACTION_PARAMETER, PAYLOAD_PARAMETER);
   }
 
   @Override
@@ -47,7 +47,8 @@ public class GenerateDeeplinkQR extends HttpRequestHandler {
 
       DeeplinkGenerator deeplinkGenerator = new DeeplinkGenerator();
       try {
-        final BufferedImage qrImage = deeplinkGenerator.generateDeepLinkQrCode(domain, action, payload);
+        final BufferedImage qrImage =
+            deeplinkGenerator.generateDeepLinkQrCode(domain, action, payload);
         resp.setContentType("image/jpeg");
         ImageIO.write(qrImage, "jpg", resp.getOutputStream());
         resp.getOutputStream().close();

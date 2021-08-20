@@ -7,16 +7,14 @@ import com.google.protobuf.Empty;
 
 public class GetCurrentTimeHandler implements GrpcApiHandler<Empty, BrsApi.Time> {
 
-    private final TimeService timeService;
+  private final TimeService timeService;
 
-    public GetCurrentTimeHandler(TimeService timeService) {
-        this.timeService = timeService;
-    }
+  public GetCurrentTimeHandler(TimeService timeService) {
+    this.timeService = timeService;
+  }
 
-    @Override
-    public BrsApi.Time handleRequest(Empty empty) {
-        return BrsApi.Time.newBuilder()
-                .setTime(timeService.getEpochTime())
-                .build();
-    }
+  @Override
+  public BrsApi.Time handleRequest(Empty empty) {
+    return BrsApi.Time.newBuilder().setTime(timeService.getEpochTime()).build();
+  }
 }

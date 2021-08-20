@@ -36,7 +36,8 @@ public class TransactionDuplicatesCheckerImplTest {
   public void setUp() {
     mockStatic(Burst.class);
 
-    final FluxCapacitor mockFluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.PRE_POC2);
+    final FluxCapacitor mockFluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.PRE_POC2);
     when(Burst.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
     BlockchainImpl mockBlockchain = mock(BlockchainImpl.class);
     when(mockBlockchain.getHeight()).thenReturn(4);
@@ -49,10 +50,20 @@ public class TransactionDuplicatesCheckerImplTest {
 
   @DisplayName("First transaction is never a duplicate when checking for any duplicate")
   @Test
-  public void firstTransactionIsNeverADuplicateWhenCheckingForAnyDuplicate() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+  public void firstTransactionIsNeverADuplicateWhenCheckingForAnyDuplicate()
+      throws NotValidException {
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
   }
@@ -60,40 +71,87 @@ public class TransactionDuplicatesCheckerImplTest {
   @DisplayName("Adding same transaction twice counts as a duplicate")
   @Test
   public void addingSameTransactionTwiceCountsAsADuplicate() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
     assertTrue(t.hasAnyDuplicate(transaction));
   }
 
-
   @DisplayName("Duplicate transaction is duplicate when checking for any duplicate")
   @Test
-  public void duplicateTransactionIsDuplicateWhenCheckingForAnyDuplicate() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+  public void duplicateTransactionIsDuplicateWhenCheckingForAnyDuplicate()
+      throws NotValidException {
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
-    Transaction duplicate = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(2).senderId(345L).build();
+    Transaction duplicate =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(2)
+            .senderId(345L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
     assertTrue(t.hasAnyDuplicate(duplicate));
   }
 
-  @DisplayName("Duplicate transaction removes cheaper duplicate when checking for cheapest duplicate")
+  @DisplayName(
+      "Duplicate transaction removes cheaper duplicate when checking for cheapest duplicate")
   @Test
-  public void duplicateTransactionRemovesCheaperDuplicateWhenCheckingForCheapestDuplicate() throws NotValidException {
-    Transaction cheaper = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+  public void duplicateTransactionRemovesCheaperDuplicateWhenCheckingForCheapestDuplicate()
+      throws NotValidException {
+    Transaction cheaper =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
-    Transaction moreExpensive = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 999999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(2).senderId(345L).build();
+    Transaction moreExpensive =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                999999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(2)
+            .senderId(345L)
+            .build();
 
     final TransactionDuplicationResult hasCheaperFirst = t.removeCheaperDuplicate(cheaper);
     assertFalse(hasCheaperFirst.duplicate);
@@ -113,21 +171,38 @@ public class TransactionDuplicatesCheckerImplTest {
   @DisplayName("Some transactions are always a duplicate")
   @Test
   public void someTransactionsAreAlwaysADuplicate() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new AdvancedPaymentEscrowResult(123L, DecisionType.REFUND,5))
-        .id(1).senderId(123L).build();
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new AdvancedPaymentEscrowResult(123L, DecisionType.REFUND, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
     assertTrue(t.hasAnyDuplicate(transaction));
     assertTrue(t.removeCheaperDuplicate(transaction).duplicate);
   }
 
-
   @DisplayName("Some transaction are never a duplicate")
   @Test
   public void someTransactionsAreNeverADuplicate() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new AdvancedPaymentSubscriptionSubscribe(123, 5))
-        .id(1).senderId(123L).build();
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new AdvancedPaymentSubscriptionSubscribe(123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
     assertFalse(t.hasAnyDuplicate(transaction));
@@ -137,13 +212,31 @@ public class TransactionDuplicatesCheckerImplTest {
   @DisplayName("Removing transaction makes it not a duplicate anymore")
   @Test
   public void removingTransactionMakesItNotADuplicateAnymore() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
-    Transaction duplicate = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(2).senderId(345L).build();
+    Transaction duplicate =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(2)
+            .senderId(345L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
     assertTrue(t.hasAnyDuplicate(duplicate));
@@ -156,13 +249,31 @@ public class TransactionDuplicatesCheckerImplTest {
   @DisplayName("Clearing removes all transactions")
   @Test
   public void clearingRemovesAllTransactions() throws NotValidException {
-    Transaction transaction = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(1).senderId(123L).build();
+    Transaction transaction =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(1)
+            .senderId(123L)
+            .build();
 
-    Transaction duplicate = new Transaction.Builder((byte) 0, TestConstants.TEST_PUBLIC_KEY_BYTES, 1, 99999999, 50000, (short) 500,
-        new MessagingAliasSell("aliasName", 123, 5))
-        .id(2).senderId(345L).build();
+    Transaction duplicate =
+        new Transaction.Builder(
+                (byte) 0,
+                TestConstants.TEST_PUBLIC_KEY_BYTES,
+                1,
+                99999999,
+                50000,
+                (short) 500,
+                new MessagingAliasSell("aliasName", 123, 5))
+            .id(2)
+            .senderId(345L)
+            .build();
 
     assertFalse(t.hasAnyDuplicate(transaction));
     assertTrue(t.hasAnyDuplicate(duplicate));

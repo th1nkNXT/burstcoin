@@ -44,7 +44,9 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
     assetExchangeMock = mock(AssetExchange.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new CancelBidOrder(parameterServiceMock, blockchainMock, assetExchangeMock, apiTransactionManagerMock);
+    t =
+        new CancelBidOrder(
+            parameterServiceMock, blockchainMock, assetExchangeMock, apiTransactionManagerMock);
   }
 
   @Test
@@ -53,9 +55,8 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
     final long orderAccountId = 1;
     final long senderAccountId = orderAccountId;
 
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ORDER_PARAMETER, orderId)
-    );
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, orderId));
 
     final Bid mockBidOrder = mock(Bid.class);
     when(mockBidOrder.getAccountId()).thenReturn(orderAccountId);
@@ -66,10 +67,13 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.ColoredCoinsBidOrderCancellation attachment = (brs.Attachment.ColoredCoinsBidOrderCancellation) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.ColoredCoinsBidOrderCancellation attachment =
+        (brs.Attachment.ColoredCoinsBidOrderCancellation)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(BID_ORDER_CANCELLATION, attachment.getTransactionType());
@@ -84,9 +88,8 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
   @Test
   public void processRequest_orderDataMissingUnkownOrder() throws BurstException {
     final int orderId = 123;
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ORDER_PARAMETER, orderId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, orderId));
 
     when(assetExchangeMock.getBidOrder(eq(123L))).thenReturn(null);
 
@@ -99,9 +102,8 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
     final long orderAccountId = 1;
     final long senderAccountId = 2;
 
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ORDER_PARAMETER, orderId)
-    );
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, orderId));
 
     final Bid mockBidOrder = mock(Bid.class);
     when(mockBidOrder.getAccountId()).thenReturn(orderAccountId);
@@ -114,5 +116,4 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
 
     assertEquals(UNKNOWN_ORDER, t.processRequest(req));
   }
-
 }

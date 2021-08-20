@@ -51,9 +51,9 @@ final class GetTransactionBytes extends APIServlet.JsonRequestHandler {
     }
 
     response.addProperty("transactionBytes", Convert.toHexString(transaction.getBytes()));
-    response.addProperty("unsignedTransactionBytes", Convert.toHexString(transaction.getUnsignedBytes()));
+    response.addProperty(
+        "unsignedTransactionBytes", Convert.toHexString(transaction.getUnsignedBytes()));
 
     return response;
   }
-
 }

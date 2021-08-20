@@ -22,7 +22,8 @@ public interface EntityTable<T> extends DerivedTable {
 
   Collection<T> getManyBy(Condition condition, int height, int from, int to);
 
-  Collection<T> getManyBy(Condition condition, int height, int from, int to, List<SortField<?>> sort);
+  Collection<T> getManyBy(
+      Condition condition, int height, int from, int to, List<SortField<?>> sort);
 
   Collection<T> getManyBy(DSLContext ctx, SelectQuery<? extends Record> query, boolean cache);
 

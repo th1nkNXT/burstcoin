@@ -23,7 +23,8 @@ public abstract class Order {
     this.creationHeight = transaction.getHeight();
   }
 
-  Order(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT) {
+  Order(
+      long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT) {
     this.id = id;
     this.accountId = accountId;
     this.assetId = assetId;
@@ -64,20 +65,41 @@ public abstract class Order {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " id: " + Convert.toUnsignedLong(id) + " account: " + Convert.toUnsignedLong(accountId)
-        + " asset: " + Convert.toUnsignedLong(assetId) + " price: " + priceNQT + " quantity: " + quantityQNT + " height: " + creationHeight;
+    return getClass().getSimpleName()
+        + " id: "
+        + Convert.toUnsignedLong(id)
+        + " account: "
+        + Convert.toUnsignedLong(accountId)
+        + " asset: "
+        + Convert.toUnsignedLong(assetId)
+        + " price: "
+        + priceNQT
+        + " quantity: "
+        + quantityQNT
+        + " height: "
+        + creationHeight;
   }
 
   public static class Ask extends Order {
 
     public final BurstKey dbKey;
 
-    public Ask(BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
+    public Ask(
+        BurstKey dbKey,
+        Transaction transaction,
+        Attachment.ColoredCoinsAskOrderPlacement attachment) {
       super(transaction, attachment);
       this.dbKey = dbKey;
     }
 
-    protected Ask(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, BurstKey dbKey) {
+    protected Ask(
+        long id,
+        long accountId,
+        long assetId,
+        long priceNQT,
+        int creationHeight,
+        long quantityQNT,
+        BurstKey dbKey) {
       super(id, accountId, assetId, priceNQT, creationHeight, quantityQNT);
       this.dbKey = dbKey;
     }
@@ -92,12 +114,22 @@ public abstract class Order {
 
     public final BurstKey dbKey;
 
-    public Bid(BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
+    public Bid(
+        BurstKey dbKey,
+        Transaction transaction,
+        Attachment.ColoredCoinsBidOrderPlacement attachment) {
       super(transaction, attachment);
       this.dbKey = dbKey;
     }
 
-    protected Bid(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, BurstKey dbKey) {
+    protected Bid(
+        long id,
+        long accountId,
+        long assetId,
+        long priceNQT,
+        int creationHeight,
+        long quantityQNT,
+        BurstKey dbKey) {
       super(id, accountId, assetId, priceNQT, creationHeight, quantityQNT);
       this.dbKey = dbKey;
     }

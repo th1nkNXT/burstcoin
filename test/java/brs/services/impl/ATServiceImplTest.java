@@ -60,5 +60,4 @@ public class ATServiceImplTest {
 
     assertEquals(mockAT, t.getAT(atId));
   }
-
 }

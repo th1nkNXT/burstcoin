@@ -24,9 +24,20 @@ public class Trade {
   private final long priceNQT;
   private final boolean isBuy;
 
-  protected Trade(int timestamp, long assetId, long blockId, int height,
-                  long askOrderId, long bidOrderId, int askOrderHeight, int bidOrderHeight,
-                  long sellerId, long buyerId, BurstKey dbKey, long quantityQNT, long priceNQT) {
+  protected Trade(
+      int timestamp,
+      long assetId,
+      long blockId,
+      int height,
+      long askOrderId,
+      long bidOrderId,
+      int askOrderHeight,
+      int bidOrderHeight,
+      long sellerId,
+      long buyerId,
+      BurstKey dbKey,
+      long quantityQNT,
+      long priceNQT) {
     this.timestamp = timestamp;
     this.assetId = assetId;
     this.blockId = blockId;
@@ -40,7 +51,9 @@ public class Trade {
     this.dbKey = dbKey;
     this.quantityQNT = quantityQNT;
     this.priceNQT = priceNQT;
-    this.isBuy = askOrderHeight < bidOrderHeight || (askOrderHeight == bidOrderHeight && askOrderId < bidOrderId);
+    this.isBuy =
+        askOrderHeight < bidOrderHeight
+            || (askOrderHeight == bidOrderHeight && askOrderId < bidOrderId);
   }
 
   public Trade(BurstKey dbKey, long assetId, Block block, Order.Ask askOrder, Order.Bid bidOrder) {
@@ -56,15 +69,23 @@ public class Trade {
     this.sellerId = askOrder.getAccountId();
     this.buyerId = bidOrder.getAccountId();
     this.quantityQNT = Math.min(askOrder.getQuantityQNT(), bidOrder.getQuantityQNT());
-    this.isBuy = askOrderHeight < bidOrderHeight || (askOrderHeight == bidOrderHeight && askOrderId < bidOrderId);
+    this.isBuy =
+        askOrderHeight < bidOrderHeight
+            || (askOrderHeight == bidOrderHeight && askOrderId < bidOrderId);
     this.priceNQT = isBuy ? askOrder.getPriceNQT() : bidOrder.getPriceNQT();
   }
 
-  public long getBlockId() { return blockId; }
+  public long getBlockId() {
+    return blockId;
+  }
 
-  public long getAskOrderId() { return askOrderId; }
+  public long getAskOrderId() {
+    return askOrderId;
+  }
 
-  public long getBidOrderId() { return bidOrderId; }
+  public long getBidOrderId() {
+    return bidOrderId;
+  }
 
   public int getAskOrderHeight() {
     return askOrderHeight;
@@ -82,13 +103,21 @@ public class Trade {
     return buyerId;
   }
 
-  public long getQuantityQNT() { return quantityQNT; }
+  public long getQuantityQNT() {
+    return quantityQNT;
+  }
 
-  public long getPriceNQT() { return priceNQT; }
+  public long getPriceNQT() {
+    return priceNQT;
+  }
 
-  public long getAssetId() { return assetId; }
+  public long getAssetId() {
+    return assetId;
+  }
 
-  public int getTimestamp() { return timestamp; }
+  public int getTimestamp() {
+    return timestamp;
+  }
 
   public int getHeight() {
     return height;
@@ -100,8 +129,17 @@ public class Trade {
 
   @Override
   public String toString() {
-    return "Trade asset: " + Convert.toUnsignedLong(assetId) + " ask: " + Convert.toUnsignedLong(askOrderId)
-        + " bid: " + Convert.toUnsignedLong(bidOrderId) + " price: " + priceNQT + " quantity: " + quantityQNT + " height: " + height;
+    return "Trade asset: "
+        + Convert.toUnsignedLong(assetId)
+        + " ask: "
+        + Convert.toUnsignedLong(askOrderId)
+        + " bid: "
+        + Convert.toUnsignedLong(bidOrderId)
+        + " price: "
+        + priceNQT
+        + " quantity: "
+        + quantityQNT
+        + " height: "
+        + height;
   }
-
 }

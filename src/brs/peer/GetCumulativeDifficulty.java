@@ -13,7 +13,6 @@ final class GetCumulativeDifficulty implements PeerServlet.PeerRequestHandler {
     this.blockchain = blockchain;
   }
 
-
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
     JsonObject response = new JsonObject();
@@ -23,5 +22,4 @@ final class GetCumulativeDifficulty implements PeerServlet.PeerRequestHandler {
     response.addProperty("blockchainHeight", lastBlock.getHeight());
     return response;
   }
-
 }

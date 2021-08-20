@@ -19,7 +19,12 @@ public final class GetBlock extends APIServlet.JsonRequestHandler {
   private final BlockService blockService;
 
   GetBlock(Blockchain blockchain, BlockService blockService) {
-    super(new APITag[] {APITag.BLOCKS}, BLOCK_PARAMETER, HEIGHT_PARAMETER, TIMESTAMP_PARAMETER, INCLUDE_TRANSACTIONS_PARAMETER);
+    super(
+        new APITag[] {APITag.BLOCKS},
+        BLOCK_PARAMETER,
+        HEIGHT_PARAMETER,
+        TIMESTAMP_PARAMETER,
+        INCLUDE_TRANSACTIONS_PARAMETER);
     this.blockchain = blockchain;
     this.blockService = blockService;
   }
@@ -65,8 +70,14 @@ public final class GetBlock extends APIServlet.JsonRequestHandler {
       return UNKNOWN_BLOCK;
     }
 
-    boolean includeTransactions = Parameters.isTrue(req.getParameter(INCLUDE_TRANSACTIONS_PARAMETER));
+    boolean includeTransactions =
+        Parameters.isTrue(req.getParameter(INCLUDE_TRANSACTIONS_PARAMETER));
 
-    return JSONData.block(blockData, includeTransactions, blockchain.getHeight(), blockService.getBlockReward(blockData), blockService.getScoopNum(blockData));
+    return JSONData.block(
+        blockData,
+        includeTransactions,
+        blockchain.getHeight(),
+        blockService.getBlockReward(blockData),
+        blockService.getScoopNum(blockData));
   }
 }

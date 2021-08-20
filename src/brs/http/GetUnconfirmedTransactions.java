@@ -23,8 +23,14 @@ final class GetUnconfirmedTransactions extends APIServlet.JsonRequestHandler {
   private final IndirectIncomingService indirectIncomingService;
   private final ParameterService parameterService;
 
-  GetUnconfirmedTransactions(TransactionProcessor transactionProcessor, IndirectIncomingService indirectIncomingService, ParameterService parameterService) {
-    super(new APITag[]{APITag.TRANSACTIONS, APITag.ACCOUNTS}, ACCOUNT_PARAMETER, INCLUDE_INDIRECT_PARAMETER);
+  GetUnconfirmedTransactions(
+      TransactionProcessor transactionProcessor,
+      IndirectIncomingService indirectIncomingService,
+      ParameterService parameterService) {
+    super(
+        new APITag[] {APITag.TRANSACTIONS, APITag.ACCOUNTS},
+        ACCOUNT_PARAMETER,
+        INCLUDE_INDIRECT_PARAMETER);
     this.transactionProcessor = transactionProcessor;
     this.indirectIncomingService = indirectIncomingService;
     this.parameterService = parameterService;
@@ -45,14 +51,16 @@ final class GetUnconfirmedTransactions extends APIServlet.JsonRequestHandler {
       }
     }
 
-    final List<Transaction> unconfirmedTransactions = transactionProcessor.getAllUnconfirmedTransactions();
+    final List<Transaction> unconfirmedTransactions =
+        transactionProcessor.getAllUnconfirmedTransactions();
 
     final JsonArray transactions = new JsonArray();
 
     for (Transaction transaction : unconfirmedTransactions) {
       if (accountId == 0
-              || (accountId == transaction.getSenderId() || accountId == transaction.getRecipientId())
-              || (includeIndirect && indirectIncomingService.isIndirectlyReceiving(transaction, accountId))) {
+          || (accountId == transaction.getSenderId() || accountId == transaction.getRecipientId())
+          || (includeIndirect
+              && indirectIncomingService.isIndirectlyReceiving(transaction, accountId))) {
         transactions.add(JSONData.unconfirmedTransaction(transaction));
       }
     }
@@ -63,5 +71,4 @@ final class GetUnconfirmedTransactions extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

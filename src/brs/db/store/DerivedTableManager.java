@@ -21,5 +21,4 @@ public class DerivedTableManager {
     logger.info("Registering derived table " + table.getClass());
     derivedTables.add(table);
   }
-
 }

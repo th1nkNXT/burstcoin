@@ -21,7 +21,12 @@ public final class GetAccountCurrentBidOrderIds extends APIServlet.JsonRequestHa
   private final AssetExchange assetExchange;
 
   GetAccountCurrentBidOrderIds(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[] {APITag.ACCOUNTS, APITag.AE}, ACCOUNT_PARAMETER, ASSET_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(
+        new APITag[] {APITag.ACCOUNTS, APITag.AE},
+        ACCOUNT_PARAMETER,
+        ASSET_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -43,7 +48,8 @@ public final class GetAccountCurrentBidOrderIds extends APIServlet.JsonRequestHa
     if (assetId == 0) {
       bidOrders = assetExchange.getBidOrdersByAccount(accountId, firstIndex, lastIndex);
     } else {
-      bidOrders = assetExchange.getBidOrdersByAccountAsset(accountId, assetId, firstIndex, lastIndex);
+      bidOrders =
+          assetExchange.getBidOrdersByAccountAsset(accountId, assetId, firstIndex, lastIndex);
     }
     JsonArray orderIds = new JsonArray();
     for (Order.Bid bidOrder : bidOrders) {
@@ -53,5 +59,4 @@ public final class GetAccountCurrentBidOrderIds extends APIServlet.JsonRequestHa
     response.add(BID_ORDER_IDS_RESPONSE, orderIds);
     return response;
   }
-
 }

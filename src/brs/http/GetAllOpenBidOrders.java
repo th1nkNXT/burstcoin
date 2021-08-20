@@ -36,5 +36,4 @@ public final class GetAllOpenBidOrders extends APIServlet.JsonRequestHandler {
     response.add("openOrders", ordersData);
     return response;
   }
-
 }

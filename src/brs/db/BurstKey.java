@@ -17,7 +17,6 @@ public interface BurstKey {
     BurstKey newKey(Record rs);
 
     BurstKey newKey(long id);
-
   }
 
   interface LinkKeyFactory<T> extends Factory<T> {

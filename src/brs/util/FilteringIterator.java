@@ -77,5 +77,4 @@ public final class FilteringIterator<T> implements Iterator<T> {
   public void remove() {
     throw new UnsupportedOperationException();
   }
-
 }

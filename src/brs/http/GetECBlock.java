@@ -19,7 +19,8 @@ final class GetECBlock extends APIServlet.JsonRequestHandler {
   private final TimeService timeService;
   private final EconomicClustering economicClustering;
 
-  GetECBlock(Blockchain blockchain, TimeService timeService, EconomicClustering economicClustering) {
+  GetECBlock(
+      Blockchain blockchain, TimeService timeService, EconomicClustering economicClustering) {
     super(new APITag[] {APITag.BLOCKS}, TIMESTAMP_PARAMETER);
     this.blockchain = blockchain;
     this.timeService = timeService;
@@ -42,5 +43,4 @@ final class GetECBlock extends APIServlet.JsonRequestHandler {
     response.addProperty(TIMESTAMP_RESPONSE, timestamp);
     return response;
   }
-
 }

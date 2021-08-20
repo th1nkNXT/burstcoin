@@ -16,9 +16,9 @@ public class BlockchainImpl implements Blockchain {
   private final TransactionDb transactionDb;
   private final BlockDb blockDb;
   private final BlockchainStore blockchainStore;
-  
+
   private final StampedLock bcsl;
-  
+
   BlockchainImpl(TransactionDb transactionDb, BlockDb blockDb, BlockchainStore blockchainStore) {
     this.transactionDb = transactionDb;
     this.blockDb = blockDb;
@@ -50,7 +50,7 @@ public class BlockchainImpl implements Blockchain {
   void setLastBlock(Block previousBlock, Block block) {
     long stamp = bcsl.writeLock();
     try {
-      if (! lastBlock.compareAndSet(previousBlock, block)) {
+      if (!lastBlock.compareAndSet(previousBlock, block)) {
         throw new IllegalStateException("Last block is no longer previous block");
       }
     } finally {
@@ -59,11 +59,11 @@ public class BlockchainImpl implements Blockchain {
   }
 
   @Override
-  public int getHeight() {  
+  public int getHeight() {
     Block last = getLastBlock();
     return last == null ? 0 : last.getHeight();
   }
-    
+
   @Override
   public Block getLastBlock(int timestamp) {
     Block block = getLastBlock();
@@ -101,7 +101,7 @@ public class BlockchainImpl implements Blockchain {
   public Collection<Block> getBlocks(Account account, int timestamp, int from, int to) {
     return blockchainStore.getBlocks(account, timestamp, from, to);
   }
-  
+
   @Override
   public int getBlocksCount(Account account, int from, int to) {
     return blockchainStore.getBlocksCount(account, from, to);
@@ -121,7 +121,8 @@ public class BlockchainImpl implements Blockchain {
   public long getBlockIdAtHeight(int height) {
     Block block = getLastBlock();
     if (height > block.getHeight()) {
-      throw new IllegalArgumentException("Invalid height " + height + ", current blockchain is at " + block.getHeight());
+      throw new IllegalArgumentException(
+          "Invalid height " + height + ", current blockchain is at " + block.getHeight());
     }
     if (height == block.getHeight()) {
       return block.getId();
@@ -133,7 +134,8 @@ public class BlockchainImpl implements Blockchain {
   public Block getBlockAtHeight(int height) {
     Block block = getLastBlock();
     if (height > block.getHeight()) {
-      throw new IllegalArgumentException("Invalid height " + height + ", current blockchain is at " + block.getHeight());
+      throw new IllegalArgumentException(
+          "Invalid height " + height + ", current blockchain is at " + block.getHeight());
     }
     if (height == block.getHeight()) {
       return block;
@@ -170,48 +172,69 @@ public class BlockchainImpl implements Blockchain {
   public Collection<Transaction> getAllTransactions() {
     return blockchainStore.getAllTransactions();
   }
-  
+
   @Override
-  public long getAtBurnTotal(){
+  public long getAtBurnTotal() {
     return blockchainStore.getAtBurnTotal();
   }
-  
+
   @Override
   public long getTotalMined() {
     long totalMined = 0;
     int height = getHeight();
     long blockReward = BlockServiceImpl.getBlockReward(1);
     int blockMonth = 0;
-    for (int i=1; i <= height; i++) {
+    for (int i = 1; i <= height; i++) {
       if (i >= 972_000) {
         blockReward = 100 * Constants.ONE_BURST;
-      }
-      else {
+      } else {
         int month = i / 10800;
-        if(month != blockMonth) {
+        if (month != blockMonth) {
           blockReward = BlockServiceImpl.getBlockReward(i);
           blockMonth = month;
         }
       }
       totalMined += blockReward;
     }
-    
+
     return totalMined;
   }
 
   @Override
-  public Collection<Transaction> getTransactions(Account account, byte type, byte subtype, int blockTimestamp, boolean includeIndirectIncoming) {
-    return getTransactions(account, 0, type, subtype, blockTimestamp, 0, -1, includeIndirectIncoming);
+  public Collection<Transaction> getTransactions(
+      Account account,
+      byte type,
+      byte subtype,
+      int blockTimestamp,
+      boolean includeIndirectIncoming) {
+    return getTransactions(
+        account, 0, type, subtype, blockTimestamp, 0, -1, includeIndirectIncoming);
   }
 
   @Override
-  public Collection<Transaction> getTransactions(Account account, int numberOfConfirmations, byte type, byte subtype,
-                                                 int blockTimestamp, int from, int to, boolean includeIndirectIncoming) {
-    return blockchainStore.getTransactions(account, numberOfConfirmations, type, subtype, blockTimestamp, from, to, includeIndirectIncoming);
+  public Collection<Transaction> getTransactions(
+      Account account,
+      int numberOfConfirmations,
+      byte type,
+      byte subtype,
+      int blockTimestamp,
+      int from,
+      int to,
+      boolean includeIndirectIncoming) {
+    return blockchainStore.getTransactions(
+        account,
+        numberOfConfirmations,
+        type,
+        subtype,
+        blockTimestamp,
+        from,
+        to,
+        includeIndirectIncoming);
   }
-  
+
   @Override
-  public long getCommittedAmount(Account account, int height, int endHeight, Transaction skipTransaction) {
+  public long getCommittedAmount(
+      Account account, int height, int endHeight, Transaction skipTransaction) {
     return blockchainStore.getCommittedAmount(account, height, endHeight, skipTransaction);
   }
 }

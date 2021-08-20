@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class Listeners<T,E extends Enum<E>> {
+public final class Listeners<T, E extends Enum<E>> {
 
-  private final ConcurrentHashMap<Enum<E>, List<Listener<T>>> listenersMap = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<Enum<E>, List<Listener<T>>> listenersMap =
+      new ConcurrentHashMap<>();
 
   public boolean addListener(Listener<T> listener, Enum<E> eventType) {
     synchronized (this) {
-        List<Listener<T>> listeners = listenersMap.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>());
-        return listeners.add(listener);
+      List<Listener<T>> listeners =
+          listenersMap.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>());
+      return listeners.add(listener);
     }
   }
 
@@ -33,5 +35,4 @@ public final class Listeners<T,E extends Enum<E>> {
       }
     }
   }
-
 }

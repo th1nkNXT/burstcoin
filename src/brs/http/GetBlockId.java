@@ -41,7 +41,5 @@ final class GetBlockId extends APIServlet.JsonRequestHandler {
     } catch (RuntimeException e) {
       return INCORRECT_HEIGHT;
     }
-
   }
-
 }

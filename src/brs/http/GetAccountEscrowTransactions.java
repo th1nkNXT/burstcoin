@@ -22,7 +22,7 @@ public final class GetAccountEscrowTransactions extends APIServlet.JsonRequestHa
   private final EscrowService escrowService;
 
   GetAccountEscrowTransactions(ParameterService parameterService, EscrowService escrowService) {
-    super(new APITag[]{APITag.ACCOUNTS}, ACCOUNT_PARAMETER);
+    super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER);
     this.parameterService = parameterService;
     this.escrowService = escrowService;
   }
@@ -31,7 +31,8 @@ public final class GetAccountEscrowTransactions extends APIServlet.JsonRequestHa
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
     final Account account = parameterService.getAccount(req);
 
-    Collection<Escrow> accountEscrows = escrowService.getEscrowTransactionsByParticipant(account.getId());
+    Collection<Escrow> accountEscrows =
+        escrowService.getEscrowTransactionsByParticipant(account.getId());
 
     JsonObject response = new JsonObject();
 

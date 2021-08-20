@@ -23,7 +23,6 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAccountCurrentAskOrdersTest extends AbstractUnitTest {
@@ -47,11 +46,11 @@ public class GetAccountCurrentAskOrdersTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ACCOUNT_PARAMETER, accountId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(accountId);
@@ -63,7 +62,8 @@ public class GetAccountCurrentAskOrdersTest extends AbstractUnitTest {
 
     final Collection<Ask> mockAskIterator = mockCollection(mockAsk);
 
-    when(mockAssetExchange.getAskOrdersByAccount(eq(accountId), eq(firstIndex), eq(lastIndex))).thenReturn(mockAskIterator);
+    when(mockAssetExchange.getAskOrdersByAccount(eq(accountId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAskIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -78,12 +78,12 @@ public class GetAccountCurrentAskOrdersTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ACCOUNT_PARAMETER, accountId),
-        new MockParam(ASSET_PARAMETER, assetId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(ASSET_PARAMETER, assetId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(accountId);
@@ -95,12 +95,13 @@ public class GetAccountCurrentAskOrdersTest extends AbstractUnitTest {
 
     final Collection<Ask> mockAskIterator = mockCollection(mockAsk);
 
-    when(mockAssetExchange.getAskOrdersByAccountAsset(eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockAskIterator);
+    when(mockAssetExchange.getAskOrdersByAccountAsset(
+            eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAskIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
     assertNotNull(result);
     assertEquals(1, ((JsonArray) result.get(ASK_ORDERS_RESPONSE)).size());
   }
-
 }

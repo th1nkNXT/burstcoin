@@ -28,14 +28,16 @@ public class CalculateFullHashTest {
 
   @Test
   public void processRequest() {
-    //TODO More sensible values here...
+    // TODO More sensible values here...
     final String mockUnsignedTransactionBytes = "123";
     final String mockSignatureHash = "123";
-    final String expectedFullHash = "fe09cbf95619345cde91e0dee049d55498085a152e19c1009cb8973f9e1b4518";
+    final String expectedFullHash =
+        "fe09cbf95619345cde91e0dee049d55498085a152e19c1009cb8973f9e1b4518";
 
     final HttpServletRequest req = mock(HttpServletRequest.class);
 
-    when(req.getParameter(eq(UNSIGNED_TRANSACTION_BYTES_PARAMETER))).thenReturn(mockUnsignedTransactionBytes);
+    when(req.getParameter(eq(UNSIGNED_TRANSACTION_BYTES_PARAMETER)))
+        .thenReturn(mockUnsignedTransactionBytes);
     when(req.getParameter(eq(SIGNATURE_HASH_PARAMETER))).thenReturn(mockSignatureHash);
 
     final JsonObject result = JSON.getAsJsonObject(t.processRequest(req));
@@ -52,7 +54,8 @@ public class CalculateFullHashTest {
     final String mockUnsignedTransactionBytes = "mockUnsignedTransactionBytes";
     final HttpServletRequest req = mock(HttpServletRequest.class);
 
-    when(req.getParameter(eq(UNSIGNED_TRANSACTION_BYTES_PARAMETER))).thenReturn(mockUnsignedTransactionBytes);
+    when(req.getParameter(eq(UNSIGNED_TRANSACTION_BYTES_PARAMETER)))
+        .thenReturn(mockUnsignedTransactionBytes);
 
     assertEquals(MISSING_SIGNATURE_HASH, t.processRequest(req));
   }

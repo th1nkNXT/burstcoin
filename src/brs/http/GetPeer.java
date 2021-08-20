@@ -32,7 +32,5 @@ final class GetPeer extends APIServlet.JsonRequestHandler {
     }
 
     return JSONData.peer(peer);
-
   }
-
 }

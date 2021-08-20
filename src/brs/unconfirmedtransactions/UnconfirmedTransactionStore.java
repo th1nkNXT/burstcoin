@@ -13,7 +13,7 @@ public interface UnconfirmedTransactionStore {
   Transaction get(Long transactionId);
 
   boolean exists(Long transactionId);
-  
+
   long getFreeSlot(int numberOfBlocks);
 
   List<Transaction> getAll();
@@ -26,6 +26,7 @@ public interface UnconfirmedTransactionStore {
 
   /**
    * Review which transactions are still eligible to stay
+   *
    * @return The list of removed transactions
    */
   void resetAccountBalances();

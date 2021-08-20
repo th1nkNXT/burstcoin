@@ -16,8 +16,17 @@ final class PlaceAskOrder extends CreateTransaction {
   private final Blockchain blockchain;
   private final AccountService accountService;
 
-  PlaceAskOrder(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager, AccountService accountService) {
-    super(new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION}, apiTransactionManager, ASSET_PARAMETER, QUANTITY_QNT_PARAMETER, PRICE_NQT_PARAMETER);
+  PlaceAskOrder(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager,
+      AccountService accountService) {
+    super(
+        new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        ASSET_PARAMETER,
+        QUANTITY_QNT_PARAMETER,
+        PRICE_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
@@ -36,9 +45,9 @@ final class PlaceAskOrder extends CreateTransaction {
       return NOT_ENOUGH_ASSETS;
     }
 
-    Attachment attachment = new Attachment.ColoredCoinsAskOrderPlacement(asset.getId(), quantityQNT, priceNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.ColoredCoinsAskOrderPlacement(
+            asset.getId(), quantityQNT, priceNQT, blockchain.getHeight());
     return createTransaction(req, account, attachment);
-
   }
-
 }

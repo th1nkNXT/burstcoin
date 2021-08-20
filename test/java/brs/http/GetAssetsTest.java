@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAssetsTest {
@@ -41,7 +40,7 @@ public class GetAssetsTest {
     final long assetId = 123L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[]{"" + assetId, ""});
+    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[] {"" + assetId, ""});
 
     final int mockTradeCount = 1;
     final int mockTransferCount = 2;
@@ -75,7 +74,7 @@ public class GetAssetsTest {
     final long assetId = 123L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[]{"" + assetId});
+    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[] {"" + assetId});
 
     when(mockAssetExchange.getAsset(eq(assetId))).thenReturn(null);
 
@@ -86,9 +85,8 @@ public class GetAssetsTest {
   public void processRequest_incorrectAsset() {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
-    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[]{"unParsable"});
+    when(req.getParameterValues(eq(ASSETS_PARAMETER))).thenReturn(new String[] {"unParsable"});
 
     assertEquals(INCORRECT_ASSET, t.processRequest(req));
   }
-
 }

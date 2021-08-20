@@ -51,17 +51,18 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
     final int firstIndex = 2;
     final int lastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, "" + sellerId),
-        new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
-        new MockParam(IN_STOCK_ONLY_PARAMETER, "true")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, "" + sellerId),
+            new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
+            new MockParam(IN_STOCK_ONLY_PARAMETER, "true"));
 
     final Goods mockGood = mockGood();
     final Collection<Goods> mockGoodIterator = mockCollection(mockGood);
 
-    when(mockDGSGoodsStoreService.getSellerGoods(eq(sellerId), eq(true), eq(firstIndex), eq(lastIndex)))
+    when(mockDGSGoodsStoreService.getSellerGoods(
+            eq(sellerId), eq(true), eq(firstIndex), eq(lastIndex)))
         .thenReturn(mockGoodIterator);
 
     final JsonObject fullResult = (JsonObject) t.processRequest(req);
@@ -91,12 +92,12 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
     final int firstIndex = 2;
     final int lastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, "" + sellerId),
-        new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
-        new MockParam(IN_STOCK_ONLY_PARAMETER, "false")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, "" + sellerId),
+            new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
+            new MockParam(IN_STOCK_ONLY_PARAMETER, "false"));
 
     final Goods mockGood = mockGood();
     final Collection<Goods> mockGoodIterator = mockCollection(mockGood);
@@ -131,12 +132,12 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
     final int firstIndex = 2;
     final int lastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(SELLER_PARAMETER, "" + sellerId),
-        new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
-        new MockParam(IN_STOCK_ONLY_PARAMETER, "true")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(SELLER_PARAMETER, "" + sellerId),
+            new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex),
+            new MockParam(IN_STOCK_ONLY_PARAMETER, "true"));
 
     final Goods mockGood = mockGood();
     final Collection<Goods> mockGoodIterator = mockCollection(mockGood);

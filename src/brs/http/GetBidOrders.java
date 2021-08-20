@@ -40,5 +40,4 @@ public final class GetBidOrders extends APIServlet.JsonRequestHandler {
     response.add(BID_ORDERS_RESPONSE, orders);
     return response;
   }
-
 }

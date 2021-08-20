@@ -15,8 +15,16 @@ final class PlaceBidOrder extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  PlaceBidOrder(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION}, apiTransactionManager, ASSET_PARAMETER, QUANTITY_QNT_PARAMETER, PRICE_NQT_PARAMETER);
+  PlaceBidOrder(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        ASSET_PARAMETER,
+        QUANTITY_QNT_PARAMETER,
+        PRICE_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -31,15 +39,17 @@ final class PlaceBidOrder extends CreateTransaction {
     Account account = parameterService.getSenderAccount(req);
 
     try {
-      if (Convert.safeAdd(feeNQT, Convert.safeMultiply(priceNQT, quantityQNT)) > account.getUnconfirmedBalanceNQT()) {
+      if (Convert.safeAdd(feeNQT, Convert.safeMultiply(priceNQT, quantityQNT))
+          > account.getUnconfirmedBalanceNQT()) {
         return NOT_ENOUGH_FUNDS;
       }
     } catch (ArithmeticException e) {
       return NOT_ENOUGH_FUNDS;
     }
 
-    Attachment attachment = new Attachment.ColoredCoinsBidOrderPlacement(asset.getId(), quantityQNT, priceNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.ColoredCoinsBidOrderPlacement(
+            asset.getId(), quantityQNT, priceNQT, blockchain.getHeight());
     return createTransaction(req, account, attachment);
   }
-
 }

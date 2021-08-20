@@ -16,37 +16,40 @@ import static org.junit.Assert.assertTrue;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Burst.class, Account.class})
 public class ATTest {
-    @Before
-    public void setUp() {
-        AtTestHelper.setupMocks();
-    }
+  @Before
+  public void setUp() {
+    AtTestHelper.setupMocks();
+  }
 
-    @Test
-    public void testAddAt() {
-        AtTestHelper.clearAddedAts();
-        AtomicBoolean helloWorldReceived = new AtomicBoolean(false);
-        AtTestHelper.setOnAtAdded(at -> {
-            assertEquals("HelloWorld", at.getName());
-            helloWorldReceived.set(true);
+  @Test
+  public void testAddAt() {
+    AtTestHelper.clearAddedAts();
+    AtomicBoolean helloWorldReceived = new AtomicBoolean(false);
+    AtTestHelper.setOnAtAdded(
+        at -> {
+          assertEquals("HelloWorld", at.getName());
+          helloWorldReceived.set(true);
         });
-        AtTestHelper.addHelloWorldAT();
-        assertTrue(helloWorldReceived.get());
+    AtTestHelper.addHelloWorldAT();
+    assertTrue(helloWorldReceived.get());
 
-        AtomicBoolean echoReceived = new AtomicBoolean(false);
-        AtTestHelper.setOnAtAdded(at -> {
-            assertEquals("Echo", at.getName());
-            echoReceived.set(true);
+    AtomicBoolean echoReceived = new AtomicBoolean(false);
+    AtTestHelper.setOnAtAdded(
+        at -> {
+          assertEquals("Echo", at.getName());
+          echoReceived.set(true);
         });
-        AtTestHelper.addEchoAT();
-        assertTrue(echoReceived.get());
+    AtTestHelper.addEchoAT();
+    assertTrue(echoReceived.get());
 
-        AtomicBoolean tipThanksReceived = new AtomicBoolean(false);
-        AtTestHelper.setOnAtAdded(at -> {
-            assertEquals("TipThanks", at.getName());
-            tipThanksReceived.set(true);
+    AtomicBoolean tipThanksReceived = new AtomicBoolean(false);
+    AtTestHelper.setOnAtAdded(
+        at -> {
+          assertEquals("TipThanks", at.getName());
+          tipThanksReceived.set(true);
         });
-        AtTestHelper.addTipThanksAT();
-        assertTrue(tipThanksReceived.get());
-        assertEquals(3, AT.getOrderedATs().size());
-    }
+    AtTestHelper.addTipThanksAT();
+    assertTrue(tipThanksReceived.get());
+    assertEquals(3, AT.getOrderedATs().size());
+  }
 }

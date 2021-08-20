@@ -13,7 +13,8 @@ public final class Constants {
 
   public static final long BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME = 4;
 
-  // not sure when these were enabled, but they each do an alias lookup every block if greater than the current height
+  // not sure when these were enabled, but they each do an alias lookup every block if greater than
+  // the current height
   public static final long BURST_ESCROW_START_BLOCK = 0;
   public static final long BURST_SUBSCRIPTION_START_BLOCK = 0;
   public static final int BURST_SUBSCRIPTION_MIN_FREQ = 3600;
@@ -23,7 +24,7 @@ public final class Constants {
 
   public static final long MAX_BALANCE_BURST = 2158812800L;
 
-  public static final long FEE_QUANT =    735000;
+  public static final long FEE_QUANT = 735000;
   public static final long ONE_BURST = 100000000;
   public static final long INITIAL_COMMITMENT = 1000 * ONE_BURST;
   public static final int COMMITMENT_WAIT = 60;
@@ -65,19 +66,17 @@ public final class Constants {
   public static final int MAX_AUTOMATED_TRANSACTION_NAME_LENGTH = 30;
   public static final int MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH = 1000;
 
-
   public static final int PEER_DEFAULT_PORT = 8123;
   public static final int PEER_TESTNET_PORT = 7123;
 
-  /**
-   * Must be >= 1.
-   */
+  /** Must be >= 1. */
   public static final int MAX_API_RETURNED_ITEMS = 500;
 
   public static final String HTTP = "http://";
 
   // TODO check if we can remove this after the next fork
-  static final long UNCONFIRMED_POOL_DEPOSIT_NQT = (Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ? 50 : 100) * ONE_BURST;
+  static final long UNCONFIRMED_POOL_DEPOSIT_NQT =
+      (Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ? 50 : 100) * ONE_BURST;
 
   // TODO burstkit4j integration
   public static final long EPOCH_BEGINNING;
@@ -96,9 +95,10 @@ public final class Constants {
 
   public static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  public static final int EC_RULE_TERMINATOR = 2400; /* cfb: This constant defines a straight edge when "longest chain"
-                                                        rule is outweighed by "economic majority" rule; the terminator
-                                                        is set as number of seconds before the current time. */
+  public static final int EC_RULE_TERMINATOR =
+      2400; /* cfb: This constant defines a straight edge when "longest chain"
+            rule is outweighed by "economic majority" rule; the terminator
+            is set as number of seconds before the current time. */
 
   public static final int EC_BLOCK_DISTANCE_LIMIT = 60;
   public static final int EC_CHANGE_BLOCK_1 = 67000;
@@ -110,7 +110,5 @@ public final class Constants {
 
   public static final int BLOCK_PROCESS_THREAD_DELAY = 500; // Milliseconds
 
-  private Constants() {
-  } // never
-
+  private Constants() {} // never
 }

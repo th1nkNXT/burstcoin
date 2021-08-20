@@ -29,22 +29,18 @@ final class LongConvert extends APIServlet.JsonRequestHandler {
     if (bigInteger.signum() < 0) {
       if (bigInteger.negate().compareTo(Convert.two64) > 0) {
         response.addProperty("error", "overflow");
-      }
-      else {
+      } else {
         response.addProperty("stringId", bigInteger.add(Convert.two64).toString());
-        response.addProperty("longId",   String.valueOf(bigInteger.longValue()));
+        response.addProperty("longId", String.valueOf(bigInteger.longValue()));
       }
-    }
-    else {
+    } else {
       if (bigInteger.compareTo(Convert.two64) >= 0) {
         response.addProperty("error", "overflow");
-      }
-      else {
+      } else {
         response.addProperty("stringId", bigInteger.toString());
-        response.addProperty("longId",   String.valueOf(bigInteger.longValue()));
+        response.addProperty("longId", String.valueOf(bigInteger.longValue()));
       }
     }
     return response;
   }
-
 }

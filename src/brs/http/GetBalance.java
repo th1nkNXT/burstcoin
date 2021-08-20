@@ -12,7 +12,7 @@ public final class GetBalance extends APIServlet.JsonRequestHandler {
   private final ParameterService parameterService;
 
   public GetBalance(ParameterService parameterService) {
-    super(new APITag[]{APITag.ACCOUNTS}, Parameters.ACCOUNT_PARAMETER);
+    super(new APITag[] {APITag.ACCOUNTS}, Parameters.ACCOUNT_PARAMETER);
     this.parameterService = parameterService;
   }
 
@@ -20,5 +20,4 @@ public final class GetBalance extends APIServlet.JsonRequestHandler {
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
     return JSONData.accountBalance(parameterService.getAccount(req));
   }
-
 }

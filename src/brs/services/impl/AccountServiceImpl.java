@@ -48,7 +48,8 @@ public class AccountServiceImpl implements AccountService {
     this.accountAssetTable = accountStore.getAccountAssetTable();
     this.accountAssetKeyFactory = accountStore.getAccountAssetKeyFactory();
     this.rewardRecipientAssignmentTable = accountStore.getRewardRecipientAssignmentTable();
-    this.rewardRecipientAssignmentKeyFactory = accountStore.getRewardRecipientAssignmentKeyFactory();
+    this.rewardRecipientAssignmentKeyFactory =
+        accountStore.getRewardRecipientAssignmentKeyFactory();
   }
 
   @Override
@@ -65,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
   public Account getAccount(long id) {
     return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id));
   }
-  
+
   @Override
   public Account getNullAccount() {
     return accountTable.get(accountBurstKeyFactory.newKey(0L));
@@ -88,8 +89,13 @@ public class AccountServiceImpl implements AccountService {
       return account;
     }
 
-    throw new RuntimeException("DUPLICATE KEY for account " + Convert.toUnsignedLong(account.getId())
-        + " existing key " + Convert.toHexString(account.getPublicKey()) + " new key " + Convert.toHexString(publicKey));
+    throw new RuntimeException(
+        "DUPLICATE KEY for account "
+            + Convert.toUnsignedLong(account.getId())
+            + " existing key "
+            + Convert.toHexString(account.getPublicKey())
+            + " new key "
+            + Convert.toHexString(publicKey));
   }
 
   @Override
@@ -116,7 +122,7 @@ public class AccountServiceImpl implements AccountService {
   public Collection<Account> getAllAccounts(int from, int to) {
     return accountTable.getAll(from, to);
   }
-  
+
   @Override
   public long getAllAccountsBalance() {
     return accountStore.getAllAccountsBalance();
@@ -192,7 +198,8 @@ public class AccountServiceImpl implements AccountService {
     AccountAsset accountAsset;
     BurstKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
     accountAsset = accountAssetTable.get(newKey);
-    long unconfirmedAssetBalance = accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
+    long unconfirmedAssetBalance =
+        accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
     unconfirmedAssetBalance = Convert.safeAdd(unconfirmedAssetBalance, quantityQNT);
     if (accountAsset == null) {
       accountAsset = new AccountAsset(newKey, account.getId(), assetId, 0, unconfirmedAssetBalance);
@@ -205,7 +212,8 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  public void addToAssetAndUnconfirmedAssetBalanceQNT(Account account, long assetId, long quantityQNT) {
+  public void addToAssetAndUnconfirmedAssetBalanceQNT(
+      Account account, long assetId, long quantityQNT) {
     if (quantityQNT == 0) {
       return;
     }
@@ -214,10 +222,12 @@ public class AccountServiceImpl implements AccountService {
     accountAsset = accountAssetTable.get(newKey);
     long assetBalance = accountAsset == null ? 0 : accountAsset.getQuantityQNT();
     assetBalance = Convert.safeAdd(assetBalance, quantityQNT);
-    long unconfirmedAssetBalance = accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
+    long unconfirmedAssetBalance =
+        accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
     unconfirmedAssetBalance = Convert.safeAdd(unconfirmedAssetBalance, quantityQNT);
     if (accountAsset == null) {
-      accountAsset = new AccountAsset(newKey, account.getId(), assetId, assetBalance, unconfirmedAssetBalance);
+      accountAsset =
+          new AccountAsset(newKey, account.getId(), assetId, assetBalance, unconfirmedAssetBalance);
     } else {
       accountAsset.setQuantityQNT(assetBalance);
       accountAsset.setUnconfirmedQuantityQNT(unconfirmedAssetBalance);
@@ -245,7 +255,8 @@ public class AccountServiceImpl implements AccountService {
     if (amountNQT == 0) {
       return;
     }
-    account.setUnconfirmedBalanceNQT(Convert.safeAdd(account.getUnconfirmedBalanceNQT(), amountNQT));
+    account.setUnconfirmedBalanceNQT(
+        Convert.safeAdd(account.getUnconfirmedBalanceNQT(), amountNQT));
     account.checkBalance();
     accountTable.insert(account);
     listeners.notify(account, Event.UNCONFIRMED_BALANCE);
@@ -257,7 +268,8 @@ public class AccountServiceImpl implements AccountService {
       return;
     }
     account.setBalanceNQT(Convert.safeAdd(account.getBalanceNQT(), amountNQT));
-    account.setUnconfirmedBalanceNQT(Convert.safeAdd(account.getUnconfirmedBalanceNQT(), amountNQT));
+    account.setUnconfirmedBalanceNQT(
+        Convert.safeAdd(account.getUnconfirmedBalanceNQT(), amountNQT));
     account.checkBalance();
     accountTable.insert(account);
     listeners.notify(account, Event.BALANCE);
@@ -279,20 +291,30 @@ public class AccountServiceImpl implements AccountService {
     RewardRecipientAssignment assignment = getRewardRecipientAssignment(account.getId());
     if (assignment == null) {
       BurstKey burstKey = rewardRecipientAssignmentKeyFactory.newKey(account.getId());
-      assignment = new RewardRecipientAssignment(account.getId(), account.getId(), recipient, (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME), burstKey);
+      assignment =
+          new RewardRecipientAssignment(
+              account.getId(),
+              account.getId(),
+              recipient,
+              (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME),
+              burstKey);
     } else {
-      assignment.setRecipient(recipient, (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME));
+      assignment.setRecipient(
+          recipient, (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME));
     }
     rewardRecipientAssignmentTable.insert(assignment);
   }
 
   @Override
   public long getUnconfirmedAssetBalanceQNT(Account account, long assetId) {
-    BurstKey newKey = Burst.getStores().getAccountStore().getAccountAssetKeyFactory().newKey(account.getId(), assetId);
+    BurstKey newKey =
+        Burst.getStores()
+            .getAccountStore()
+            .getAccountAssetKeyFactory()
+            .newKey(account.getId(), assetId);
     AccountAsset accountAsset = accountAssetTable.get(newKey);
     return accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
   }
-
 
   private void saveAccountAsset(AccountAsset accountAsset) {
     accountAsset.checkBalance();

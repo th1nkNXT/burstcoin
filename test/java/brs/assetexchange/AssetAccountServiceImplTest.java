@@ -33,7 +33,8 @@ public class AssetAccountServiceImplTest {
 
     final Collection<AccountAsset> mockAccountIterator = mock(Collection.class);
 
-    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(from), eq(to))).thenReturn(mockAccountIterator);
+    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountIterator);
 
     assertEquals(mockAccountIterator, t.getAssetAccounts(assetId, from, to));
   }
@@ -47,7 +48,8 @@ public class AssetAccountServiceImplTest {
 
     final Collection<AccountAsset> mockAccountIterator = mock(Collection.class);
 
-    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(height), eq(from), eq(to))).thenReturn(mockAccountIterator);
+    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(height), eq(from), eq(to)))
+        .thenReturn(mockAccountIterator);
 
     assertEquals(mockAccountIterator, t.getAssetAccounts(assetId, height, from, to));
   }
@@ -61,7 +63,8 @@ public class AssetAccountServiceImplTest {
 
     final Collection<AccountAsset> mockAccountIterator = mock(Collection.class);
 
-    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(from), eq(to))).thenReturn(mockAccountIterator);
+    when(mockAccountStore.getAssetAccounts(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountIterator);
 
     assertEquals(mockAccountIterator, t.getAssetAccounts(assetId, height, from, to));
   }

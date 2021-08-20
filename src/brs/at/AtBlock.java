@@ -8,25 +8,25 @@
 package brs.at;
 
 public class AtBlock {
-    private final long totalFees;
-    private final long totalAmount;
-    private final byte[] bytesForBlock;
+  private final long totalFees;
+  private final long totalAmount;
+  private final byte[] bytesForBlock;
 
-    AtBlock(long totalFees, long totalAmount, byte[] bytesForBlock) {
-        this.totalFees = totalFees;
-        this.totalAmount = totalAmount;
-        this.bytesForBlock = bytesForBlock;
-    }
+  AtBlock(long totalFees, long totalAmount, byte[] bytesForBlock) {
+    this.totalFees = totalFees;
+    this.totalAmount = totalAmount;
+    this.bytesForBlock = bytesForBlock;
+  }
 
-    public long getTotalFees() {
-        return totalFees;
-    }
+  public long getTotalFees() {
+    return totalFees;
+  }
 
-    public long getTotalAmount() {
-        return totalAmount;
-    }
+  public long getTotalAmount() {
+    return totalAmount;
+  }
 
-    public byte[] getBytesForBlock() {
-        return bytesForBlock;
-    }
+  public byte[] getBytesForBlock() {
+    return bytesForBlock;
+  }
 }

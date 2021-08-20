@@ -18,7 +18,7 @@ public interface AccountService {
   Account getAccount(long id);
 
   Account getAccount(long id, int height);
-  
+
   Account getNullAccount();
 
   Account getAccount(byte[] publicKey);
@@ -32,7 +32,7 @@ public interface AccountService {
   Collection<Account> getAccountsWithName(String name);
 
   Collection<Account> getAllAccounts(int from, int to);
-  
+
   long getAllAccountsBalance();
 
   Account getOrAddAccount(long id);

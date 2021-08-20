@@ -11,7 +11,8 @@ public class Alias {
   private String aliasURI;
   private int timestamp;
 
-  private Alias(BurstKey dbKey, long id, long accountId, String aliasName, String aliasURI, int timestamp) {
+  private Alias(
+      BurstKey dbKey, long id, long accountId, String aliasName, String aliasURI, int timestamp) {
     this.id = id;
     this.dbKey = dbKey;
     this.accountId = accountId;
@@ -20,7 +21,8 @@ public class Alias {
     this.timestamp = timestamp;
   }
 
-  protected Alias(long id, long accountId, String aliasName, String aliasURI, int timestamp, BurstKey dbKey) {
+  protected Alias(
+      long id, long accountId, String aliasName, String aliasURI, int timestamp, BurstKey dbKey) {
     this.id = id;
     this.dbKey = dbKey;
     this.accountId = accountId;
@@ -29,8 +31,17 @@ public class Alias {
     this.timestamp = timestamp;
   }
 
-  public Alias(long aliasId, BurstKey dbKey, Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
-    this(dbKey, aliasId, transaction.getSenderId(), attachment.getAliasName(), attachment.getAliasURI(),
+  public Alias(
+      long aliasId,
+      BurstKey dbKey,
+      Transaction transaction,
+      Attachment.MessagingAliasAssignment attachment) {
+    this(
+        dbKey,
+        aliasId,
+        transaction.getSenderId(),
+        attachment.getAliasName(),
+        attachment.getAliasURI(),
         transaction.getBlockTimestamp());
   }
 
@@ -107,5 +118,4 @@ public class Alias {
       this.buyerId = buyerId;
     }
   }
-
 }

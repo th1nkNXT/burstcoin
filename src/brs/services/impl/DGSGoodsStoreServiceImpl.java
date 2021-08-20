@@ -33,11 +33,14 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   private final LongKeyFactory<Goods> goodsDbKeyFactory;
   private final LongKeyFactory<Purchase> purchaseDbKeyFactory;
 
-  private final Listeners<Goods,Event> goodsListeners = new Listeners<>();
+  private final Listeners<Goods, Event> goodsListeners = new Listeners<>();
 
-  private final Listeners<Purchase,Event> purchaseListeners = new Listeners<>();
+  private final Listeners<Purchase, Event> purchaseListeners = new Listeners<>();
 
-  public DGSGoodsStoreServiceImpl(Blockchain blockchain, DigitalGoodsStoreStore digitalGoodsStoreStore, AccountService accountService) {
+  public DGSGoodsStoreServiceImpl(
+      Blockchain blockchain,
+      DigitalGoodsStoreStore digitalGoodsStoreStore,
+      AccountService accountService) {
     this.blockchain = blockchain;
     this.digitalGoodsStoreStore = digitalGoodsStoreStore;
     this.goodsTable = digitalGoodsStoreStore.getGoodsTable();
@@ -86,7 +89,8 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   }
 
   @Override
-  public Collection<Goods> getSellerGoods(final long sellerId, final boolean inStockOnly, int from, int to) {
+  public Collection<Goods> getSellerGoods(
+      final long sellerId, final boolean inStockOnly, int from, int to) {
     return digitalGoodsStoreStore.getSellerGoods(sellerId, inStockOnly, from, to);
   }
 
@@ -106,7 +110,8 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   }
 
   @Override
-  public Collection<Purchase> getSellerBuyerPurchases(final long sellerId, final long buyerId, int from, int to) {
+  public Collection<Purchase> getSellerBuyerPurchases(
+      final long sellerId, final long buyerId, int from, int to) {
     return digitalGoodsStoreStore.getSellerBuyerPurchases(sellerId, buyerId, from, to);
   }
 
@@ -123,7 +128,7 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public void changeQuantity(long goodsId, int deltaQuantity, boolean allowDelisted) {
     Goods goods = goodsTable.get(goodsDbKeyFactory.newKey(goodsId));
-    if (allowDelisted || ! goods.isDelisted()) {
+    if (allowDelisted || !goods.isDelisted()) {
       goods.changeQuantity(deltaQuantity);
       goodsTable.insert(goods);
       goodsListeners.notify(goods, Event.GOODS_QUANTITY_CHANGE);
@@ -135,19 +140,24 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public void purchase(Transaction transaction, Attachment.DigitalGoodsPurchase attachment) {
     Goods goods = goodsTable.get(goodsDbKeyFactory.newKey(attachment.getGoodsId()));
-    if (! goods.isDelisted() && attachment.getQuantity() <= goods.getQuantity() && attachment.getPriceNQT() == goods.getPriceNQT()
+    if (!goods.isDelisted()
+        && attachment.getQuantity() <= goods.getQuantity()
+        && attachment.getPriceNQT() == goods.getPriceNQT()
         && attachment.getDeliveryDeadlineTimestamp() > blockchain.getLastBlock().getTimestamp()) {
       changeQuantity(goods.getId(), -attachment.getQuantity(), false);
       addPurchase(transaction, attachment, goods.getSellerId());
     } else {
       Account buyer = accountService.getAccount(transaction.getSenderId());
-      accountService.addToUnconfirmedBalanceNQT(buyer, Convert.safeMultiply(attachment.getQuantity(), attachment.getPriceNQT()));
-      // restoring the unconfirmed balance if purchase not successful, however buyer still lost the transaction fees
+      accountService.addToUnconfirmedBalanceNQT(
+          buyer, Convert.safeMultiply(attachment.getQuantity(), attachment.getPriceNQT()));
+      // restoring the unconfirmed balance if purchase not successful, however buyer still lost the
+      // transaction fees
     }
   }
 
   @Override
-  public void addPurchase(Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId) {
+  public void addPurchase(
+      Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId) {
     Purchase purchase = new Purchase(transaction, attachment, sellerId);
     purchaseTable.insert(purchase);
     purchaseListeners.notify(purchase, Event.PURCHASE);
@@ -164,7 +174,7 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public void delistGoods(long goodsId) {
     Goods goods = goodsTable.get(goodsDbKeyFactory.newKey(goodsId));
-    if (! goods.isDelisted()) {
+    if (!goods.isDelisted()) {
       goods.setDelisted(true);
       goodsTable.insert(goods);
       goodsListeners.notify(goods, Event.GOODS_DELISTED);
@@ -174,7 +184,8 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   }
 
   @Override
-  public void feedback(long purchaseId, Appendix.EncryptedMessage encryptedMessage, Appendix.Message message) {
+  public void feedback(
+      long purchaseId, Appendix.EncryptedMessage encryptedMessage, Appendix.Message message) {
     Purchase purchase = purchaseTable.get(purchaseDbKeyFactory.newKey(purchaseId));
     if (encryptedMessage != null) {
       purchase.addFeedbackNote(encryptedMessage.getEncryptedData());
@@ -199,7 +210,8 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   }
 
   @Override
-  public void refund(long sellerId, long purchaseId, long refundNQT, Appendix.EncryptedMessage encryptedMessage) {
+  public void refund(
+      long sellerId, long purchaseId, long refundNQT, Appendix.EncryptedMessage encryptedMessage) {
     Purchase purchase = purchaseTable.get(purchaseDbKeyFactory.newKey(purchaseId));
     Account seller = accountService.getAccount(sellerId);
     accountService.addToBalanceNQT(seller, -refundNQT);
@@ -222,7 +234,7 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public void changePrice(long goodsId, long priceNQT) {
     Goods goods = goodsTable.get(goodsDbKeyFactory.newKey(goodsId));
-    if (! goods.isDelisted()) {
+    if (!goods.isDelisted()) {
       goods.changePrice(priceNQT);
       goodsTable.insert(goods);
       goodsListeners.notify(goods, Event.GOODS_PRICE_CHANGE);
@@ -234,16 +246,19 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public void deliver(Transaction transaction, Attachment.DigitalGoodsDelivery attachment) {
     Purchase purchase = getPendingPurchase(attachment.getPurchaseId());
-    if ( purchase == null ) {
+    if (purchase == null) {
       throw new RuntimeException("cant find purchase with id " + attachment.getPurchaseId());
     }
     setPending(purchase, false);
-    long totalWithoutDiscount = Convert.safeMultiply(purchase.getQuantity(), purchase.getPriceNQT());
+    long totalWithoutDiscount =
+        Convert.safeMultiply(purchase.getQuantity(), purchase.getPriceNQT());
     Account buyer = accountService.getAccount(purchase.getBuyerId());
-    accountService.addToBalanceNQT(buyer, Convert.safeSubtract(attachment.getDiscountNQT(), totalWithoutDiscount));
+    accountService.addToBalanceNQT(
+        buyer, Convert.safeSubtract(attachment.getDiscountNQT(), totalWithoutDiscount));
     accountService.addToUnconfirmedBalanceNQT(buyer, attachment.getDiscountNQT());
     Account seller = accountService.getAccount(transaction.getSenderId());
-    accountService.addToBalanceAndUnconfirmedBalanceNQT(seller, Convert.safeSubtract(totalWithoutDiscount, attachment.getDiscountNQT()));
+    accountService.addToBalanceAndUnconfirmedBalanceNQT(
+        seller, Convert.safeSubtract(totalWithoutDiscount, attachment.getDiscountNQT()));
     purchase.setEncryptedGoods(attachment.getGoods(), attachment.goodsIsText());
     purchaseTable.insert(purchase);
     purchase.setDiscountNQT(attachment.getDiscountNQT());
@@ -254,7 +269,7 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
   @Override
   public Purchase getPendingPurchase(long purchaseId) {
     Purchase purchase = getPurchase(purchaseId);
-    return purchase == null || ! purchase.isPending() ? null : purchase;
+    return purchase == null || !purchase.isPending() ? null : purchase;
   }
 
   @Override
@@ -268,7 +283,8 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
     private final AccountService accountService;
     private final DGSGoodsStoreService goodsService;
 
-    public ExpiredPurchaseListener(AccountService accountService, DGSGoodsStoreService goodsService) {
+    public ExpiredPurchaseListener(
+        AccountService accountService, DGSGoodsStoreService goodsService) {
       this.accountService = accountService;
       this.goodsService = goodsService;
     }
@@ -277,11 +293,11 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
     public void notify(Block block) {
       for (Purchase purchase : goodsService.getExpiredPendingPurchases(block.getTimestamp())) {
         Account buyer = accountService.getAccount(purchase.getBuyerId());
-        accountService.addToUnconfirmedBalanceNQT(buyer, Convert.safeMultiply(purchase.getQuantity(), purchase.getPriceNQT()));
+        accountService.addToUnconfirmedBalanceNQT(
+            buyer, Convert.safeMultiply(purchase.getQuantity(), purchase.getPriceNQT()));
         goodsService.changeQuantity(purchase.getGoodsId(), purchase.getQuantity(), true);
         goodsService.setPending(purchase, false);
       }
     }
   }
-
 }

@@ -1,11 +1,11 @@
 package brs.db;
 
 public interface VersionedEntityTable<T> extends DerivedTable, EntityTable<T> {
-    @Override
-    void rollback(int height);
+  @Override
+  void rollback(int height);
 
-    boolean delete(T t);
+  boolean delete(T t);
 
-    @Override
-    void trim(int height);
+  @Override
+  void trim(int height);
 }

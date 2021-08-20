@@ -21,7 +21,15 @@ public interface EscrowService {
 
   void updateOnBlock(Block block, int blockchainHeight);
 
-  void addEscrowTransaction(Account sender, Account recipient, Long id, Long amountNQT, int requiredSigners, Collection<Long> signers, int deadline, DecisionType deadlineAction);
+  void addEscrowTransaction(
+      Account sender,
+      Account recipient,
+      Long id,
+      Long amountNQT,
+      int requiredSigners,
+      Collection<Long> signers,
+      int deadline,
+      DecisionType deadlineAction);
 
   void sign(Long id, DecisionType decision, Escrow escrow);
 
@@ -31,5 +39,11 @@ public interface EscrowService {
 
   boolean isIdSigner(Long id, Escrow escrow);
 
-  void saveResultTransaction(Block block, Long escrowId, Long recipientId, Long amountNQT, DecisionType decision, int blockchainHeight);
+  void saveResultTransaction(
+      Block block,
+      Long escrowId,
+      Long recipientId,
+      Long amountNQT,
+      DecisionType decision,
+      int blockchainHeight);
 }

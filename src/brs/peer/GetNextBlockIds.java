@@ -17,7 +17,6 @@ final class GetNextBlockIds implements PeerServlet.PeerRequestHandler {
     this.blockchain = blockchain;
   }
 
-
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
 
@@ -35,5 +34,4 @@ final class GetNextBlockIds implements PeerServlet.PeerRequestHandler {
 
     return response;
   }
-
 }

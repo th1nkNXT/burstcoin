@@ -54,14 +54,34 @@ public class Block {
   private Peer downloadedFrom = null;
   private int byteLength = 0;
 
-  Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT,
-      int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature,
-      byte[] blockSignature, byte[] previousBlockHash, List<Transaction> transactions,
-      long nonce, byte[] blockATs, int height, long baseTarget) throws BurstException.ValidationException {
+  Block(
+      int version,
+      int timestamp,
+      long previousBlockId,
+      long totalAmountNQT,
+      long totalFeeNQT,
+      int payloadLength,
+      byte[] payloadHash,
+      byte[] generatorPublicKey,
+      byte[] generationSignature,
+      byte[] blockSignature,
+      byte[] previousBlockHash,
+      List<Transaction> transactions,
+      long nonce,
+      byte[] blockATs,
+      int height,
+      long baseTarget)
+      throws BurstException.ValidationException {
 
-    if (payloadLength > Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height) || payloadLength < 0) {
+    if (payloadLength > Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height)
+        || payloadLength < 0) {
       throw new BurstException.NotValidException(
-          "attempted to create a block with payloadLength " + payloadLength + " height " + height + "previd " + previousBlockId);
+          "attempted to create a block with payloadLength "
+              + payloadLength
+              + " height "
+              + height
+              + "previd "
+              + previousBlockId);
     }
 
     this.version = version;
@@ -78,7 +98,8 @@ public class Block {
     this.previousBlockHash = previousBlockHash;
     if (transactions != null) {
       this.blockTransactions.set(Collections.unmodifiableList(transactions));
-      if (blockTransactions.get().size() > (Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {
+      if (blockTransactions.get().size()
+          > (Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {
         throw new BurstException.NotValidException(
             "attempted to create a block with " + blockTransactions.get().size() + " transactions");
       }
@@ -95,12 +116,47 @@ public class Block {
     this.baseTarget = baseTarget;
   }
 
-  public Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT, int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature, byte[] blockSignature, byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget,
-      long nextBlockId, int height, Long id, long nonce, byte[] blockATs) throws BurstException.ValidationException {
+  public Block(
+      int version,
+      int timestamp,
+      long previousBlockId,
+      long totalAmountNQT,
+      long totalFeeNQT,
+      int payloadLength,
+      byte[] payloadHash,
+      byte[] generatorPublicKey,
+      byte[] generationSignature,
+      byte[] blockSignature,
+      byte[] previousBlockHash,
+      BigInteger cumulativeDifficulty,
+      long baseTarget,
+      long nextBlockId,
+      int height,
+      Long id,
+      long nonce,
+      byte[] blockATs)
+      throws BurstException.ValidationException {
 
-    this(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature, previousBlockHash, null, nonce, blockATs, height, baseTarget);
+    this(
+        version,
+        timestamp,
+        previousBlockId,
+        totalAmountNQT,
+        totalFeeNQT,
+        payloadLength,
+        payloadHash,
+        generatorPublicKey,
+        generationSignature,
+        blockSignature,
+        previousBlockHash,
+        null,
+        nonce,
+        blockATs,
+        height,
+        baseTarget);
 
-    this.cumulativeDifficulty = cumulativeDifficulty == null ? BigInteger.ZERO : cumulativeDifficulty;
+    this.cumulativeDifficulty =
+        cumulativeDifficulty == null ? BigInteger.ZERO : cumulativeDifficulty;
     this.nextBlockId.set(nextBlockId);
     this.height = height;
     this.id.set(id);
@@ -180,7 +236,8 @@ public class Block {
 
   public List<Transaction> getTransactions() {
     if (blockTransactions.get() == null) {
-      this.blockTransactions.set(Collections.unmodifiableList(transactionDb().findBlockTransactions(getId())));
+      this.blockTransactions.set(
+          Collections.unmodifiableList(transactionDb().findBlockTransactions(getId())));
       this.blockTransactions.get().forEach(transaction -> transaction.setBlock(this));
     }
     return blockTransactions.get();
@@ -189,29 +246,32 @@ public class Block {
   public long getBaseTarget() {
     return baseTarget;
   }
-  
+
   public long getCapacityBaseTarget() {
     long capacityBaseTarget = baseTarget;
-    if(Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height)) {
-      // Base target encoded as two floats, one for the commitment and the other the classical base target
-      float capacityBaseTargetFloat = Float.intBitsToFloat((int)(baseTarget & 0xFFFFFFFFL));
-      capacityBaseTarget = (long)capacityBaseTargetFloat;
+    if (Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height)) {
+      // Base target encoded as two floats, one for the commitment and the other the classical base
+      // target
+      float capacityBaseTargetFloat = Float.intBitsToFloat((int) (baseTarget & 0xFFFFFFFFL));
+      capacityBaseTarget = (long) capacityBaseTargetFloat;
     }
     return capacityBaseTarget;
   }
-  
+
   public long getAverageCommitment() {
-    if(Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height)) {
-      // Base target encoded as two floats, one for the commitment and the other the classical base target
-      float commitmentBaseTargetFloat = Float.intBitsToFloat((int)((baseTarget) >> 32));
-      return (long)commitmentBaseTargetFloat;
+    if (Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height)) {
+      // Base target encoded as two floats, one for the commitment and the other the classical base
+      // target
+      float commitmentBaseTargetFloat = Float.intBitsToFloat((int) ((baseTarget) >> 32));
+      return (long) commitmentBaseTargetFloat;
     }
     return Constants.INITIAL_COMMITMENT;
   }
-  
+
   public void setBaseTarget(long baseTargetCapacity, long averageCommitment) {
-    this.baseTarget = ((long)Float.floatToIntBits((float)averageCommitment)) << 32 |
-        ((long)Float.floatToIntBits((float)baseTargetCapacity));
+    this.baseTarget =
+        ((long) Float.floatToIntBits((float) averageCommitment)) << 32
+            | ((long) Float.floatToIntBits((float) baseTargetCapacity));
   }
 
   public BigInteger getCumulativeDifficulty() {
@@ -296,40 +356,65 @@ public class Block {
     return json;
   }
 
-  static Block parseBlock(JsonObject blockData, int height) throws BurstException.ValidationException {
+  static Block parseBlock(JsonObject blockData, int height)
+      throws BurstException.ValidationException {
     try {
       int version = JSON.getAsInt(blockData.get("version"));
       int timestamp = JSON.getAsInt(blockData.get("timestamp"));
-      long previousBlock = Convert.parseUnsignedLong(JSON.getAsString(blockData.get("previousBlock")));
+      long previousBlock =
+          Convert.parseUnsignedLong(JSON.getAsString(blockData.get("previousBlock")));
       long totalAmountNQT = JSON.getAsLong(blockData.get("totalAmountNQT"));
       long totalFeeNQT = JSON.getAsLong(blockData.get("totalFeeNQT"));
       int payloadLength = JSON.getAsInt(blockData.get("payloadLength"));
       byte[] payloadHash = Convert.parseHexString(JSON.getAsString(blockData.get("payloadHash")));
-      byte[] generatorPublicKey = Convert.parseHexString(JSON.getAsString(blockData.get("generatorPublicKey")));
-      byte[] generationSignature = Convert.parseHexString(JSON.getAsString(blockData.get("generationSignature")));
-      byte[] blockSignature = Convert.parseHexString(JSON.getAsString(blockData.get("blockSignature")));
-      byte[] previousBlockHash = version == 1 ? null : Convert.parseHexString(JSON.getAsString(blockData.get("previousBlockHash")));
+      byte[] generatorPublicKey =
+          Convert.parseHexString(JSON.getAsString(blockData.get("generatorPublicKey")));
+      byte[] generationSignature =
+          Convert.parseHexString(JSON.getAsString(blockData.get("generationSignature")));
+      byte[] blockSignature =
+          Convert.parseHexString(JSON.getAsString(blockData.get("blockSignature")));
+      byte[] previousBlockHash =
+          version == 1
+              ? null
+              : Convert.parseHexString(JSON.getAsString(blockData.get("previousBlockHash")));
       long nonce = Convert.parseUnsignedLong(JSON.getAsString(blockData.get("nonce")));
       long baseTarget = Convert.parseUnsignedLong(JSON.getAsString(blockData.get("baseTarget")));
-      
-      if(Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height) && baseTarget == 0L) {
+
+      if (Burst.getFluxCapacitor().getValue(FluxValues.POC_PLUS, height) && baseTarget == 0L) {
         throw new BurstException.NotValidException("Block received without a baseTarget");
       }
 
       SortedMap<Long, Transaction> blockTransactions = new TreeMap<>();
       JsonArray transactionsData = JSON.getAsJsonArray(blockData.get("transactions"));
-    
+
       for (JsonElement transactionData : transactionsData) {
-        Transaction transaction = Transaction.parseTransaction(JSON.getAsJsonObject(transactionData), height);
-        if (transaction.getSignature() != null && blockTransactions.put(transaction.getId(), transaction) != null) {
-          throw new BurstException.NotValidException("Block contains duplicate transactions: " + transaction.getStringId());
+        Transaction transaction =
+            Transaction.parseTransaction(JSON.getAsJsonObject(transactionData), height);
+        if (transaction.getSignature() != null
+            && blockTransactions.put(transaction.getId(), transaction) != null) {
+          throw new BurstException.NotValidException(
+              "Block contains duplicate transactions: " + transaction.getStringId());
         }
       }
-    
+
       byte[] blockATs = Convert.parseHexString(JSON.getAsString(blockData.get("blockATs")));
-      return new Block(version, timestamp, previousBlock, totalAmountNQT, totalFeeNQT,
-          payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature,
-          previousBlockHash, new ArrayList<>(blockTransactions.values()), nonce, blockATs, height, baseTarget);
+      return new Block(
+          version,
+          timestamp,
+          previousBlock,
+          totalAmountNQT,
+          totalFeeNQT,
+          payloadLength,
+          payloadHash,
+          generatorPublicKey,
+          generationSignature,
+          blockSignature,
+          previousBlockHash,
+          new ArrayList<>(blockTransactions.values()),
+          nonce,
+          blockATs,
+          height,
+          baseTarget);
     } catch (BurstException.ValidationException | RuntimeException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Failed to parse block: {}", JSON.toJsonString(blockData));
@@ -339,8 +424,20 @@ public class Block {
   }
 
   public byte[] getBytes() {
-    ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + 8 + 4 + (version < 3 ? (4 + 4) : (8 + 8)) + 4
-        + 32 + 32 + (32 + 32) + 8 + (blockATs != null ? blockATs.length : 0) + 64);
+    ByteBuffer buffer =
+        ByteBuffer.allocate(
+            4
+                + 4
+                + 8
+                + 4
+                + (version < 3 ? (4 + 4) : (8 + 8))
+                + 4
+                + 32
+                + 32
+                + (32 + 32)
+                + 8
+                + (blockATs != null ? blockATs.length : 0)
+                + 64);
     buffer.order(ByteOrder.LITTLE_ENDIAN);
     buffer.putInt(version);
     buffer.putInt(timestamp);
@@ -361,12 +458,12 @@ public class Block {
       buffer.put(previousBlockHash);
     }
     buffer.putLong(nonce);
-    if (blockATs != null)
-      buffer.put(blockATs);
+    if (blockATs != null) buffer.put(blockATs);
     if (buffer.limit() - buffer.position() < blockSignature.length)
-      logger.error("Something is too large here - buffer should have {} bytes left but only has {}",
-                   blockSignature.length,
-                   (buffer.limit() - buffer.position()));
+      logger.error(
+          "Something is too large here - buffer should have {} bytes left but only has {}",
+          blockSignature.length,
+          (buffer.limit() - buffer.position()));
     buffer.put(blockSignature);
     return buffer.array();
   }
@@ -393,7 +490,7 @@ public class Block {
   public void setPocTime(BigInteger pocTime) {
     this.pocTime = pocTime;
   }
-  
+
   public long getCommitment() {
     return this.commitment;
   }

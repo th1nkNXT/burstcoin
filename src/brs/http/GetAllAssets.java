@@ -26,9 +26,10 @@ public final class GetAllAssets extends AbstractAssetsRetrieval {
 
     JsonObject response = new JsonObject();
 
-    response.add(ASSETS_RESPONSE, assetsToJson(assetExchange.getAllAssets(firstIndex, lastIndex).iterator()));
+    response.add(
+        ASSETS_RESPONSE,
+        assetsToJson(assetExchange.getAllAssets(firstIndex, lastIndex).iterator()));
 
     return response;
   }
-
 }

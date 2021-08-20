@@ -97,7 +97,8 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
     final Collection<Alias> mockAliasIterator = mockCollection();
 
-    when(aliasStoreMock.getAliasesByOwner(eq(accountId), eq(from), eq(to))).thenReturn(mockAliasIterator);
+    when(aliasStoreMock.getAliasesByOwner(eq(accountId), eq(from), eq(to)))
+        .thenReturn(mockAliasIterator);
 
     assertEquals(mockAliasIterator, t.getAliasesByOwner(accountId, from, to));
   }

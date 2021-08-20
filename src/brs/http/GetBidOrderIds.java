@@ -19,7 +19,7 @@ final class GetBidOrderIds extends APIServlet.JsonRequestHandler {
   private final AssetExchange assetExchange;
 
   GetBidOrderIds(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[]{APITag.AE}, ASSET_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(new APITag[] {APITag.AE}, ASSET_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -38,5 +38,4 @@ final class GetBidOrderIds extends APIServlet.JsonRequestHandler {
     response.add("bidOrderIds", orderIds);
     return response;
   }
-
 }

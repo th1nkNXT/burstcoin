@@ -21,7 +21,12 @@ public final class GetAccountCurrentAskOrders extends APIServlet.JsonRequestHand
   private final AssetExchange assetExchange;
 
   GetAccountCurrentAskOrders(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[]{APITag.ACCOUNTS, APITag.AE}, ACCOUNT_PARAMETER, ASSET_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(
+        new APITag[] {APITag.ACCOUNTS, APITag.AE},
+        ACCOUNT_PARAMETER,
+        ASSET_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -43,7 +48,10 @@ public final class GetAccountCurrentAskOrders extends APIServlet.JsonRequestHand
     if (assetId == 0) {
       askOrders = assetExchange.getAskOrdersByAccount(accountId, firstIndex, lastIndex).iterator();
     } else {
-      askOrders = assetExchange.getAskOrdersByAccountAsset(accountId, assetId, firstIndex, lastIndex).iterator();
+      askOrders =
+          assetExchange
+              .getAskOrdersByAccountAsset(accountId, assetId, firstIndex, lastIndex)
+              .iterator();
     }
     JsonArray orders = new JsonArray();
     while (askOrders.hasNext()) {
@@ -53,5 +61,4 @@ public final class GetAccountCurrentAskOrders extends APIServlet.JsonRequestHand
     response.add(ASK_ORDERS_RESPONSE, orders);
     return response;
   }
-
 }

@@ -18,8 +18,16 @@ public final class DGSRefund extends CreateTransaction {
   private final AccountService accountService;
   private final Blockchain blockchain;
 
-  DGSRefund(ParameterService parameterService, Blockchain blockchain, AccountService accountService, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, PURCHASE_PARAMETER, REFUND_NQT_PARAMETER);
+  DGSRefund(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AccountService accountService,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        PURCHASE_PARAMETER,
+        REFUND_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.accountService = accountService;
     this.blockchain = blockchain;
@@ -55,9 +63,8 @@ public final class DGSRefund extends CreateTransaction {
 
     Account buyerAccount = accountService.getAccount(purchase.getBuyerId());
 
-    Attachment attachment = new Attachment.DigitalGoodsRefund(purchase.getId(), refundNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsRefund(purchase.getId(), refundNQT, blockchain.getHeight());
     return createTransaction(req, sellerAccount, buyerAccount.getId(), 0, attachment);
-
   }
-
 }

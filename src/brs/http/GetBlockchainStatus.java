@@ -20,8 +20,9 @@ final class GetBlockchainStatus extends APIServlet.JsonRequestHandler {
   private final Blockchain blockchain;
   private final TimeService timeService;
 
-  GetBlockchainStatus(BlockchainProcessor blockchainProcessor, Blockchain blockchain, TimeService timeService) {
-    super(new APITag[]{APITag.BLOCKS, APITag.INFO});
+  GetBlockchainStatus(
+      BlockchainProcessor blockchainProcessor, Blockchain blockchain, TimeService timeService) {
+    super(new APITag[] {APITag.BLOCKS, APITag.INFO});
     this.blockchainProcessor = blockchainProcessor;
     this.blockchain = blockchain;
     this.timeService = timeService;
@@ -37,13 +38,16 @@ final class GetBlockchainStatus extends APIServlet.JsonRequestHandler {
     response.addProperty("lastBlock", lastBlock.getStringId());
     response.addProperty("lastBlockTimestamp", lastBlock.getTimestamp());
     response.addProperty("cumulativeDifficulty", lastBlock.getCumulativeDifficulty().toString());
-    response.addProperty(ResultFields.AVERAGE_COMMITMENT_NQT_RESPONSE, lastBlock.getAverageCommitment());
+    response.addProperty(
+        ResultFields.AVERAGE_COMMITMENT_NQT_RESPONSE, lastBlock.getAverageCommitment());
     response.addProperty("numberOfBlocks", lastBlock.getHeight() + 1);
     Peer lastBlockchainFeeder = blockchainProcessor.getLastBlockchainFeeder();
-    response.addProperty("lastBlockchainFeeder", lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
-    response.addProperty("lastBlockchainFeederHeight", blockchainProcessor.getLastBlockchainFeederHeight());
+    response.addProperty(
+        "lastBlockchainFeeder",
+        lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
+    response.addProperty(
+        "lastBlockchainFeederHeight", blockchainProcessor.getLastBlockchainFeederHeight());
     response.addProperty("isScanning", blockchainProcessor.isScanning());
     return response;
   }
-
 }

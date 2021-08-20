@@ -20,8 +20,9 @@ public final class GetAccountSubscriptions extends APIServlet.JsonRequestHandler
   private final ParameterService parameterService;
   private final SubscriptionService subscriptionService;
 
-  GetAccountSubscriptions(ParameterService parameterService, SubscriptionService subscriptionService) {
-    super(new APITag[]{APITag.ACCOUNTS}, ACCOUNT_PARAMETER);
+  GetAccountSubscriptions(
+      ParameterService parameterService, SubscriptionService subscriptionService) {
+    super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER);
     this.parameterService = parameterService;
     this.subscriptionService = subscriptionService;
   }
@@ -35,7 +36,8 @@ public final class GetAccountSubscriptions extends APIServlet.JsonRequestHandler
 
     JsonArray subscriptions = new JsonArray();
 
-    Collection<Subscription> accountSubscriptions = subscriptionService.getSubscriptionsByParticipant(account.getId());
+    Collection<Subscription> accountSubscriptions =
+        subscriptionService.getSubscriptionsByParticipant(account.getId());
 
     for (Subscription accountSubscription : accountSubscriptions) {
       subscriptions.add(JSONData.subscription(accountSubscription));

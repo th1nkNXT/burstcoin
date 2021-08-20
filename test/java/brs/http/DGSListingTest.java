@@ -53,21 +53,24 @@ public class DGSListingTest extends AbstractTransactionTest {
     final int priceNqt = 123;
     final int quantity = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, priceNqt),
-        new MockParam(QUANTITY_PARAMETER, quantity),
-        new MockParam(NAME_PARAMETER, dgsName),
-        new MockParam(DESCRIPTION_PARAMETER, dgsDescription),
-        new MockParam(TAGS_PARAMETER, tags)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, priceNqt),
+            new MockParam(QUANTITY_PARAMETER, quantity),
+            new MockParam(NAME_PARAMETER, dgsName),
+            new MockParam(DESCRIPTION_PARAMETER, dgsDescription),
+            new MockParam(TAGS_PARAMETER, tags));
 
     when(mockParameterService.getSenderAccount(eq(req))).thenReturn(mockAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsListing attachment = (Attachment.DigitalGoodsListing) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsListing attachment =
+        (Attachment.DigitalGoodsListing)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(DigitalGoods.LISTING, attachment.getTransactionType());
@@ -80,10 +83,9 @@ public class DGSListingTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_missingName() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123),
-        new MockParam(QUANTITY_PARAMETER, 1)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, 123), new MockParam(QUANTITY_PARAMETER, 1));
 
     assertEquals(MISSING_NAME, t.processRequest(req));
   }
@@ -96,11 +98,11 @@ public class DGSListingTest extends AbstractTransactionTest {
       tooLongName += "a";
     }
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123),
-        new MockParam(QUANTITY_PARAMETER, 1),
-        new MockParam(NAME_PARAMETER, tooLongName)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, 123),
+            new MockParam(QUANTITY_PARAMETER, 1),
+            new MockParam(NAME_PARAMETER, tooLongName));
 
     assertEquals(INCORRECT_DGS_LISTING_NAME, t.processRequest(req));
   }
@@ -113,12 +115,12 @@ public class DGSListingTest extends AbstractTransactionTest {
       tooLongDescription += "a";
     }
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123),
-        new MockParam(QUANTITY_PARAMETER, 1),
-        new MockParam(NAME_PARAMETER, "name"),
-        new MockParam(DESCRIPTION_PARAMETER, tooLongDescription)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, 123),
+            new MockParam(QUANTITY_PARAMETER, 1),
+            new MockParam(NAME_PARAMETER, "name"),
+            new MockParam(DESCRIPTION_PARAMETER, tooLongDescription));
 
     assertEquals(INCORRECT_DGS_LISTING_DESCRIPTION, t.processRequest(req));
   }
@@ -131,15 +133,14 @@ public class DGSListingTest extends AbstractTransactionTest {
       tooLongTags += "a";
     }
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123),
-        new MockParam(QUANTITY_PARAMETER, 1),
-        new MockParam(NAME_PARAMETER, "name"),
-        new MockParam(DESCRIPTION_PARAMETER, "description"),
-        new MockParam(TAGS_PARAMETER, tooLongTags)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(PRICE_NQT_PARAMETER, 123),
+            new MockParam(QUANTITY_PARAMETER, 1),
+            new MockParam(NAME_PARAMETER, "name"),
+            new MockParam(DESCRIPTION_PARAMETER, "description"),
+            new MockParam(TAGS_PARAMETER, tooLongTags));
 
     assertEquals(INCORRECT_DGS_LISTING_TAGS, t.processRequest(req));
   }
-
 }

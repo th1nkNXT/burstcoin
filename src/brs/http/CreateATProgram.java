@@ -26,9 +26,22 @@ final class CreateATProgram extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  CreateATProgram(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.AT, APITag.CREATE_TRANSACTION}, apiTransactionManager,
-        NAME_PARAMETER, DESCRIPTION_PARAMETER, CREATION_BYTES_PARAMETER, CODE_PARAMETER, DATA_PARAMETER, DPAGES_PARAMETER, CSPAGES_PARAMETER, USPAGES_PARAMETER, MIN_ACTIVATION_AMOUNT_NQT_PARAMETER);
+  CreateATProgram(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.AT, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        NAME_PARAMETER,
+        DESCRIPTION_PARAMETER,
+        CREATION_BYTES_PARAMETER,
+        CODE_PARAMETER,
+        DATA_PARAMETER,
+        DPAGES_PARAMETER,
+        CSPAGES_PARAMETER,
+        USPAGES_PARAMETER,
+        MIN_ACTIVATION_AMOUNT_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -51,7 +64,8 @@ final class CreateATProgram extends CreateTransaction {
       return INCORRECT_AUTOMATED_TRANSACTION_NAME;
     }
 
-    if (description != null && description.length() > Constants.MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH) {
+    if (description != null
+        && description.length() > Constants.MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH) {
       return INCORRECT_AUTOMATED_TRANSACTION_DESCRIPTION;
     }
 
@@ -81,7 +95,8 @@ final class CreateATProgram extends CreateTransaction {
           throw new IllegalArgumentException();
         }
 
-        long minActivationAmount = Convert.parseUnsignedLong(req.getParameter(MIN_ACTIVATION_AMOUNT_NQT_PARAMETER));
+        long minActivationAmount =
+            Convert.parseUnsignedLong(req.getParameter(MIN_ACTIVATION_AMOUNT_NQT_PARAMETER));
 
         int creationLength = 4; // version + reserved
         creationLength += 8; // pages
@@ -125,19 +140,21 @@ final class CreateATProgram extends CreateTransaction {
     }
 
     Account account = parameterService.getSenderAccount(req);
-    Attachment attachment = new Attachment.AutomatedTransactionsCreation(name, description, creationBytes, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.AutomatedTransactionsCreation(
+            name, description, creationBytes, blockchain.getHeight());
 
     logger.debug("AT {} added successfully", name);
     return createTransaction(req, account, attachment);
   }
 
-    private void putLength(int nPages, String string, ByteBuffer buffer) {
-        if (nPages * 256 <= 256) {
-            buffer.put((byte) (string.length() / 2));
-        } else if (nPages * 256 <= 32767) {
-            buffer.putShort((short) (string.length() / 2));
-        } else {
-            buffer.putInt(string.length() / 2);
-        }
+  private void putLength(int nPages, String string, ByteBuffer buffer) {
+    if (nPages * 256 <= 256) {
+      buffer.put((byte) (string.length() / 2));
+    } else if (nPages * 256 <= 32767) {
+      buffer.putShort((short) (string.length() / 2));
+    } else {
+      buffer.putInt(string.length() / 2);
     }
+  }
 }

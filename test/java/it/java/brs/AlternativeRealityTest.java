@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 ;
 ;
 
@@ -22,7 +21,7 @@ public class AlternativeRealityTest extends AbstractIT {
 
   @Test
   public void normalReality() throws IOException, InterruptedException {
-    for(JsonObject jsonObject:getReality("reality1.json")) {
+    for (JsonObject jsonObject : getReality("reality1.json")) {
       super.processBlock(jsonObject);
       Thread.sleep(500);
     }
@@ -38,7 +37,7 @@ public class AlternativeRealityTest extends AbstractIT {
 
     List<JsonObject> result = new ArrayList<>();
 
-    for(JsonElement obj:array) {
+    for (JsonElement obj : array) {
       result.add(JSON.getAsJsonObject(obj));
     }
 

@@ -14,14 +14,14 @@ final class GetAT extends APIServlet.JsonRequestHandler {
   private final ParameterService parameterService;
 
   GetAT(ParameterService parameterService) {
-    super(new APITag[]{APITag.AT}, AT_PARAMETER, INCLUDE_DETAILS_PARAMETER);
+    super(new APITag[] {APITag.AT}, AT_PARAMETER, INCLUDE_DETAILS_PARAMETER);
     this.parameterService = parameterService;
   }
 
   @Override
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
-    boolean includeDetails = !("false".equalsIgnoreCase(req.getParameter(INCLUDE_DETAILS_PARAMETER)));
+    boolean includeDetails =
+        !("false".equalsIgnoreCase(req.getParameter(INCLUDE_DETAILS_PARAMETER)));
     return JSONData.at(parameterService.getAT(req), includeDetails);
   }
-
 }

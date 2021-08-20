@@ -21,5 +21,4 @@ final class AddPeers implements PeerServlet.PeerRequestHandler {
     }
     return JSON.emptyJSON;
   }
-
 }

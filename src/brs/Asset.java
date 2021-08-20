@@ -12,7 +12,14 @@ public class Asset {
   private final long quantityQNT;
   private final byte decimals;
 
-  protected Asset(long assetId, BurstKey dbKey, long accountId, String name, String description, long quantityQNT, byte decimals) {
+  protected Asset(
+      long assetId,
+      BurstKey dbKey,
+      long accountId,
+      String name,
+      String description,
+      long quantityQNT,
+      byte decimals) {
     this.assetId = assetId;
     this.dbKey = dbKey;
     this.accountId = accountId;
@@ -22,7 +29,8 @@ public class Asset {
     this.decimals = decimals;
   }
 
-  public Asset(BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetIssuance attachment) {
+  public Asset(
+      BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetIssuance attachment) {
     this.dbKey = dbKey;
     this.assetId = transaction.getId();
     this.accountId = transaction.getSenderId();
@@ -55,5 +63,4 @@ public class Asset {
   public byte getDecimals() {
     return decimals;
   }
-
 }

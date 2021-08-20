@@ -15,12 +15,13 @@ final class GetInfo implements PeerServlet.PeerRequestHandler {
 
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
-    PeerImpl peerImpl = (PeerImpl)peer;
+    PeerImpl peerImpl = (PeerImpl) peer;
     String announcedAddress = JSON.getAsString(request.get("announcedAddress"));
     if (announcedAddress != null) {
       announcedAddress = announcedAddress.trim();
       if (!announcedAddress.isEmpty()) {
-        if (peerImpl.getAnnouncedAddress() != null && !announcedAddress.equals(peerImpl.getAnnouncedAddress())) {
+        if (peerImpl.getAnnouncedAddress() != null
+            && !announcedAddress.equals(peerImpl.getAnnouncedAddress())) {
           // force verification of changed announced address
           peerImpl.setState(Peer.State.NON_CONNECTED);
         }

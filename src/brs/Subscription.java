@@ -14,20 +14,20 @@ public class Subscription {
   public final int frequency;
   private final AtomicInteger timeNext;
 
-  public Subscription(Long senderId,
-                         Long recipientId,
-                         Long id,
-                         Long amountNQT,
-                         int frequency,
-                         int timeNext,
-                         BurstKey dbKey
-                         ) {
+  public Subscription(
+      Long senderId,
+      Long recipientId,
+      Long id,
+      Long amountNQT,
+      int frequency,
+      int timeNext,
+      BurstKey dbKey) {
     this.senderId = senderId;
     this.recipientId = recipientId;
     this.id = id;
     this.dbKey = dbKey;
     this.amountNQT = amountNQT;
-    this.frequency  = frequency;
+    this.frequency = frequency;
     this.timeNext = new AtomicInteger(timeNext);
   }
 

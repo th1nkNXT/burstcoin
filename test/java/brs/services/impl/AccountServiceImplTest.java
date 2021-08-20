@@ -162,7 +162,8 @@ public class AccountServiceImplTest {
     final Long recipientId = 123l;
     final Collection<RewardRecipientAssignment> mockAccountsIterator = mock(Collection.class);
 
-    when(accountStoreMock.getAccountsWithRewardRecipient(eq(recipientId))).thenReturn(mockAccountsIterator);
+    when(accountStoreMock.getAccountsWithRewardRecipient(eq(recipientId)))
+        .thenReturn(mockAccountsIterator);
 
     assertEquals(mockAccountsIterator, t.getAccountsWithRewardRecipient(recipientId));
   }
@@ -233,5 +234,4 @@ public class AccountServiceImplTest {
 
     assertEquals(count, t.getCount());
   }
-
 }

@@ -32,7 +32,7 @@ public class StatisticsManagerImpl {
   }
 
   private CacheStatisticsOverview getCacheStatisticsOverview(String cacheName) {
-    if(! this.cacheStatistics.containsKey(cacheName)) {
+    if (!this.cacheStatistics.containsKey(cacheName)) {
       this.cacheStatistics.put(cacheName, new CacheStatisticsOverview(cacheName));
     }
 
@@ -40,13 +40,17 @@ public class StatisticsManagerImpl {
   }
 
   public void blockAdded() {
-    if (addedBlockCount++ == 0 ) {
+    if (addedBlockCount++ == 0) {
       firstBlockAdded = timeService.getEpochTime();
-    } else if ( addedBlockCount % 500 == 0 ) {
+    } else if (addedBlockCount % 500 == 0) {
       float blocksPerSecond = 500 / (float) (timeService.getEpochTime() - firstBlockAdded);
 
       if (logger.isInfoEnabled()) {
-        final String handleText = "handling {} blocks/s" + cacheStatistics.values().stream().map(cacheInfo -> " " + cacheInfo.getCacheInfoAndReset()).collect(Collectors.joining());
+        final String handleText =
+            "handling {} blocks/s"
+                + cacheStatistics.values().stream()
+                    .map(cacheInfo -> " " + cacheInfo.getCacheInfoAndReset())
+                    .collect(Collectors.joining());
         logger.info(handleText, String.format("%.2f", blocksPerSecond));
       }
 
@@ -68,13 +72,19 @@ public class StatisticsManagerImpl {
     }
 
     private String getCacheInfoAndReset() {
-      final Float hitRatio = (cacheHits + cacheMisses) > 0 ? (float) cacheHits / (cacheHits + cacheMisses) : null;
-      final Float totalHitRatio = (totalCacheHits + totalCacheMisses) > 0 ? (float) totalCacheHits / (totalCacheHits + totalCacheMisses) : null;
+      final Float hitRatio =
+          (cacheHits + cacheMisses) > 0 ? (float) cacheHits / (cacheHits + cacheMisses) : null;
+      final Float totalHitRatio =
+          (totalCacheHits + totalCacheMisses) > 0
+              ? (float) totalCacheHits / (totalCacheHits + totalCacheMisses)
+              : null;
 
       cacheHits = 0;
       cacheMisses = 0;
 
-      return String.format("%s cache hit ratio now/total:%.2f%%/%.2f%%", cacheName, hitRatio * 100, totalHitRatio * 100);
+      return String.format(
+          "%s cache hit ratio now/total:%.2f%%/%.2f%%",
+          cacheName, hitRatio * 100, totalHitRatio * 100);
     }
 
     private void cacheHit() {

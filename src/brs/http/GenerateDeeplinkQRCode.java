@@ -28,7 +28,14 @@ public class GenerateDeeplinkQRCode extends HttpRequestHandler {
   private final DeeplinkQRCodeGenerator deeplinkQRCodeGenerator;
 
   public GenerateDeeplinkQRCode(DeeplinkQRCodeGenerator deeplinkQRCodeGenerator) {
-    super(new APITag[]{APITag.CREATE_TRANSACTION, APITag.TRANSACTIONS}, IMMUTABLE_PARAMETER, RECEIVER_ID_PARAMETER, AMOUNT_NQT_PARAMETER, FEE_NQT_PARAMETER, FEE_SUGGESTION_TYPE_PARAMETER, MESSAGE_PARAMETER);
+    super(
+        new APITag[] {APITag.CREATE_TRANSACTION, APITag.TRANSACTIONS},
+        IMMUTABLE_PARAMETER,
+        RECEIVER_ID_PARAMETER,
+        AMOUNT_NQT_PARAMETER,
+        FEE_NQT_PARAMETER,
+        FEE_SUGGESTION_TYPE_PARAMETER,
+        MESSAGE_PARAMETER);
     this.deeplinkQRCodeGenerator = deeplinkQRCodeGenerator;
   }
 
@@ -72,7 +79,8 @@ public class GenerateDeeplinkQRCode extends HttpRequestHandler {
       FeeSuggestionType feeSuggestionType = null;
 
       if (feeNQT == null) {
-        final String feeSuggestionTypeString = Convert.emptyToNull(req.getParameter(FEE_SUGGESTION_TYPE_PARAMETER));
+        final String feeSuggestionTypeString =
+            Convert.emptyToNull(req.getParameter(FEE_SUGGESTION_TYPE_PARAMETER));
 
         if (StringUtils.isEmpty(feeSuggestionTypeString)) {
           addErrorMessage(resp, FEE_OR_FEE_SUGGESTION_REQUIRED);
@@ -89,14 +97,17 @@ public class GenerateDeeplinkQRCode extends HttpRequestHandler {
 
       final String message = Convert.emptyToNull(req.getParameter(MESSAGE_PARAMETER));
 
-      if (!StringUtils.isEmpty(message) && message.length() > Constants.MAX_ARBITRARY_MESSAGE_LENGTH) {
+      if (!StringUtils.isEmpty(message)
+          && message.length() > Constants.MAX_ARBITRARY_MESSAGE_LENGTH) {
         addErrorMessage(resp, INCORRECT_MESSAGE_LENGTH);
         return;
       }
 
       resp.setContentType("image/jpeg");
 
-      final BufferedImage qrImage = deeplinkQRCodeGenerator.generateRequestBurstDeepLinkQRCode(receiverId, amountNQT, feeSuggestionType, feeNQT, message, immutable);
+      final BufferedImage qrImage =
+          deeplinkQRCodeGenerator.generateRequestBurstDeepLinkQRCode(
+              receiverId, amountNQT, feeSuggestionType, feeNQT, message, immutable);
       ImageIO.write(qrImage, "jpg", resp.getOutputStream());
       resp.getOutputStream().close();
     } catch (WriterException | IOException e) {

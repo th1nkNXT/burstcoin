@@ -27,20 +27,24 @@ final class PopOff extends APIServlet.JsonRequestHandler {
   private final BlockService blockService;
   private final List<String> apiAdminKeyList;
 
-  PopOff(BlockchainProcessor blockchainProcessor, Blockchain blockchain, BlockService blockService, PropertyService propertyService) {
+  PopOff(
+      BlockchainProcessor blockchainProcessor,
+      Blockchain blockchain,
+      BlockService blockService,
+      PropertyService propertyService) {
     super(new APITag[] {APITag.ADMIN}, NUM_BLOCKS_PARAMETER, HEIGHT_PARAMETER, API_KEY_PARAMETER);
     this.blockchainProcessor = blockchainProcessor;
     this.blockchain = blockchain;
     this.blockService = blockService;
-    
+
     apiAdminKeyList = propertyService.getStringList(Props.API_ADMIN_KEY_LIST);
   }
 
   @Override
   JsonElement processRequest(HttpServletRequest req) {
-    
+
     String apiKey = req.getParameter(API_KEY_PARAMETER);
-    if(!apiAdminKeyList.contains(apiKey)) {
+    if (!apiAdminKeyList.contains(apiKey)) {
       return ERROR_NOT_ALLOWED;
     }
 
@@ -48,26 +52,32 @@ final class PopOff extends APIServlet.JsonRequestHandler {
     int numBlocks = 0;
     try {
       numBlocks = Integer.parseInt(req.getParameter(NUM_BLOCKS_PARAMETER));
-    } catch (NumberFormatException ignored) {}
+    } catch (NumberFormatException ignored) {
+    }
     int height = 0;
     try {
       height = Integer.parseInt(req.getParameter(HEIGHT_PARAMETER));
-    } catch (NumberFormatException ignored) {}
+    } catch (NumberFormatException ignored) {
+    }
 
     List<? extends Block> blocks;
     JsonArray blocksJSON = new JsonArray();
     if (numBlocks > 0) {
       blocks = blockchainProcessor.popOffTo(blockchain.getHeight() - numBlocks);
-    }
-    else if (height > 0) {
+    } else if (height > 0) {
       blocks = blockchainProcessor.popOffTo(height);
-    }
-    else {
+    } else {
       response.addProperty(ERROR_RESPONSE, "invalid numBlocks or height");
       return response;
     }
     for (Block block : blocks) {
-      blocksJSON.add(JSONData.block(block, true, blockchain.getHeight(), blockService.getBlockReward(block), blockService.getScoopNum(block)));
+      blocksJSON.add(
+          JSONData.block(
+              block,
+              true,
+              blockchain.getHeight(),
+              blockService.getBlockReward(block),
+              blockService.getScoopNum(block)));
     }
     response.add(BLOCKS_RESPONSE, blocksJSON);
     return response;
@@ -77,5 +87,4 @@ final class PopOff extends APIServlet.JsonRequestHandler {
   final boolean requirePost() {
     return true;
   }
-
 }

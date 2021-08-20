@@ -28,7 +28,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
@@ -50,9 +49,8 @@ public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
   public void processRequest() throws BurstException {
     final long accountId = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ACCOUNT_PARAMETER, accountId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
     final Account account = mock(Account.class);
     when(account.getId()).thenReturn(accountId);
@@ -79,11 +77,13 @@ public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
     when(escrow.getRecipientId()).thenReturn(5L);
     when(escrow.getSenderId()).thenReturn(6L);
 
-    final Collection<Decision> decisionsIterator = mockCollection(decision, skippedDecision, otherSkippedDecision);
+    final Collection<Decision> decisionsIterator =
+        mockCollection(decision, skippedDecision, otherSkippedDecision);
     when(escrow.getDecisions()).thenReturn(decisionsIterator);
 
     final Collection<Escrow> escrowCollection = Arrays.asList(escrow);
-    when(escrowServiceMock.getEscrowTransactionsByParticipant(eq(accountId))).thenReturn(escrowCollection);
+    when(escrowServiceMock.getEscrowTransactionsByParticipant(eq(accountId)))
+        .thenReturn(escrowCollection);
 
     final JsonObject resultOverview = (JsonObject) t.processRequest(req);
     assertNotNull(resultOverview);

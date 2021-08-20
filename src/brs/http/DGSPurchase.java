@@ -19,8 +19,19 @@ public final class DGSPurchase extends CreateTransaction {
   private final AccountService accountService;
   private final TimeService timeService;
 
-  DGSPurchase(ParameterService parameterService, Blockchain blockchain, AccountService accountService, TimeService timeService, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, GOODS_PARAMETER, PRICE_NQT_PARAMETER, QUANTITY_PARAMETER, DELIVERY_DEADLINE_TIMESTAMP_PARAMETER);
+  DGSPurchase(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AccountService accountService,
+      TimeService timeService,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        GOODS_PARAMETER,
+        PRICE_NQT_PARAMETER,
+        QUANTITY_PARAMETER,
+        DELIVERY_DEADLINE_TIMESTAMP_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
@@ -45,7 +56,8 @@ public final class DGSPurchase extends CreateTransaction {
       return INCORRECT_PURCHASE_PRICE;
     }
 
-    String deliveryDeadlineString = Convert.emptyToNull(req.getParameter(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER));
+    String deliveryDeadlineString =
+        Convert.emptyToNull(req.getParameter(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER));
     if (deliveryDeadlineString == null) {
       return MISSING_DELIVERY_DEADLINE_TIMESTAMP;
     }
@@ -62,10 +74,9 @@ public final class DGSPurchase extends CreateTransaction {
     Account buyerAccount = parameterService.getSenderAccount(req);
     Account sellerAccount = accountService.getAccount(goods.getSellerId());
 
-    Attachment attachment = new Attachment.DigitalGoodsPurchase(goods.getId(), quantity, priceNQT,
-        deliveryDeadline, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsPurchase(
+            goods.getId(), quantity, priceNQT, deliveryDeadline, blockchain.getHeight());
     return createTransaction(req, buyerAccount, sellerAccount.getId(), 0, attachment);
-
   }
-
 }

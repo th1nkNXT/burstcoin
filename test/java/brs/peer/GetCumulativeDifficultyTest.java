@@ -44,8 +44,8 @@ public class GetCumulativeDifficultyTest {
     final JsonObject result = (JsonObject) t.processRequest(request, mock(Peer.class));
     assertNotNull(result);
 
-    assertEquals(cumulativeDifficulty.toString(), JSON.getAsString(result.get("cumulativeDifficulty")));
+    assertEquals(
+        cumulativeDifficulty.toString(), JSON.getAsString(result.get("cumulativeDifficulty")));
     assertEquals(blockchainHeight, JSON.getAsInt(result.get("blockchainHeight")));
   }
-
 }

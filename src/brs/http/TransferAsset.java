@@ -16,8 +16,17 @@ public final class TransferAsset extends CreateTransaction {
   private final Blockchain blockchain;
   private final AccountService accountService;
 
-  public TransferAsset(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager, AccountService accountService) {
-    super(new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION}, apiTransactionManager, RECIPIENT_PARAMETER, ASSET_PARAMETER, QUANTITY_QNT_PARAMETER);
+  public TransferAsset(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager,
+      AccountService accountService) {
+    super(
+        new APITag[] {APITag.AE, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        RECIPIENT_PARAMETER,
+        ASSET_PARAMETER,
+        QUANTITY_QNT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
@@ -37,9 +46,9 @@ public final class TransferAsset extends CreateTransaction {
       return NOT_ENOUGH_ASSETS;
     }
 
-    Attachment attachment = new Attachment.ColoredCoinsAssetTransfer(asset.getId(), quantityQNT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.ColoredCoinsAssetTransfer(
+            asset.getId(), quantityQNT, blockchain.getHeight());
     return createTransaction(req, account, recipient, 0, attachment);
-
   }
-
 }

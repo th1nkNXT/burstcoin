@@ -23,11 +23,13 @@ import java.util.stream.Collectors;
 
 public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionStore {
 
-  private static final Logger logger = LoggerFactory.getLogger(UnconfirmedTransactionStoreImpl.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(UnconfirmedTransactionStoreImpl.class);
 
   private final TimeService timeService;
   private final ReservedBalanceCache reservedBalanceCache;
-  private final TransactionDuplicatesCheckerImpl transactionDuplicatesChecker = new TransactionDuplicatesCheckerImpl();
+  private final TransactionDuplicatesCheckerImpl transactionDuplicatesChecker =
+      new TransactionDuplicatesCheckerImpl();
 
   private final HashMap<Transaction, HashSet<Peer>> fingerPrintsOverview = new HashMap<>();
 
@@ -41,7 +43,11 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   private int numberUnconfirmedTransactionsFullHash;
   private final int maxPercentageUnconfirmedTransactionsFullHash;
 
-  public UnconfirmedTransactionStoreImpl(TimeService timeService, PropertyService propertyService, AccountStore accountStore, TransactionDb transactionDb) {
+  public UnconfirmedTransactionStoreImpl(
+      TimeService timeService,
+      PropertyService propertyService,
+      AccountStore accountStore,
+      TransactionDb transactionDb) {
     this.timeService = timeService;
 
     this.reservedBalanceCache = new ReservedBalanceCache(accountStore);
@@ -49,23 +55,30 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
     this.maxSize = propertyService.getInt(Props.P2P_MAX_UNCONFIRMED_TRANSACTIONS);
     this.totalSize = 0;
 
-    this.maxRawUTBytesToSend = propertyService.getInt(Props.P2P_MAX_UNCONFIRMED_TRANSACTIONS_RAW_SIZE_BYTES_TO_SEND);
+    this.maxRawUTBytesToSend =
+        propertyService.getInt(Props.P2P_MAX_UNCONFIRMED_TRANSACTIONS_RAW_SIZE_BYTES_TO_SEND);
 
-    this.maxPercentageUnconfirmedTransactionsFullHash = propertyService.getInt(Props.P2P_MAX_PERCENTAGE_UNCONFIRMED_TRANSACTIONS_FULL_HASH_REFERENCE);
+    this.maxPercentageUnconfirmedTransactionsFullHash =
+        propertyService.getInt(
+            Props.P2P_MAX_PERCENTAGE_UNCONFIRMED_TRANSACTIONS_FULL_HASH_REFERENCE);
     this.numberUnconfirmedTransactionsFullHash = 0;
 
     internalStore = new TreeMap<>();
 
-      ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    Runnable cleanupExpiredTransactions = () -> {
-      synchronized (internalStore) {
-        final List<Transaction> expiredTransactions = getAll()
-                .stream()
-                .filter(t -> timeService.getEpochTime() > t.getExpiration() || transactionDb.hasTransaction(t.getId()))
-                .collect(Collectors.toList());
-        expiredTransactions.forEach(this::removeTransaction);
-      }
-    };
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    Runnable cleanupExpiredTransactions =
+        () -> {
+          synchronized (internalStore) {
+            final List<Transaction> expiredTransactions =
+                getAll().stream()
+                    .filter(
+                        t ->
+                            timeService.getEpochTime() > t.getExpiration()
+                                || transactionDb.hasTransaction(t.getId()))
+                    .collect(Collectors.toList());
+            expiredTransactions.forEach(this::removeTransaction);
+          }
+        };
     scheduler.scheduleWithFixedDelay(cleanupExpiredTransactions, 1, 1, TimeUnit.MINUTES);
   }
 
@@ -74,19 +87,24 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
     synchronized (internalStore) {
       if (transactionIsCurrentlyInCache(transaction)) {
         if (peer != null) {
-          logger.info("Transaction {}: Added fingerprint of {}", transaction.getId(), peer.getPeerAddress());
+          logger.info(
+              "Transaction {}: Added fingerprint of {}",
+              transaction.getId(),
+              peer.getPeerAddress());
           fingerPrintsOverview.get(transaction).add(peer);
         }
       } else if (transactionCanBeAddedToCache(transaction)) {
         this.reservedBalanceCache.reserveBalanceAndPut(transaction);
 
-        final TransactionDuplicationResult duplicationInformation = transactionDuplicatesChecker.removeCheaperDuplicate(transaction);
+        final TransactionDuplicationResult duplicationInformation =
+            transactionDuplicatesChecker.removeCheaperDuplicate(transaction);
 
         if (duplicationInformation.isDuplicate()) {
           final Transaction duplicatedTransaction = duplicationInformation.getTransaction();
 
           if (duplicatedTransaction != null && duplicatedTransaction != transaction) {
-            logger.info("Transaction {}: Adding more expensive duplicate transaction", transaction.getId());
+            logger.info(
+                "Transaction {}: Adding more expensive duplicate transaction", transaction.getId());
             removeTransaction(duplicationInformation.getTransaction());
             this.reservedBalanceCache.refundBalance(duplicationInformation.getTransaction());
 
@@ -96,14 +114,25 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
               removeCheapestFirstToExpireTransaction();
             }
           } else {
-            logger.debug("Transaction {}: Will not add a cheaper duplicate UT", transaction.getId());
+            logger.debug(
+                "Transaction {}: Will not add a cheaper duplicate UT", transaction.getId());
           }
         } else {
           addTransaction(transaction, peer);
           if (totalSize % 128 == 0) {
-            logger.info("Cache size: {}/{} added {} from sender {}", totalSize, maxSize, transaction.getId(), transaction.getSenderId());
+            logger.info(
+                "Cache size: {}/{} added {} from sender {}",
+                totalSize,
+                maxSize,
+                transaction.getId(),
+                transaction.getSenderId());
           } else {
-            logger.debug("Cache size: {}/{} added {} from sender {}", totalSize, maxSize, transaction.getId(), transaction.getSenderId());
+            logger.debug(
+                "Cache size: {}/{} added {} from sender {}",
+                totalSize,
+                maxSize,
+                transaction.getId(),
+                transaction.getSenderId());
           }
         }
 
@@ -155,9 +184,11 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   @Override
   public List<Transaction> getAllFor(Peer peer) {
     synchronized (internalStore) {
-      final List<Transaction> untouchedTransactions = fingerPrintsOverview.entrySet().stream()
-          .filter(e -> !e.getValue().contains(peer))
-          .map(Map.Entry::getKey).collect(Collectors.toList());
+      final List<Transaction> untouchedTransactions =
+          fingerPrintsOverview.entrySet().stream()
+              .filter(e -> !e.getValue().contains(peer))
+              .map(Map.Entry::getKey)
+              .collect(Collectors.toList());
 
       final ArrayList<Transaction> resultList = new ArrayList<>();
 
@@ -180,7 +211,8 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   @Override
   public void remove(Transaction transaction) {
     synchronized (internalStore) {
-      // Make sure that we are acting on our own copy of the transaction, as this is the one we want to remove.
+      // Make sure that we are acting on our own copy of the transaction, as this is the one we want
+      // to remove.
       Transaction internalTransaction = get(transaction.getId());
       if (internalTransaction != null) {
         logger.debug("Removing {}", transaction.getId());
@@ -203,7 +235,7 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   @Override
   public void resetAccountBalances() {
     synchronized (internalStore) {
-      for(Transaction insufficientFundsTransactions: reservedBalanceCache.rebuild(getAll())) {
+      for (Transaction insufficientFundsTransactions : reservedBalanceCache.rebuild(getAll())) {
         this.removeTransaction(insufficientFundsTransactions);
       }
     }
@@ -236,7 +268,8 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
 
   private boolean transactionIsCurrentlyInCache(Transaction transaction) {
     final List<Transaction> amountSlot = internalStore.get(amountSlotForTransaction(transaction));
-    return amountSlot != null && amountSlot.stream().anyMatch(t -> t.getId() == transaction.getId());
+    return amountSlot != null
+        && amountSlot.stream().anyMatch(t -> t.getId() == transaction.getId());
   }
 
   private boolean transactionCanBeAddedToCache(Transaction transaction) {
@@ -249,8 +282,10 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   private boolean tooManyTransactionsForSlotSize(Transaction transaction) {
     final long slotHeight = this.amountSlotForTransaction(transaction);
 
-    if (this.internalStore.containsKey(slotHeight) && this.internalStore.get(slotHeight).size() == slotHeight * 360) {
-      logger.info("Transaction {}: Not added because slot {} is full", transaction.getId(), slotHeight);
+    if (this.internalStore.containsKey(slotHeight)
+        && this.internalStore.get(slotHeight).size() == slotHeight * 360) {
+      logger.info(
+          "Transaction {}: Not added because slot {} is full", transaction.getId(), slotHeight);
       return true;
     }
 
@@ -258,8 +293,12 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
   }
 
   private boolean tooManyTransactionsWithReferencedFullHash(Transaction transaction) {
-    if (!StringUtils.isEmpty(transaction.getReferencedTransactionFullHash()) && maxPercentageUnconfirmedTransactionsFullHash <= (((numberUnconfirmedTransactionsFullHash + 1) * 100) / maxSize)) {
-      logger.info("Transaction {}: Not added because too many transactions with referenced full hash", transaction.getId());
+    if (!StringUtils.isEmpty(transaction.getReferencedTransactionFullHash())
+        && maxPercentageUnconfirmedTransactionsFullHash
+            <= (((numberUnconfirmedTransactionsFullHash + 1) * 100) / maxSize)) {
+      logger.info(
+          "Transaction {}: Not added because too many transactions with referenced full hash",
+          transaction.getId());
       return true;
     }
 
@@ -268,7 +307,10 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
 
   private boolean cacheFullAndTransactionCheaperThanAllTheRest(Transaction transaction) {
     if (totalSize == maxSize && internalStore.firstKey() > amountSlotForTransaction(transaction)) {
-      logger.info("Transaction {}: Not added because cache is full and transaction is cheaper than all the rest", transaction.getId());
+      logger.info(
+          "Transaction {}: Not added because cache is full and transaction is cheaper than all the"
+              + " rest",
+          transaction.getId());
       return true;
     }
 
@@ -279,7 +321,8 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
     if (timeService.getEpochTime() < transaction.getExpiration()) {
       return true;
     } else {
-      logger.info("Transaction {} past expiration: {}", transaction.getId(), transaction.getExpiration());
+      logger.info(
+          "Transaction {} past expiration: {}", transaction.getId(), transaction.getExpiration());
       return false;
     }
   }
@@ -299,7 +342,8 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
       if (peer == null) {
         logger.debug("Adding Transaction {} from ourself", transaction.getId());
       } else {
-        logger.debug("Adding Transaction {} from Peer {}", transaction.getId(), peer.getPeerAddress());
+        logger.debug(
+            "Adding Transaction {} from Peer {}", transaction.getId(), peer.getPeerAddress());
       }
     }
 
@@ -318,15 +362,18 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
     return this.internalStore.get(amountSlotNumber);
   }
 
-
   private long amountSlotForTransaction(Transaction transaction) {
     return transaction.getFeeNQT() / Constants.FEE_QUANT;
   }
 
   private void removeCheapestFirstToExpireTransaction() {
-    final Optional<Transaction> cheapestFirstToExpireTransaction = this.internalStore.get(this.internalStore.firstKey()).stream()
-        .sorted(Comparator.comparingLong(Transaction::getFeeNQT).thenComparing(Transaction::getExpiration).thenComparing(Transaction::getId))
-        .findFirst();
+    final Optional<Transaction> cheapestFirstToExpireTransaction =
+        this.internalStore.get(this.internalStore.firstKey()).stream()
+            .sorted(
+                Comparator.comparingLong(Transaction::getFeeNQT)
+                    .thenComparing(Transaction::getExpiration)
+                    .thenComparing(Transaction::getId))
+            .findFirst();
 
     if (cheapestFirstToExpireTransaction.isPresent()) {
       reservedBalanceCache.refundBalance(cheapestFirstToExpireTransaction.get());
@@ -361,14 +408,13 @@ public class UnconfirmedTransactionStoreImpl implements UnconfirmedTransactionSt
     long freeSlot = 1;
     for (Long currentSlot : internalStore.keySet()) {
       List<Transaction> txInSlot = internalStore.get(currentSlot);
-      
-      slotsAvailable += numberOfBlocks*(currentSlot - previousSlot) - txInSlot.size();
-      
-      if(slotsAvailable < 0) {
+
+      slotsAvailable += numberOfBlocks * (currentSlot - previousSlot) - txInSlot.size();
+
+      if (slotsAvailable < 0) {
         freeSlot = currentSlot + 1;
       }
     }
     return freeSlot;
   }
-
 }

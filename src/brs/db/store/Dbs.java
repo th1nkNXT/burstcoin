@@ -11,5 +11,4 @@ public interface Dbs {
   TransactionDb getTransactionDb();
 
   PeerDb getPeerDb();
-
 }

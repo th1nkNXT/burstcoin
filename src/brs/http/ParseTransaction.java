@@ -24,7 +24,10 @@ final class ParseTransaction extends APIServlet.JsonRequestHandler {
   private final TransactionService transactionService;
 
   ParseTransaction(ParameterService parameterService, TransactionService transactionService) {
-    super(new APITag[] {APITag.TRANSACTIONS}, TRANSACTION_BYTES_PARAMETER, TRANSACTION_JSON_PARAMETER);
+    super(
+        new APITag[] {APITag.TRANSACTIONS},
+        TRANSACTION_BYTES_PARAMETER,
+        TRANSACTION_JSON_PARAMETER);
     this.parameterService = parameterService;
     this.transactionService = transactionService;
   }
@@ -38,15 +41,16 @@ final class ParseTransaction extends APIServlet.JsonRequestHandler {
     JsonObject response = JSONData.unconfirmedTransaction(transaction);
     try {
       transactionService.validate(transaction);
-    } catch (BurstException.ValidationException|RuntimeException e) {
+    } catch (BurstException.ValidationException | RuntimeException e) {
       logger.debug(e.getMessage(), e);
       response.addProperty(VALIDATE_RESPONSE, false);
       response.addProperty(ERROR_CODE_RESPONSE, 4);
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Invalid transaction: " + e.toString());
       response.addProperty(ERROR_RESPONSE, e.getMessage());
     }
-    response.addProperty(VERIFY_RESPONSE, transaction.verifySignature() && transactionService.verifyPublicKey(transaction));
+    response.addProperty(
+        VERIFY_RESPONSE,
+        transaction.verifySignature() && transactionService.verifyPublicKey(transaction));
     return response;
   }
-
 }

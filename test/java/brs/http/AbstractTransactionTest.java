@@ -20,14 +20,22 @@ public abstract class AbstractTransactionTest extends AbstractUnitTest {
     R apply() throws BurstException;
   }
 
-  protected Attachment attachmentCreatedTransaction(TransactionCreationFunction r, APITransactionManager apiTransactionManagerMock) throws BurstException {
+  protected Attachment attachmentCreatedTransaction(
+      TransactionCreationFunction r, APITransactionManager apiTransactionManagerMock)
+      throws BurstException {
     final ArgumentCaptor<Attachment> ac = ArgumentCaptor.forClass(Attachment.class);
 
-    when(apiTransactionManagerMock.createTransaction(any(HttpServletRequest.class), nullable(Account.class), nullable(Long.class), anyLong(), ac.capture(), anyLong())).thenReturn(mock(JsonElement.class));
+    when(apiTransactionManagerMock.createTransaction(
+            any(HttpServletRequest.class),
+            nullable(Account.class),
+            nullable(Long.class),
+            anyLong(),
+            ac.capture(),
+            anyLong()))
+        .thenReturn(mock(JsonElement.class));
 
     r.apply();
 
     return ac.getValue();
   }
-
 }

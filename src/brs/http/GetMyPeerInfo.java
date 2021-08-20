@@ -11,7 +11,7 @@ final class GetMyPeerInfo extends APIServlet.JsonRequestHandler {
   private final TransactionProcessor transactionProcessor;
 
   public GetMyPeerInfo(TransactionProcessor transactionProcessor) {
-    super(new APITag[]{APITag.PEER_INFO});
+    super(new APITag[] {APITag.PEER_INFO});
     this.transactionProcessor = transactionProcessor;
   }
 
@@ -22,5 +22,4 @@ final class GetMyPeerInfo extends APIServlet.JsonRequestHandler {
     response.addProperty("utsInStore", transactionProcessor.getAmountUnconfirmedTransactions());
     return response;
   }
-
 }

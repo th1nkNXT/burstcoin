@@ -19,7 +19,12 @@ final class GetAssetAccounts extends APIServlet.JsonRequestHandler {
   private final AssetExchange assetExchange;
 
   GetAssetAccounts(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[]{APITag.AE}, ASSET_PARAMETER, HEIGHT_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(
+        new APITag[] {APITag.AE},
+        ASSET_PARAMETER,
+        HEIGHT_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -33,7 +38,8 @@ final class GetAssetAccounts extends APIServlet.JsonRequestHandler {
     int height = parameterService.getHeight(req);
 
     JsonArray accountAssets = new JsonArray();
-    for (Account.AccountAsset accountAsset : assetExchange.getAccountAssetsOverview(asset.getId(), height, firstIndex, lastIndex)) {
+    for (Account.AccountAsset accountAsset :
+        assetExchange.getAccountAssetsOverview(asset.getId(), height, firstIndex, lastIndex)) {
       accountAssets.add(JSONData.accountAsset(accountAsset));
     }
 

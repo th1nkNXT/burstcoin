@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAllOpenBidOrdersTest extends AbstractUnitTest {
@@ -50,13 +49,14 @@ public class GetAllOpenBidOrdersTest extends AbstractUnitTest {
     final int lastIndex = 2;
 
     final Collection<Bid> mockIterator = mockCollection(mockBidOrder);
-    when(mockAssetExchange.getAllBidOrders(eq(firstIndex), eq(lastIndex)))
-        .thenReturn(mockIterator);
+    when(mockAssetExchange.getAllBidOrders(eq(firstIndex), eq(lastIndex))).thenReturn(mockIterator);
 
-    final JsonObject result = (JsonObject) t.processRequest(QuickMocker.httpServletRequest(
-        new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex)
-    ));
+    final JsonObject result =
+        (JsonObject)
+            t.processRequest(
+                QuickMocker.httpServletRequest(
+                    new MockParam(FIRST_INDEX_PARAMETER, "" + firstIndex),
+                    new MockParam(LAST_INDEX_PARAMETER, "" + lastIndex)));
 
     assertNotNull(result);
     final JsonArray openOrdersResult = (JsonArray) result.get(OPEN_ORDERS_RESPONSE);
@@ -66,9 +66,13 @@ public class GetAllOpenBidOrdersTest extends AbstractUnitTest {
 
     final JsonObject openOrderResult = JSON.getAsJsonObject(openOrdersResult.get(0));
     assertEquals("" + mockBidOrder.getId(), JSON.getAsString(openOrderResult.get(ORDER_RESPONSE)));
-    assertEquals("" + mockBidOrder.getAssetId(), JSON.getAsString(openOrderResult.get(ASSET_RESPONSE)));
-    assertEquals("" + mockBidOrder.getQuantityQNT(), JSON.getAsString(openOrderResult.get(QUANTITY_QNT_RESPONSE)));
-    assertEquals("" + mockBidOrder.getPriceNQT(), JSON.getAsString(openOrderResult.get(PRICE_NQT_RESPONSE)));
+    assertEquals(
+        "" + mockBidOrder.getAssetId(), JSON.getAsString(openOrderResult.get(ASSET_RESPONSE)));
+    assertEquals(
+        "" + mockBidOrder.getQuantityQNT(),
+        JSON.getAsString(openOrderResult.get(QUANTITY_QNT_RESPONSE)));
+    assertEquals(
+        "" + mockBidOrder.getPriceNQT(), JSON.getAsString(openOrderResult.get(PRICE_NQT_RESPONSE)));
     assertEquals(mockBidOrder.getHeight(), JSON.getAsInt(openOrderResult.get(HEIGHT_RESPONSE)));
   }
 }

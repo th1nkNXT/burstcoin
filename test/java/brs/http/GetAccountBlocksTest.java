@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 @SuppressStaticInitializationFor("brs.Block")
@@ -52,20 +51,21 @@ public class GetAccountBlocksTest extends AbstractUnitTest {
     final int mockFirstIndex = 2;
     final int mockLastIndex = 3;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(FIRST_INDEX_PARAMETER, "" + mockFirstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, "" + mockLastIndex),
-        new MockParam(TIMESTAMP_PARAMETER, "" + mockTimestamp)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(FIRST_INDEX_PARAMETER, "" + mockFirstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, "" + mockLastIndex),
+            new MockParam(TIMESTAMP_PARAMETER, "" + mockTimestamp));
 
     final Account mockAccount = mock(Account.class);
     final Block mockBlock = mock(Block.class);
 
-
     when(parameterServiceMock.getAccount(req)).thenReturn(mockAccount);
 
     final Collection<Block> mockBlockIterator = mockCollection(mockBlock);
-    when(blockchainMock.getBlocks(eq(mockAccount), eq(mockTimestamp), eq(mockFirstIndex), eq(mockLastIndex))).thenReturn(mockBlockIterator);
+    when(blockchainMock.getBlocks(
+            eq(mockAccount), eq(mockTimestamp), eq(mockFirstIndex), eq(mockLastIndex)))
+        .thenReturn(mockBlockIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -76,6 +76,6 @@ public class GetAccountBlocksTest extends AbstractUnitTest {
     final JsonObject resultBlock = (JsonObject) blocks.get(0);
     assertNotNull(resultBlock);
 
-    //TODO validate all fields
+    // TODO validate all fields
   }
 }

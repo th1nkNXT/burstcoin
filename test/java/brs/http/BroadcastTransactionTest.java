@@ -34,7 +34,9 @@ public class BroadcastTransactionTest {
     this.parameterServiceMock = mock(ParameterService.class);
     this.transactionServiceMock = mock(TransactionService.class);
 
-    t = new BroadcastTransaction(transactionProcessorMock, parameterServiceMock, transactionServiceMock);
+    t =
+        new BroadcastTransaction(
+            transactionProcessorMock, parameterServiceMock, transactionServiceMock);
   }
 
   @Test
@@ -54,7 +56,9 @@ public class BroadcastTransactionTest {
     when(req.getParameter(TRANSACTION_BYTES_PARAMETER)).thenReturn(mockTransactionBytesParameter);
     when(req.getParameter(TRANSACTION_JSON_PARAMETER)).thenReturn(mockTransactionJson);
 
-    when(parameterServiceMock.parseTransaction(eq(mockTransactionBytesParameter), eq(mockTransactionJson))).thenReturn(mockTransaction);
+    when(parameterServiceMock.parseTransaction(
+            eq(mockTransactionBytesParameter), eq(mockTransactionJson)))
+        .thenReturn(mockTransaction);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -75,9 +79,13 @@ public class BroadcastTransactionTest {
     when(req.getParameter(TRANSACTION_BYTES_PARAMETER)).thenReturn(mockTransactionBytesParameter);
     when(req.getParameter(TRANSACTION_JSON_PARAMETER)).thenReturn(mockTransactionJson);
 
-    when(parameterServiceMock.parseTransaction(eq(mockTransactionBytesParameter), eq(mockTransactionJson))).thenReturn(mockTransaction);
+    when(parameterServiceMock.parseTransaction(
+            eq(mockTransactionBytesParameter), eq(mockTransactionJson)))
+        .thenReturn(mockTransaction);
 
-    Mockito.doThrow(BurstException.NotCurrentlyValidException.class).when(transactionServiceMock).validate(eq(mockTransaction));
+    Mockito.doThrow(BurstException.NotCurrentlyValidException.class)
+        .when(transactionServiceMock)
+        .validate(eq(mockTransaction));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 

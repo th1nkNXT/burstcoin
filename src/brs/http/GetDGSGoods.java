@@ -19,7 +19,12 @@ public final class GetDGSGoods extends APIServlet.JsonRequestHandler {
   private final DGSGoodsStoreService digitalGoodsStoreService;
 
   public GetDGSGoods(DGSGoodsStoreService digitalGoodsStoreService) {
-    super(new APITag[] {APITag.DGS}, SELLER_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER, IN_STOCK_ONLY_PARAMETER);
+    super(
+        new APITag[] {APITag.DGS},
+        SELLER_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER,
+        IN_STOCK_ONLY_PARAMETER);
     this.digitalGoodsStoreService = digitalGoodsStoreService;
   }
 
@@ -50,5 +55,4 @@ public final class GetDGSGoods extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

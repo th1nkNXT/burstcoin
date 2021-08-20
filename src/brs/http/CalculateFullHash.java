@@ -15,13 +15,17 @@ import static brs.http.common.Parameters.*;
 public final class CalculateFullHash extends APIServlet.JsonRequestHandler {
 
   public CalculateFullHash() {
-    super(new APITag[]{APITag.TRANSACTIONS}, UNSIGNED_TRANSACTION_BYTES_PARAMETER, SIGNATURE_HASH_PARAMETER);
+    super(
+        new APITag[] {APITag.TRANSACTIONS},
+        UNSIGNED_TRANSACTION_BYTES_PARAMETER,
+        SIGNATURE_HASH_PARAMETER);
   }
 
   @Override
   JsonElement processRequest(HttpServletRequest req) {
 
-    String unsignedBytesString = Convert.emptyToNull(req.getParameter(UNSIGNED_TRANSACTION_BYTES_PARAMETER));
+    String unsignedBytesString =
+        Convert.emptyToNull(req.getParameter(UNSIGNED_TRANSACTION_BYTES_PARAMETER));
     String signatureHashString = Convert.emptyToNull(req.getParameter(SIGNATURE_HASH_PARAMETER));
 
     if (unsignedBytesString == null) {
@@ -37,7 +41,5 @@ public final class CalculateFullHash extends APIServlet.JsonRequestHandler {
     response.addProperty(FULL_HASH_RESPONSE, Convert.toHexString(fullHash));
 
     return response;
-
   }
-
 }

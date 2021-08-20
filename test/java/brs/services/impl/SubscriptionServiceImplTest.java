@@ -32,7 +32,6 @@ public class SubscriptionServiceImplTest extends AbstractUnitTest {
   private AliasService aliasService;
   private AccountService accountService;
 
-
   @Before
   public void setUp() {
     mockSubscriptionStore = mock(SubscriptionStore.class);
@@ -40,9 +39,12 @@ public class SubscriptionServiceImplTest extends AbstractUnitTest {
     mockSubscriptionDbKeyFactory = mock(LongKeyFactory.class);
 
     when(mockSubscriptionStore.getSubscriptionTable()).thenReturn(mockSubscriptionTable);
-    when(mockSubscriptionStore.getSubscriptionDbKeyFactory()).thenReturn(mockSubscriptionDbKeyFactory);
+    when(mockSubscriptionStore.getSubscriptionDbKeyFactory())
+        .thenReturn(mockSubscriptionDbKeyFactory);
 
-    t = new SubscriptionServiceImpl(mockSubscriptionStore, transactionDb, blockchain, aliasService, accountService);
+    t =
+        new SubscriptionServiceImpl(
+            mockSubscriptionStore, transactionDb, blockchain, aliasService, accountService);
   }
 
   @Test
@@ -64,7 +66,8 @@ public class SubscriptionServiceImplTest extends AbstractUnitTest {
     long accountId = 123L;
 
     Collection<Subscription> mockSubscriptionIterator = mockCollection();
-    when(mockSubscriptionStore.getSubscriptionsByParticipant(eq(accountId))).thenReturn(mockSubscriptionIterator);
+    when(mockSubscriptionStore.getSubscriptionsByParticipant(eq(accountId)))
+        .thenReturn(mockSubscriptionIterator);
 
     assertEquals(mockSubscriptionIterator, t.getSubscriptionsByParticipant(accountId));
   }
@@ -74,7 +77,8 @@ public class SubscriptionServiceImplTest extends AbstractUnitTest {
     long accountId = 123L;
 
     Collection<Subscription> mockSubscriptionIterator = mockCollection();
-    when(mockSubscriptionStore.getSubscriptionsToId(eq(accountId))).thenReturn(mockSubscriptionIterator);
+    when(mockSubscriptionStore.getSubscriptionsToId(eq(accountId)))
+        .thenReturn(mockSubscriptionIterator);
 
     assertEquals(mockSubscriptionIterator, t.getSubscriptionsToId(accountId));
   }

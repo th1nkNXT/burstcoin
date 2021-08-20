@@ -18,7 +18,12 @@ final class EncryptTo extends APIServlet.JsonRequestHandler {
   private final AccountService accountService;
 
   EncryptTo(ParameterService parameterService, AccountService accountService) {
-    super(new APITag[]{APITag.MESSAGES}, RECIPIENT_PARAMETER, MESSAGE_TO_ENCRYPT_PARAMETER, MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, SECRET_PHRASE_PARAMETER);
+    super(
+        new APITag[] {APITag.MESSAGES},
+        RECIPIENT_PARAMETER,
+        MESSAGE_TO_ENCRYPT_PARAMETER,
+        MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER,
+        SECRET_PHRASE_PARAMETER);
     this.parameterService = parameterService;
     this.accountService = accountService;
   }
@@ -32,9 +37,9 @@ final class EncryptTo extends APIServlet.JsonRequestHandler {
       return INCORRECT_RECIPIENT;
     }
 
-    EncryptedData encryptedData = parameterService.getEncryptedMessage(req, recipientAccount, recipientAccount.getPublicKey());
+    EncryptedData encryptedData =
+        parameterService.getEncryptedMessage(
+            req, recipientAccount, recipientAccount.getPublicKey());
     return JSONData.encryptedData(encryptedData);
-
   }
-
 }

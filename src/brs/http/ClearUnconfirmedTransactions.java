@@ -19,23 +19,24 @@ import java.util.List;
 public final class ClearUnconfirmedTransactions extends APIServlet.JsonRequestHandler {
 
   private final TransactionProcessor transactionProcessor;
-  
+
   private final List<String> apiAdminKeyList;
 
-  ClearUnconfirmedTransactions(TransactionProcessor transactionProcessor, PropertyService propertyService) {
-    super(new APITag[]{APITag.ADMIN}, API_KEY_PARAMETER);
+  ClearUnconfirmedTransactions(
+      TransactionProcessor transactionProcessor, PropertyService propertyService) {
+    super(new APITag[] {APITag.ADMIN}, API_KEY_PARAMETER);
     this.transactionProcessor = transactionProcessor;
-    
+
     apiAdminKeyList = propertyService.getStringList(Props.API_ADMIN_KEY_LIST);
   }
 
   @Override
   JsonElement processRequest(HttpServletRequest req) {
     String apiKey = req.getParameter(API_KEY_PARAMETER);
-    if(!apiAdminKeyList.contains(apiKey)) {
+    if (!apiAdminKeyList.contains(apiKey)) {
       return ERROR_NOT_ALLOWED;
     }
-    
+
     JsonObject response = new JsonObject();
     try {
       transactionProcessor.clearUnconfirmedTransactions();
@@ -50,5 +51,4 @@ public final class ClearUnconfirmedTransactions extends APIServlet.JsonRequestHa
   final boolean requirePost() {
     return true;
   }
-
 }

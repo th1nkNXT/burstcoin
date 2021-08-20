@@ -23,8 +23,14 @@ final class GetUnconfirmedTransactionIds extends APIServlet.JsonRequestHandler {
   private final IndirectIncomingService indirectIncomingService;
   private final ParameterService parameterService;
 
-  GetUnconfirmedTransactionIds(TransactionProcessor transactionProcessor, IndirectIncomingService indirectIncomingService, ParameterService parameterService) {
-    super(new APITag[]{APITag.TRANSACTIONS, APITag.ACCOUNTS}, ACCOUNT_PARAMETER, INCLUDE_INDIRECT_PARAMETER);
+  GetUnconfirmedTransactionIds(
+      TransactionProcessor transactionProcessor,
+      IndirectIncomingService indirectIncomingService,
+      ParameterService parameterService) {
+    super(
+        new APITag[] {APITag.TRANSACTIONS, APITag.ACCOUNTS},
+        ACCOUNT_PARAMETER,
+        INCLUDE_INDIRECT_PARAMETER);
     this.transactionProcessor = transactionProcessor;
     this.indirectIncomingService = indirectIncomingService;
     this.parameterService = parameterService;
@@ -47,12 +53,14 @@ final class GetUnconfirmedTransactionIds extends APIServlet.JsonRequestHandler {
 
     final JsonArray transactionIds = new JsonArray();
 
-    final List<Transaction> unconfirmedTransactions = transactionProcessor.getAllUnconfirmedTransactions();
+    final List<Transaction> unconfirmedTransactions =
+        transactionProcessor.getAllUnconfirmedTransactions();
 
     for (Transaction transaction : unconfirmedTransactions) {
       if (accountId == 0
-              || (accountId == transaction.getSenderId() || accountId == transaction.getRecipientId())
-              || (includeIndirect && indirectIncomingService.isIndirectlyReceiving(transaction, accountId))) {
+          || (accountId == transaction.getSenderId() || accountId == transaction.getRecipientId())
+          || (includeIndirect
+              && indirectIncomingService.isIndirectlyReceiving(transaction, accountId))) {
         transactionIds.add(transaction.getStringId());
       }
     }
@@ -63,5 +71,4 @@ final class GetUnconfirmedTransactionIds extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

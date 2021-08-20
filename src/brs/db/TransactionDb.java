@@ -15,7 +15,8 @@ public interface TransactionDb extends Table {
 
   boolean hasTransactionByFullHash(String fullHash); // TODO add byte[] method
 
-  Transaction loadTransaction(TransactionRecord transactionRecord) throws BurstException.ValidationException;
+  Transaction loadTransaction(TransactionRecord transactionRecord)
+      throws BurstException.ValidationException;
 
   List<Transaction> findBlockTransactions(long blockId);
 

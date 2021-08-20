@@ -54,9 +54,13 @@ public class Account {
   }
 
   public enum Event {
-    BALANCE, UNCONFIRMED_BALANCE, ASSET_BALANCE, UNCONFIRMED_ASSET_BALANCE,
-    LEASE_SCHEDULED, LEASE_STARTED, LEASE_ENDED
-
+    BALANCE,
+    UNCONFIRMED_BALANCE,
+    ASSET_BALANCE,
+    UNCONFIRMED_ASSET_BALANCE,
+    LEASE_SCHEDULED,
+    LEASE_STARTED,
+    LEASE_ENDED
   }
 
   public static class AccountAsset {
@@ -66,7 +70,12 @@ public class Account {
     private long quantityQNT;
     private long unconfirmedQuantityQNT;
 
-    protected AccountAsset(long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT, BurstKey burstKey) {
+    protected AccountAsset(
+        long accountId,
+        long assetId,
+        long quantityQNT,
+        long unconfirmedQuantityQNT,
+        BurstKey burstKey) {
       this.accountId = accountId;
       this.assetId = assetId;
       this.quantityQNT = quantityQNT;
@@ -74,7 +83,12 @@ public class Account {
       this.burstKey = burstKey;
     }
 
-    public AccountAsset(BurstKey burstKey, long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT) {
+    public AccountAsset(
+        BurstKey burstKey,
+        long accountId,
+        long assetId,
+        long quantityQNT,
+        long unconfirmedQuantityQNT) {
       this.accountId = accountId;
       this.assetId = assetId;
       this.burstKey = burstKey;
@@ -130,7 +144,8 @@ public class Account {
     private int fromHeight;
     public final BurstKey burstKey;
 
-    public RewardRecipientAssignment(Long accountId, Long prevRecipientId, Long recipientId, int fromHeight, BurstKey burstKey) {
+    public RewardRecipientAssignment(
+        Long accountId, Long prevRecipientId, Long recipientId, int fromHeight, BurstKey burstKey) {
       this.accountId = accountId;
       this.prevRecipientId = prevRecipientId;
       this.recipientId = recipientId;
@@ -153,6 +168,7 @@ public class Account {
     public int getFromHeight() {
       return fromHeight;
     }
+
     public void setRecipient(long newRecipientId, int fromHeight) {
       prevRecipientId = recipientId;
       recipientId = newRecipientId;
@@ -165,7 +181,6 @@ public class Account {
     DoubleSpendingException(String message) {
       super(message);
     }
-
   }
 
   private static BurstKey.LongKeyFactory<Account> accountBurstKeyFactory() {
@@ -253,7 +268,6 @@ public class Account {
     return EncryptedData.encrypt(data, Crypto.getPrivateKey(senderSecretPhrase), publicKey);
   }
 
-
   public byte[] decryptFrom(EncryptedData encryptedData, String recipientSecretPhrase) {
     if (getPublicKey() == null) {
       throw new IllegalArgumentException("Sender account doesn't have a public key set");
@@ -286,8 +300,13 @@ public class Account {
       throw new IllegalStateException("Public key mismatch");
     }
     if (this.publicKey == null) {
-      throw new IllegalStateException("Public key has not been set for account " + Convert.toUnsignedLong(id)
-          + " at height " + height + ", key height is " + keyHeight);
+      throw new IllegalStateException(
+          "Public key has not been set for account "
+              + Convert.toUnsignedLong(id)
+              + " at height "
+              + height
+              + ", key height is "
+              + keyHeight);
     }
     if (this.keyHeight == -1 || this.keyHeight > height) {
       this.keyHeight = height;
@@ -297,29 +316,31 @@ public class Account {
 
   private static void checkBalance(long accountId, long confirmed, long unconfirmed) {
     if (confirmed < 0) {
-      throw new DoubleSpendingException("Negative balance or quantity ("
-                                        + confirmed
-                                        + ") for account "
-                                        + Convert.toUnsignedLong(accountId));
+      throw new DoubleSpendingException(
+          "Negative balance or quantity ("
+              + confirmed
+              + ") for account "
+              + Convert.toUnsignedLong(accountId));
     }
     if (unconfirmed < 0) {
-      throw new DoubleSpendingException("Negative unconfirmed balance or quantity ("
-                                        + unconfirmed
-                                        + ") for account "
-                                        + Convert.toUnsignedLong(accountId));
+      throw new DoubleSpendingException(
+          "Negative unconfirmed balance or quantity ("
+              + unconfirmed
+              + ") for account "
+              + Convert.toUnsignedLong(accountId));
     }
     if (unconfirmed > confirmed) {
-      throw new DoubleSpendingException("Unconfirmed ("
-                                        + unconfirmed
-                                        + ") exceeds confirmed ("
-                                        + confirmed
-                                        + ") balance or quantity for account "
-                                        + Convert.toUnsignedLong(accountId));
+      throw new DoubleSpendingException(
+          "Unconfirmed ("
+              + unconfirmed
+              + ") exceeds confirmed ("
+              + confirmed
+              + ") balance or quantity for account "
+              + Convert.toUnsignedLong(accountId));
     }
   }
 
   public void checkBalance() {
     checkBalance(this.id, this.balanceNQT, this.unconfirmedBalanceNQT);
   }
-
 }

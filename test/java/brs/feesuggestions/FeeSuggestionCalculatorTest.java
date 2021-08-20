@@ -33,7 +33,9 @@ public class FeeSuggestionCalculatorTest extends AbstractUnitTest {
     unconfirmedTransactionStoreMock = mock(UnconfirmedTransactionStore.class);
 
     listenerArgumentCaptor = ArgumentCaptor.forClass(Listener.class);
-    when(blockchainProcessorMock.addListener(listenerArgumentCaptor.capture(), eq(Event.AFTER_BLOCK_APPLY))).thenReturn(true);
+    when(blockchainProcessorMock.addListener(
+            listenerArgumentCaptor.capture(), eq(Event.AFTER_BLOCK_APPLY)))
+        .thenReturn(true);
 
     t = new FeeSuggestionCalculator(blockchainProcessorMock, unconfirmedTransactionStoreMock);
   }

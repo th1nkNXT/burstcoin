@@ -46,7 +46,9 @@ public class AssetServiceImplTest extends AbstractUnitTest {
     when(assetStoreMock.getAssetTable()).thenReturn(assetTableMock);
     when(assetStoreMock.getAssetDbKeyFactory()).thenReturn(assetDbKeyFactoryMock);
 
-    t = new AssetServiceImpl(assetAccountServiceMock, tradeServiceMock, assetStoreMock, assetTransferServicMock);
+    t =
+        new AssetServiceImpl(
+            assetAccountServiceMock, tradeServiceMock, assetStoreMock, assetTransferServicMock);
   }
 
   @Test
@@ -69,7 +71,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
 
     final Collection<AccountAsset> mockAccountAssetIterator = mock(Collection.class);
 
-    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(from), eq(to))).thenReturn(mockAccountAssetIterator);
+    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountAssetIterator);
 
     assertEquals(mockAccountAssetIterator, t.getAccounts(assetId, from, to));
   }
@@ -83,7 +86,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
 
     final Collection<AccountAsset> mockAccountAssetIterator = mock(Collection.class);
 
-    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(height), eq(from), eq(to))).thenReturn(mockAccountAssetIterator);
+    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(height), eq(from), eq(to)))
+        .thenReturn(mockAccountAssetIterator);
 
     assertEquals(mockAccountAssetIterator, t.getAccounts(assetId, height, from, to));
   }
@@ -97,7 +101,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
 
     final Collection<AccountAsset> mockAccountAssetIterator = mock(Collection.class);
 
-    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(from), eq(to))).thenReturn(mockAccountAssetIterator);
+    when(assetAccountServiceMock.getAssetAccounts(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountAssetIterator);
 
     assertEquals(mockAccountAssetIterator, t.getAccounts(assetId, height, from, to));
   }
@@ -110,7 +115,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
 
     final Collection<Trade> mockTradeIterator = mock(Collection.class);
 
-    when(tradeServiceMock.getAssetTrades(eq(assetId), eq(from), eq(to))).thenReturn(mockTradeIterator);
+    when(tradeServiceMock.getAssetTrades(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockTradeIterator);
 
     assertEquals(mockTradeIterator, t.getTrades(assetId, from, to));
   }
@@ -123,7 +129,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
 
     final Collection<AssetTransfer> mockTransferIterator = mock(Collection.class);
 
-    when(assetTransferServicMock.getAssetTransfers(eq(assetId), eq(from), eq(to))).thenReturn(mockTransferIterator);
+    when(assetTransferServicMock.getAssetTransfers(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockTransferIterator);
 
     assertEquals(mockTransferIterator, t.getAssetTransfers(assetId, from, to));
   }
@@ -147,7 +154,8 @@ public class AssetServiceImplTest extends AbstractUnitTest {
     int to = 2;
 
     Collection<Asset> mockAssetIterator = mockCollection();
-    when(assetStoreMock.getAssetsIssuedBy(eq(accountId), eq(from), eq(to))).thenReturn(mockAssetIterator);
+    when(assetStoreMock.getAssetsIssuedBy(eq(accountId), eq(from), eq(to)))
+        .thenReturn(mockAssetIterator);
 
     assertEquals(mockAssetIterator, t.getAssetsIssuedBy(accountId, from, to));
   }

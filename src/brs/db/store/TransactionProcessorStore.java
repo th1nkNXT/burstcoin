@@ -20,7 +20,7 @@ public interface TransactionProcessorStore {
 
   EntitySqlTable<Transaction> getUnconfirmedTransactionTable();
 
-  int deleteTransaction (Transaction transaction);
+  int deleteTransaction(Transaction transaction);
 
   boolean hasTransaction(long transactionId);
 }

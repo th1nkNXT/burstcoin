@@ -15,12 +15,11 @@ import java.util.Collection;
 
 class TradeServiceImpl {
 
-  private final Listeners<Trade,Event> listeners = new Listeners<>();
+  private final Listeners<Trade, Event> listeners = new Listeners<>();
 
   private final TradeStore tradeStore;
   private final EntitySqlTable<Trade> tradeTable;
   private final LinkKeyFactory<Trade> tradeDbKeyFactory;
-
 
   public TradeServiceImpl(TradeStore tradeStore) {
     this.tradeStore = tradeStore;

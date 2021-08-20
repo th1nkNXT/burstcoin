@@ -14,7 +14,8 @@ class StatisticsCache<K, V> implements Cache<K, V> {
   private final StatisticsManagerImpl statisticsManager;
   private final String cacheName;
 
-  public StatisticsCache(Cache<K, V> wrappedCache, String cacheName, StatisticsManagerImpl statisticsManager) {
+  public StatisticsCache(
+      Cache<K, V> wrappedCache, String cacheName, StatisticsManagerImpl statisticsManager) {
     this.wrappedCache = wrappedCache;
     this.statisticsManager = statisticsManager;
     this.cacheName = cacheName;
@@ -34,7 +35,7 @@ class StatisticsCache<K, V> implements Cache<K, V> {
   public boolean containsKey(K k) {
     final boolean result = wrappedCache.containsKey(k);
 
-    if(result) {
+    if (result) {
       statisticsManager.foundObjectInCache(cacheName);
     } else {
       statisticsManager.didNotFindObjectInCache(cacheName);

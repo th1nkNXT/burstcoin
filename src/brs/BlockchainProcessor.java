@@ -10,10 +10,15 @@ import java.util.List;
 public interface BlockchainProcessor extends Observable<Block, BlockchainProcessor.Event> {
 
   enum Event {
-    BLOCK_PUSHED, BLOCK_POPPED, BLOCK_GENERATED, BLOCK_SCANNED,
-    RESCAN_BEGIN, RESCAN_END,
+    BLOCK_PUSHED,
+    BLOCK_POPPED,
+    BLOCK_GENERATED,
+    BLOCK_SCANNED,
+    RESCAN_BEGIN,
+    RESCAN_END,
     BEFORE_BLOCK_ACCEPT,
-    BEFORE_BLOCK_APPLY, AFTER_BLOCK_APPLY
+    BEFORE_BLOCK_APPLY,
+    AFTER_BLOCK_APPLY
   }
 
   Peer getLastBlockchainFeeder();
@@ -38,7 +43,6 @@ public interface BlockchainProcessor extends Observable<Block, BlockchainProcess
     BlockNotAcceptedException(String message) {
       super(message);
     }
-
   }
 
   class TransactionNotAcceptedException extends BlockNotAcceptedException {
@@ -46,14 +50,13 @@ public interface BlockchainProcessor extends Observable<Block, BlockchainProcess
     private final transient Transaction transaction;
 
     public TransactionNotAcceptedException(String message, Transaction transaction) {
-      super(message  + " transaction: " + JSON.toJsonString(transaction.getJsonObject()));
+      super(message + " transaction: " + JSON.toJsonString(transaction.getJsonObject()));
       this.transaction = transaction;
     }
 
     Transaction getTransaction() {
       return transaction;
     }
-
   }
 
   class BlockOutOfOrderException extends BlockNotAcceptedException {
@@ -61,7 +64,5 @@ public interface BlockchainProcessor extends Observable<Block, BlockchainProcess
     public BlockOutOfOrderException(String message) {
       super(message);
     }
-
   }
-
 }

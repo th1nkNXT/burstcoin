@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAssetIdsTest extends AbstractUnitTest {
@@ -51,10 +50,10 @@ public class GetAssetIdsTest extends AbstractUnitTest {
     when(mockAssetExchange.getAllAssets(eq(firstIndex), eq(lastIndex)))
         .thenReturn(mockAssetIterator);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
 
@@ -67,5 +66,4 @@ public class GetAssetIdsTest extends AbstractUnitTest {
     final String resultAssetId = JSON.getAsString(resultAssetIds.get(0));
     assertEquals("5", resultAssetId);
   }
-
 }

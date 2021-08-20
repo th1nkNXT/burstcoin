@@ -12,9 +12,9 @@ public class SqlDbs implements Dbs {
   private final PeerDb peerDb;
 
   public SqlDbs() {
-    this.blockDb       = new SqlBlockDb();
+    this.blockDb = new SqlBlockDb();
     this.transactionDb = new SqlTransactionDb();
-    this.peerDb        = new SqlPeerDb();
+    this.peerDb = new SqlPeerDb();
   }
 
   @Override

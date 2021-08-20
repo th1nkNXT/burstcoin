@@ -12,8 +12,14 @@ import java.util.List;
 public final class DigitalGoodsStore {
 
   public enum Event {
-    GOODS_LISTED, GOODS_DELISTED, GOODS_PRICE_CHANGE, GOODS_QUANTITY_CHANGE,
-    PURCHASE, DELIVERY, REFUND, FEEDBACK
+    GOODS_LISTED,
+    GOODS_DELISTED,
+    GOODS_PRICE_CHANGE,
+    GOODS_QUANTITY_CHANGE,
+    PURCHASE,
+    DELIVERY,
+    REFUND,
+    FEEDBACK
   }
 
   public static class Goods {
@@ -37,8 +43,17 @@ public final class DigitalGoodsStore {
     private long priceNQT;
     private boolean delisted;
 
-    protected Goods(long id, BurstKey dbKey, long sellerId, String name, String description, String tags, int timestamp,
-                    int quantity, long priceNQT, boolean delisted) {
+    protected Goods(
+        long id,
+        BurstKey dbKey,
+        long sellerId,
+        String name,
+        String description,
+        String tags,
+        int timestamp,
+        int quantity,
+        long priceNQT,
+        boolean delisted) {
       this.id = id;
       this.dbKey = dbKey;
       this.sellerId = sellerId;
@@ -51,7 +66,8 @@ public final class DigitalGoodsStore {
       this.delisted = delisted;
     }
 
-    public Goods(BurstKey dbKey, Transaction transaction, Attachment.DigitalGoodsListing attachment) {
+    public Goods(
+        BurstKey dbKey, Transaction transaction, Attachment.DigitalGoodsListing attachment) {
       this.dbKey = dbKey;
       this.id = transaction.getId();
       this.sellerId = transaction.getSenderId();
@@ -116,7 +132,6 @@ public final class DigitalGoodsStore {
     public void setDelisted(boolean delisted) {
       this.delisted = delisted;
     }
-
   }
 
   public static class Purchase {
@@ -162,7 +177,8 @@ public final class DigitalGoodsStore {
     private long discountNQT;
     private long refundNQT;
 
-    public Purchase(Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId) {
+    public Purchase(
+        Transaction transaction, Attachment.DigitalGoodsPurchase attachment, long sellerId) {
       this.id = transaction.getId();
       this.dbKey = purchaseDbKeyFactory().newKey(this.id);
       this.buyerId = transaction.getSenderId();
@@ -171,16 +187,32 @@ public final class DigitalGoodsStore {
       this.quantity = attachment.getQuantity();
       this.priceNQT = attachment.getPriceNQT();
       this.deadline = attachment.getDeliveryDeadlineTimestamp();
-      this.note = transaction.getEncryptedMessage() == null ? null : transaction.getEncryptedMessage().getEncryptedData();
+      this.note =
+          transaction.getEncryptedMessage() == null
+              ? null
+              : transaction.getEncryptedMessage().getEncryptedData();
       this.timestamp = transaction.getTimestamp();
       this.isPending = true;
     }
 
-    protected Purchase(long id, BurstKey dbKey, long buyerId, long goodsId, long sellerId, int quantity,
-                       long priceNQT, int deadline, EncryptedData note, int timestamp, boolean isPending,
-                       EncryptedData encryptedGoods,EncryptedData refundNote,
-                       boolean hasFeedbackNotes, boolean hasPublicFeedbacks,
-                       long discountNQT, long refundNQT) {
+    protected Purchase(
+        long id,
+        BurstKey dbKey,
+        long buyerId,
+        long goodsId,
+        long sellerId,
+        int quantity,
+        long priceNQT,
+        int deadline,
+        EncryptedData note,
+        int timestamp,
+        boolean isPending,
+        EncryptedData encryptedGoods,
+        EncryptedData refundNote,
+        boolean hasFeedbackNotes,
+        boolean hasPublicFeedbacks,
+        long discountNQT,
+        long refundNQT) {
       this.id = id;
       this.dbKey = dbKey;
       this.buyerId = buyerId;
@@ -212,7 +244,9 @@ public final class DigitalGoodsStore {
       return goodsId;
     }
 
-    public long getSellerId() { return sellerId; }
+    public long getSellerId() {
+      return sellerId;
+    }
 
     public int getQuantity() {
       return quantity;
@@ -236,7 +270,6 @@ public final class DigitalGoodsStore {
 
     public void setPending(boolean isPending) {
       this.isPending = isPending;
-
     }
 
     public int getTimestamp() {
@@ -288,7 +321,7 @@ public final class DigitalGoodsStore {
       if (!hasPublicFeedbacks) {
         return Collections.emptyList();
       }
-      publicFeedbacks =  publicFeedbackTable().get(publicFeedbackDbKeyFactory().newKey(this));
+      publicFeedbacks = publicFeedbackTable().get(publicFeedbackDbKeyFactory().newKey(this));
       return publicFeedbacks;
     }
 
@@ -320,5 +353,4 @@ public final class DigitalGoodsStore {
   private static Goods getGoods(long goodsId) {
     return Goods.goodsTable().get(Goods.goodsDbKeyFactory().newKey(goodsId));
   }
-
 }

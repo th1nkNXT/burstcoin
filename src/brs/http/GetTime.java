@@ -13,7 +13,7 @@ public final class GetTime extends APIServlet.JsonRequestHandler {
   private final TimeService timeService;
 
   GetTime(TimeService timeService) {
-    super(new APITag[]{APITag.INFO});
+    super(new APITag[] {APITag.INFO});
     this.timeService = timeService;
   }
 
@@ -24,5 +24,4 @@ public final class GetTime extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

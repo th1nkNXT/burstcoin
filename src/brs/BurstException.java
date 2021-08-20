@@ -27,7 +27,6 @@ public abstract class BurstException extends Exception {
     private ValidationException(String message, Throwable cause) {
       super(message, cause);
     }
-
   }
 
   public static class NotCurrentlyValidException extends ValidationException {
@@ -39,7 +38,6 @@ public abstract class BurstException extends Exception {
     public NotCurrentlyValidException(String message, Throwable cause) {
       super(message, cause);
     }
-
   }
 
   public static final class NotYetEnabledException extends NotCurrentlyValidException {
@@ -51,7 +49,6 @@ public abstract class BurstException extends Exception {
     public NotYetEnabledException(String message, Throwable throwable) {
       super(message, throwable);
     }
-
   }
 
   public static final class NotValidException extends ValidationException {
@@ -63,7 +60,6 @@ public abstract class BurstException extends Exception {
     public NotValidException(String message, Throwable cause) {
       super(message, cause);
     }
-
   }
 
   public static final class StopException extends RuntimeException {
@@ -75,7 +71,5 @@ public abstract class BurstException extends Exception {
     public StopException(String message, Throwable cause) {
       super(message, cause);
     }
-
   }
-
 }

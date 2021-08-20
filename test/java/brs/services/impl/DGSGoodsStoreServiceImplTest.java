@@ -90,7 +90,8 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
     final int to = 2;
 
     final Collection<DigitalGoodsStore.Goods> mockIterator = mockCollection();
-    when(mockDigitalGoodsStoreStore.getSellerGoods(eq(sellerId), eq(inStockOnly), eq(from), eq(to))).thenReturn(mockIterator);
+    when(mockDigitalGoodsStoreStore.getSellerGoods(eq(sellerId), eq(inStockOnly), eq(from), eq(to)))
+        .thenReturn(mockIterator);
 
     assertEquals(mockIterator, t.getSellerGoods(sellerId, inStockOnly, from, to));
   }
@@ -113,7 +114,8 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
     final int to = 3;
 
     final Collection<DigitalGoodsStore.Purchase> mockIterator = mockCollection();
-    when(mockDigitalGoodsStoreStore.getSellerPurchases(eq(sellerId), eq(from), eq(to))).thenReturn(mockIterator);
+    when(mockDigitalGoodsStoreStore.getSellerPurchases(eq(sellerId), eq(from), eq(to)))
+        .thenReturn(mockIterator);
 
     assertEquals(mockIterator, t.getSellerPurchases(sellerId, from, to));
   }
@@ -125,7 +127,8 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
     final int to = 3;
 
     final Collection<DigitalGoodsStore.Purchase> mockIterator = mockCollection();
-    when(mockDigitalGoodsStoreStore.getBuyerPurchases(eq(buyerId), eq(from), eq(to))).thenReturn(mockIterator);
+    when(mockDigitalGoodsStoreStore.getBuyerPurchases(eq(buyerId), eq(from), eq(to)))
+        .thenReturn(mockIterator);
 
     assertEquals(mockIterator, t.getBuyerPurchases(buyerId, from, to));
   }
@@ -138,7 +141,9 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
     final int to = 4;
 
     final Collection<DigitalGoodsStore.Purchase> mockIterator = mockCollection();
-    when(mockDigitalGoodsStoreStore.getSellerBuyerPurchases( eq(sellerId), eq(buyerId), eq(from), eq(to))).thenReturn(mockIterator);
+    when(mockDigitalGoodsStoreStore.getSellerBuyerPurchases(
+            eq(sellerId), eq(buyerId), eq(from), eq(to)))
+        .thenReturn(mockIterator);
 
     assertEquals(mockIterator, t.getSellerBuyerPurchases(sellerId, buyerId, from, to));
   }
@@ -150,9 +155,9 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
     final int to = 2;
 
     Collection<Purchase> mockPurchaseIterator = mockCollection();
-    when(mockDigitalGoodsStoreStore.getPendingSellerPurchases(eq(sellerId), eq(from), eq(to))).thenReturn(mockPurchaseIterator);
+    when(mockDigitalGoodsStoreStore.getPendingSellerPurchases(eq(sellerId), eq(from), eq(to)))
+        .thenReturn(mockPurchaseIterator);
 
     assertEquals(mockPurchaseIterator, t.getPendingSellerPurchases(sellerId, from, to));
   }
-
 }

@@ -16,13 +16,26 @@ import static brs.http.common.Parameters.*;
 
 abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
 
-  private static final String[] commonParameters = new String[] {
-    SECRET_PHRASE_PARAMETER, PUBLIC_KEY_PARAMETER, FEE_NQT_PARAMETER,
-    DEADLINE_PARAMETER, REFERENCED_TRANSACTION_FULL_HASH_PARAMETER, BROADCAST_PARAMETER,
-    MESSAGE_PARAMETER, MESSAGE_IS_TEXT_PARAMETER,
-    MESSAGE_TO_ENCRYPT_PARAMETER, MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, ENCRYPTED_MESSAGE_DATA_PARAMETER, ENCRYPTED_MESSAGE_NONCE_PARAMETER,
-    MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, ENCRYPT_TO_SELF_MESSAGE_DATA, ENCRYPT_TO_SELF_MESSAGE_NONCE,
-    RECIPIENT_PUBLIC_KEY_PARAMETER};
+  private static final String[] commonParameters =
+      new String[] {
+        SECRET_PHRASE_PARAMETER,
+        PUBLIC_KEY_PARAMETER,
+        FEE_NQT_PARAMETER,
+        DEADLINE_PARAMETER,
+        REFERENCED_TRANSACTION_FULL_HASH_PARAMETER,
+        BROADCAST_PARAMETER,
+        MESSAGE_PARAMETER,
+        MESSAGE_IS_TEXT_PARAMETER,
+        MESSAGE_TO_ENCRYPT_PARAMETER,
+        MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER,
+        ENCRYPTED_MESSAGE_DATA_PARAMETER,
+        ENCRYPTED_MESSAGE_NONCE_PARAMETER,
+        MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER,
+        MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER,
+        ENCRYPT_TO_SELF_MESSAGE_DATA,
+        ENCRYPT_TO_SELF_MESSAGE_NONCE,
+        RECIPIENT_PUBLIC_KEY_PARAMETER
+      };
 
   private final APITransactionManager apiTransactionManager;
 
@@ -32,28 +45,42 @@ abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
     return result;
   }
 
-  CreateTransaction(APITag[] apiTags, APITransactionManager apiTransactionManager, boolean replaceParameters, String... parameters) {
+  CreateTransaction(
+      APITag[] apiTags,
+      APITransactionManager apiTransactionManager,
+      boolean replaceParameters,
+      String... parameters) {
     super(apiTags, replaceParameters ? parameters : addCommonParameters(parameters));
     this.apiTransactionManager = apiTransactionManager;
   }
 
-  CreateTransaction(APITag[] apiTags, APITransactionManager apiTransactionManager, String... parameters) {
+  CreateTransaction(
+      APITag[] apiTags, APITransactionManager apiTransactionManager, String... parameters) {
     super(apiTags, addCommonParameters(parameters));
     this.apiTransactionManager = apiTransactionManager;
   }
 
-  final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Attachment attachment)
-    throws BurstException {
+  final JsonElement createTransaction(
+      HttpServletRequest req, Account senderAccount, Attachment attachment) throws BurstException {
     return createTransaction(req, senderAccount, null, 0, attachment);
   }
 
-  final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT)
-    throws BurstException {
-    return createTransaction(req, senderAccount, recipientId, amountNQT, Attachment.ORDINARY_PAYMENT);
+  final JsonElement createTransaction(
+      HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT)
+      throws BurstException {
+    return createTransaction(
+        req, senderAccount, recipientId, amountNQT, Attachment.ORDINARY_PAYMENT);
   }
 
-  final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment) throws BurstException {
-    return apiTransactionManager.createTransaction(req, senderAccount, recipientId, amountNQT, attachment, minimumFeeNQT());
+  final JsonElement createTransaction(
+      HttpServletRequest req,
+      Account senderAccount,
+      Long recipientId,
+      long amountNQT,
+      Attachment attachment)
+      throws BurstException {
+    return apiTransactionManager.createTransaction(
+        req, senderAccount, recipientId, amountNQT, attachment, minimumFeeNQT());
   }
 
   @Override
@@ -64,5 +91,4 @@ abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
   private long minimumFeeNQT() {
     return Burst.getFluxCapacitor().getValue(FluxValues.PRE_POC2) ? FEE_QUANT : ONE_BURST;
   }
-
 }

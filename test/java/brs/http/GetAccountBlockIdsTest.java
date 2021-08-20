@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAccountBlockIdsTest extends AbstractUnitTest {
@@ -48,11 +47,11 @@ public class GetAccountBlockIdsTest extends AbstractUnitTest {
     final int firstIndex = 0;
     final int lastIndex = 1;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(TIMESTAMP_PARAMETER, timestamp),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(TIMESTAMP_PARAMETER, timestamp),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Account mockAccount = mock(Account.class);
 

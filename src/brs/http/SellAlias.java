@@ -15,8 +15,17 @@ public final class SellAlias extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  SellAlias(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.ALIASES, APITag.CREATE_TRANSACTION}, apiTransactionManager, ALIAS_PARAMETER, ALIAS_NAME_PARAMETER, RECIPIENT_PARAMETER, PRICE_NQT_PARAMETER);
+  SellAlias(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.ALIASES, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        ALIAS_PARAMETER,
+        ALIAS_NAME_PARAMETER,
+        RECIPIENT_PARAMETER,
+        PRICE_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -57,7 +66,8 @@ public final class SellAlias extends CreateTransaction {
       return INCORRECT_ALIAS_OWNER;
     }
 
-    Attachment attachment = new Attachment.MessagingAliasSell(alias.getAliasName(), priceNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.MessagingAliasSell(alias.getAliasName(), priceNQT, blockchain.getHeight());
     return createTransaction(req, owner, recipientId, 0, attachment);
   }
 }

@@ -9,10 +9,12 @@ import java.util.Collection;
 public interface Generator {
 
   enum Event {
-    GENERATION_DEADLINE, NONCE_SUBMITTED
+    GENERATION_DEADLINE,
+    NONCE_SUBMITTED
   }
 
-  void generateForBlockchainProcessor(ThreadPool threadPool, BlockchainProcessor blockchainProcessor);
+  void generateForBlockchainProcessor(
+      ThreadPool threadPool, BlockchainProcessor blockchainProcessor);
 
   boolean addListener(Listener<GeneratorState> listener, Event eventType);
 
@@ -32,12 +34,17 @@ public interface Generator {
 
   BigInteger calculateHit(byte[] genSig, byte[] scoopData);
 
-  BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight);
+  BigInteger calculateDeadline(
+      BigInteger hit,
+      long capacityBaseTarget,
+      long commitment,
+      long averageCommitment,
+      int blockHeight);
 
   long estimateCommitment(long generatorId, Block prevBlock);
-  
+
   double getCommitmentFactor(long commitment, long averageCommitment, int blockHeight);
-  
+
   interface GeneratorState {
     byte[] getPublicKey();
 

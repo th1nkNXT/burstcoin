@@ -1,8 +1,7 @@
 package brs.http.common;
 
 public final class Parameters {
-  private Parameters() {
-  }
+  private Parameters() {}
 
   public static final String ALIAS_PARAMETER = "alias";
   public static final String AMOUNT_NQT_PARAMETER = "amountNQT";
@@ -22,7 +21,8 @@ public final class Parameters {
   public static final String ENCRYPT_TO_SELF_MESSAGE_DATA = "encryptToSelfMessageData";
   public static final String ENCRYPT_TO_SELF_MESSAGE_NONCE = "encryptToSelfMessageNonce";
   public static final String MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER = "messageToEncryptToSelf";
-  public static final String MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER = "messageToEncryptToSelfIsText";
+  public static final String MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER =
+      "messageToEncryptToSelfIsText";
   public static final String GOODS_DATA_PARAMETER = "goodsData";
   public static final String GOODS_NONCE_PARAMETER = "goodsNonce";
   public static final String PURCHASE_PARAMETER = "purchase";
@@ -87,7 +87,8 @@ public final class Parameters {
   public static final String BLOCK_PARAMETER = "block";
   public static final String INCLUDE_COUNTS_PARAMETER = "includeCounts";
   public static final String DEADLINE_PARAMETER = "deadline";
-  public static final String REFERENCED_TRANSACTION_FULL_HASH_PARAMETER = "referencedTransactionFullHash";
+  public static final String REFERENCED_TRANSACTION_FULL_HASH_PARAMETER =
+      "referencedTransactionFullHash";
   public static final String REFERENCED_TRANSACTION_PARAMETER = "referencedTransaction";
   public static final String BROADCAST_PARAMETER = "broadcast";
   public static final String RECIPIENT_PUBLIC_KEY_PARAMETER = "recipientPublicKey";
@@ -118,8 +119,10 @@ public final class Parameters {
   public static final String ESCROWS_RESPONSE = "escrows";
   public static final String ACCOUNTS_RESPONSE = "accounts";
   public static final String RECIPIENTS_RESPONSE = "recipients";
-  public static final String LAST_UNCONFIRMED_TRANSACTION_TIMESTAMP_PARAMETER = "lastUnconfirmedTransactionTimestamp";
-  public static final String LIMIT_UNCONFIRMED_TRANSACTIONS_RETRIEVED_PARAMETER = "limitUnconfirmedTransactionsRetrieved";
+  public static final String LAST_UNCONFIRMED_TRANSACTION_TIMESTAMP_PARAMETER =
+      "lastUnconfirmedTransactionTimestamp";
+  public static final String LIMIT_UNCONFIRMED_TRANSACTIONS_RETRIEVED_PARAMETER =
+      "limitUnconfirmedTransactionsRetrieved";
   public static final String RECEIVER_ID_PARAMETER = "receiverId";
   public static final String FEE_SUGGESTION_TYPE_PARAMETER = "feeSuggestionType";
   public static final String IMMUTABLE_PARAMETER = "immutable";

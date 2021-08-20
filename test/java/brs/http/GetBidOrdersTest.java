@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetBidOrdersTest extends AbstractUnitTest {
@@ -50,10 +49,10 @@ public class GetBidOrdersTest extends AbstractUnitTest {
     final int firstIndex = 0;
     final int lastIndex = 1;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Asset mockAsset = mock(Asset.class);
     when(mockAsset.getId()).thenReturn(assetId);
@@ -65,7 +64,8 @@ public class GetBidOrdersTest extends AbstractUnitTest {
     final Collection<Bid> mockBidIterator = mockCollection(mockBid);
 
     when(mockParameterService.getAsset(req)).thenReturn(mockAsset);
-    when(mockAssetExchange.getSortedBidOrders(eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockBidIterator);
+    when(mockAssetExchange.getSortedBidOrders(eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockBidIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -79,5 +79,4 @@ public class GetBidOrdersTest extends AbstractUnitTest {
 
     assertEquals("" + mockOrderId, JSON.getAsString(resultBidOrder.get(ORDER_RESPONSE)));
   }
-
 }

@@ -37,5 +37,4 @@ public final class GetAllOpenAskOrders extends APIServlet.JsonRequestHandler {
     response.add(OPEN_ORDERS_RESPONSE, ordersData);
     return response;
   }
-
 }

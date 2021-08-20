@@ -16,9 +16,13 @@ import java.util.Arrays;
 public interface Appendix {
 
   int getSize();
+
   void putBytes(ByteBuffer buffer);
+
   JsonObject getJsonObject();
+
   byte getVersion();
+
   Any getProtobufMessage();
 
   abstract class AbstractAppendix implements Appendix {
@@ -30,7 +34,7 @@ public interface Appendix {
     }
 
     AbstractAppendix(ByteBuffer buffer, byte transactionVersion) {
-        version = (transactionVersion == 0) ? 0 : buffer.get();
+      version = (transactionVersion == 0) ? 0 : buffer.get();
     }
 
     AbstractAppendix(byte version) {
@@ -38,7 +42,11 @@ public interface Appendix {
     }
 
     AbstractAppendix(int blockchainHeight) {
-      this.version = (byte)(Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight) ? 1 : 0);
+      this.version =
+          (byte)
+              (Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)
+                  ? 1
+                  : 0);
     }
 
     abstract String getAppendixName();
@@ -81,9 +89,11 @@ public interface Appendix {
       return transactionVersion == 0 ? version == 0 : version > 0;
     }
 
-    public abstract void validate(Transaction transaction) throws BurstException.ValidationException;
+    public abstract void validate(Transaction transaction)
+        throws BurstException.ValidationException;
 
-    public abstract void apply(Transaction transaction, Account senderAccount, Account recipientAccount);
+    public abstract void apply(
+        Transaction transaction, Account senderAccount, Account recipientAccount);
   }
 
   class Message extends AbstractAppendix {
@@ -98,7 +108,8 @@ public interface Appendix {
     private final byte[] messageBytes;
     private final boolean isText;
 
-    public Message(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    public Message(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       int messageLength = buffer.getInt();
       this.isText = messageLength < 0; // ugly hack
@@ -106,7 +117,8 @@ public interface Appendix {
         messageLength &= Integer.MAX_VALUE;
       }
       if (messageLength > Constants.MAX_ARBITRARY_MESSAGE_LENGTH) {
-        throw new BurstException.NotValidException("Invalid arbitrary message length: " + messageLength);
+        throw new BurstException.NotValidException(
+            "Invalid arbitrary message length: " + messageLength);
       }
       this.messageBytes = new byte[messageLength];
       buffer.get(this.messageBytes);
@@ -116,7 +128,8 @@ public interface Appendix {
       super(attachmentData);
       String messageString = JSON.getAsString(attachmentData.get("message"));
       this.isText = Boolean.TRUE.equals(JSON.getAsBoolean(attachmentData.get("messageIsText")));
-      this.messageBytes = isText ? Convert.toBytes(messageString) : Convert.parseHexString(messageString);
+      this.messageBytes =
+          isText ? Convert.toBytes(messageString) : Convert.parseHexString(messageString);
     }
 
     public Message(byte[] message, int blockchainHeight) {
@@ -155,7 +168,8 @@ public interface Appendix {
 
     @Override
     void putMyJSON(JsonObject json) {
-      json.addProperty("message", isText ? Convert.toString(messageBytes) : Convert.toHexString(messageBytes));
+      json.addProperty(
+          "message", isText ? Convert.toString(messageBytes) : Convert.toHexString(messageBytes));
       json.addProperty("messageIsText", isText);
     }
 
@@ -164,11 +178,14 @@ public interface Appendix {
       if (this.isText && transaction.getVersion() == 0) {
         throw new BurstException.NotValidException("Text messages not yet enabled");
       }
-      if (transaction.getVersion() == 0 && transaction.getAttachment() != Attachment.ARBITRARY_MESSAGE) {
-        throw new BurstException.NotValidException("Message attachments not enabled for version 0 transactions");
+      if (transaction.getVersion() == 0
+          && transaction.getAttachment() != Attachment.ARBITRARY_MESSAGE) {
+        throw new BurstException.NotValidException(
+            "Message attachments not enabled for version 0 transactions");
       }
       if (messageBytes.length > Constants.MAX_ARBITRARY_MESSAGE_LENGTH) {
-        throw new BurstException.NotValidException("Invalid arbitrary message length: " + messageBytes.length);
+        throw new BurstException.NotValidException(
+            "Invalid arbitrary message length: " + messageBytes.length);
       }
     }
 
@@ -187,7 +204,8 @@ public interface Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.MessageAppendix.newBuilder()
+      return Any.pack(
+          BrsApi.MessageAppendix.newBuilder()
               .setVersion(super.getVersion())
               .setMessage(ByteString.copyFrom(messageBytes))
               .setIsText(isText)
@@ -200,14 +218,16 @@ public interface Appendix {
     private final EncryptedData encryptedData;
     private final boolean isText;
 
-    private AbstractEncryptedMessage(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    private AbstractEncryptedMessage(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       int length = buffer.getInt();
       this.isText = length < 0;
       if (length < 0) {
         length &= Integer.MAX_VALUE;
       }
-      this.encryptedData = EncryptedData.readEncryptedData(buffer, length, Constants.MAX_ENCRYPTED_MESSAGE_LENGTH);
+      this.encryptedData =
+          EncryptedData.readEncryptedData(buffer, length, Constants.MAX_ENCRYPTED_MESSAGE_LENGTH);
     }
 
     private AbstractEncryptedMessage(JsonObject attachmentJSON, JsonObject encryptedMessageJSON) {
@@ -218,15 +238,18 @@ public interface Appendix {
       this.isText = Boolean.TRUE.equals(JSON.getAsBoolean(encryptedMessageJSON.get("isText")));
     }
 
-    private AbstractEncryptedMessage(EncryptedData encryptedData, boolean isText, int blockchainHeight) {
+    private AbstractEncryptedMessage(
+        EncryptedData encryptedData, boolean isText, int blockchainHeight) {
       super(blockchainHeight);
       this.encryptedData = encryptedData;
       this.isText = isText;
     }
 
-    private AbstractEncryptedMessage(BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
+    private AbstractEncryptedMessage(
+        BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
       super(blockchainHeight);
-      this.encryptedData = ProtoBuilder.parseEncryptedData(encryptedMessageAppendix.getEncryptedData());
+      this.encryptedData =
+          ProtoBuilder.parseEncryptedData(encryptedMessageAppendix.getEncryptedData());
       this.isText = encryptedMessageAppendix.getIsText();
     }
 
@@ -237,7 +260,10 @@ public interface Appendix {
 
     @Override
     void putMyBytes(ByteBuffer buffer) {
-      buffer.putInt(isText ? (encryptedData.getData().length | Integer.MIN_VALUE) : encryptedData.getData().length);
+      buffer.putInt(
+          isText
+              ? (encryptedData.getData().length | Integer.MIN_VALUE)
+              : encryptedData.getData().length);
       buffer.put(encryptedData.getData());
       buffer.put(encryptedData.getNonce());
     }
@@ -251,7 +277,8 @@ public interface Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.EncryptedMessageAppendix.newBuilder()
+      return Any.pack(
+          BrsApi.EncryptedMessageAppendix.newBuilder()
               .setVersion(super.getVersion())
               .setEncryptedData(ProtoBuilder.buildEncryptedData(encryptedData))
               .setType(getType())
@@ -265,7 +292,8 @@ public interface Appendix {
       }
       if ((encryptedData.getNonce().length != 32 && encryptedData.getData().length > 0)
           || (encryptedData.getNonce().length != 0 && encryptedData.getData().length == 0)) {
-        throw new BurstException.NotValidException("Invalid nonce length " + encryptedData.getNonce().length);
+        throw new BurstException.NotValidException(
+            "Invalid nonce length " + encryptedData.getNonce().length);
       }
     }
 
@@ -285,13 +313,14 @@ public interface Appendix {
   class EncryptedMessage extends AbstractEncryptedMessage {
 
     static EncryptedMessage parse(JsonObject attachmentData) {
-      if (attachmentData.get("encryptedMessage") == null ) {
+      if (attachmentData.get("encryptedMessage") == null) {
         return null;
       }
       return new EncryptedMessage(attachmentData);
     }
 
-    public EncryptedMessage(ByteBuffer buffer, byte transactionVersion) throws BurstException.ValidationException {
+    public EncryptedMessage(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.ValidationException {
       super(buffer, transactionVersion);
     }
 
@@ -303,9 +332,11 @@ public interface Appendix {
       super(encryptedData, isText, blockchainHeight);
     }
 
-    public EncryptedMessage(BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
+    public EncryptedMessage(
+        BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
       super(encryptedMessageAppendix, blockchainHeight);
-      if (encryptedMessageAppendix.getType() != BrsApi.EncryptedMessageAppendix.Type.TO_RECIPIENT) throw new IllegalArgumentException();
+      if (encryptedMessageAppendix.getType() != BrsApi.EncryptedMessageAppendix.Type.TO_RECIPIENT)
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -323,11 +354,13 @@ public interface Appendix {
     @Override
     public void validate(Transaction transaction) throws BurstException.ValidationException {
       super.validate(transaction);
-      if (! transaction.getType().hasRecipient()) {
-        throw new BurstException.NotValidException("Encrypted messages cannot be attached to transactions with no recipient");
+      if (!transaction.getType().hasRecipient()) {
+        throw new BurstException.NotValidException(
+            "Encrypted messages cannot be attached to transactions with no recipient");
       }
       if (transaction.getVersion() == 0) {
-        throw new BurstException.NotValidException("Encrypted message attachments not enabled for version 0 transactions");
+        throw new BurstException.NotValidException(
+            "Encrypted message attachments not enabled for version 0 transactions");
       }
     }
 
@@ -335,19 +368,19 @@ public interface Appendix {
     protected BrsApi.EncryptedMessageAppendix.Type getType() {
       return BrsApi.EncryptedMessageAppendix.Type.TO_RECIPIENT;
     }
-
   }
 
   class EncryptToSelfMessage extends AbstractEncryptedMessage {
 
     static EncryptToSelfMessage parse(JsonObject attachmentData) {
-      if (attachmentData.get("encryptToSelfMessage") == null ) {
+      if (attachmentData.get("encryptToSelfMessage") == null) {
         return null;
       }
       return new EncryptToSelfMessage(attachmentData);
     }
 
-    public  EncryptToSelfMessage(ByteBuffer buffer, byte transactionVersion) throws BurstException.ValidationException {
+    public EncryptToSelfMessage(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.ValidationException {
       super(buffer, transactionVersion);
     }
 
@@ -359,9 +392,11 @@ public interface Appendix {
       super(encryptedData, isText, blockchainHeight);
     }
 
-    public EncryptToSelfMessage(BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
+    public EncryptToSelfMessage(
+        BrsApi.EncryptedMessageAppendix encryptedMessageAppendix, int blockchainHeight) {
       super(encryptedMessageAppendix, blockchainHeight);
-      if (encryptedMessageAppendix.getType() != BrsApi.EncryptedMessageAppendix.Type.TO_SELF) throw new IllegalArgumentException();
+      if (encryptedMessageAppendix.getType() != BrsApi.EncryptedMessageAppendix.Type.TO_SELF)
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -380,7 +415,8 @@ public interface Appendix {
     public void validate(Transaction transaction) throws BurstException.ValidationException {
       super.validate(transaction);
       if (transaction.getVersion() == 0) {
-        throw new BurstException.NotValidException("Encrypt-to-self message attachments not enabled for version 0 transactions");
+        throw new BurstException.NotValidException(
+            "Encrypt-to-self message attachments not enabled for version 0 transactions");
       }
     }
 
@@ -388,7 +424,6 @@ public interface Appendix {
     protected BrsApi.EncryptedMessageAppendix.Type getType() {
       return BrsApi.EncryptedMessageAppendix.Type.TO_SELF;
     }
-
   }
 
   class PublicKeyAnnouncement extends AbstractAppendix {
@@ -410,7 +445,8 @@ public interface Appendix {
 
     PublicKeyAnnouncement(JsonObject attachmentData) {
       super(attachmentData);
-      this.publicKey = Convert.parseHexString(JSON.getAsString(attachmentData.get("recipientPublicKey")));
+      this.publicKey =
+          Convert.parseHexString(JSON.getAsString(attachmentData.get("recipientPublicKey")));
     }
 
     public PublicKeyAnnouncement(byte[] publicKey, int blockchainHeight) {
@@ -418,7 +454,8 @@ public interface Appendix {
       this.publicKey = publicKey;
     }
 
-    public PublicKeyAnnouncement(BrsApi.PublicKeyAnnouncementAppendix publicKeyAnnouncementAppendix, int blockchainHeight) {
+    public PublicKeyAnnouncement(
+        BrsApi.PublicKeyAnnouncementAppendix publicKeyAnnouncementAppendix, int blockchainHeight) {
       super(blockchainHeight);
       this.publicKey = publicKeyAnnouncementAppendix.getRecipientPublicKey().toByteArray();
     }
@@ -445,22 +482,29 @@ public interface Appendix {
 
     @Override
     public void validate(Transaction transaction) throws BurstException.ValidationException {
-      if (! transaction.getType().hasRecipient()) {
-        throw new BurstException.NotValidException("PublicKeyAnnouncement cannot be attached to transactions with no recipient");
+      if (!transaction.getType().hasRecipient()) {
+        throw new BurstException.NotValidException(
+            "PublicKeyAnnouncement cannot be attached to transactions with no recipient");
       }
       if (publicKey.length != 32) {
-        throw new BurstException.NotValidException("Invalid recipient public key length: " + Convert.toHexString(publicKey));
+        throw new BurstException.NotValidException(
+            "Invalid recipient public key length: " + Convert.toHexString(publicKey));
       }
       long recipientId = transaction.getRecipientId();
       if (Account.getId(this.publicKey) != recipientId) {
-        throw new BurstException.NotValidException("Announced public key does not match recipient accountId");
+        throw new BurstException.NotValidException(
+            "Announced public key does not match recipient accountId");
       }
       if (transaction.getVersion() == 0) {
-        throw new BurstException.NotValidException("Public key announcements not enabled for version 0 transactions");
+        throw new BurstException.NotValidException(
+            "Public key announcements not enabled for version 0 transactions");
       }
       Account recipientAccount = Account.getAccount(recipientId);
-      if (recipientAccount != null && recipientAccount.getPublicKey() != null && ! Arrays.equals(publicKey, recipientAccount.getPublicKey())) {
-        throw new BurstException.NotCurrentlyValidException("A different public key for this account has already been announced");
+      if (recipientAccount != null
+          && recipientAccount.getPublicKey() != null
+          && !Arrays.equals(publicKey, recipientAccount.getPublicKey())) {
+        throw new BurstException.NotCurrentlyValidException(
+            "A different public key for this account has already been announced");
       }
     }
 
@@ -477,7 +521,8 @@ public interface Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.PublicKeyAnnouncementAppendix.newBuilder()
+      return Any.pack(
+          BrsApi.PublicKeyAnnouncementAppendix.newBuilder()
               .setVersion(super.getVersion())
               .setRecipientPublicKey(ByteString.copyFrom(publicKey))
               .build());

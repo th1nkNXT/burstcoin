@@ -70,7 +70,7 @@ public class PropertyServiceImpl implements PropertyService {
   @Override
   public String getString(Prop<String> prop) {
     String value = properties.getProperty(prop.name);
-    if (value != null && ! value.isEmpty()) {
+    if (value != null && !value.isEmpty()) {
       logOnce(prop.name, true, prop.name + " = \"" + value + "\"");
       return value;
     }
@@ -96,7 +96,8 @@ public class PropertyServiceImpl implements PropertyService {
     return result;
   }
 
-  private void logOnce(String propertyName, boolean debugLevel, String logText, Object... arguments) {
+  private void logOnce(
+      String propertyName, boolean debugLevel, String logText, Object... arguments) {
     if (Objects.equals(propertyName, Props.SOLO_MINING_PASSPHRASES.getName())) return;
     if (!this.alreadyLoggedProperties.contains(propertyName)) {
       if (debugLevel) {
@@ -107,5 +108,4 @@ public class PropertyServiceImpl implements PropertyService {
       this.alreadyLoggedProperties.add(propertyName);
     }
   }
-
 }

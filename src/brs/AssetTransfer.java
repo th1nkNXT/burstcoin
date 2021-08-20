@@ -17,7 +17,8 @@ public class AssetTransfer {
   private final long quantityQNT;
   private final int timestamp;
 
-  public AssetTransfer(BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
+  public AssetTransfer(
+      BurstKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
     this.dbKey = dbKey;
     this.id = transaction.getId();
     this.height = transaction.getHeight();
@@ -28,7 +29,15 @@ public class AssetTransfer {
     this.timestamp = transaction.getBlockTimestamp();
   }
 
-  protected AssetTransfer(long id, BurstKey dbKey, long assetId, int height, long senderId, long recipientId, long quantityQNT, int timestamp) {
+  protected AssetTransfer(
+      long id,
+      BurstKey dbKey,
+      long assetId,
+      int height,
+      long senderId,
+      long recipientId,
+      long quantityQNT,
+      int timestamp) {
     this.id = id;
     this.dbKey = dbKey;
     this.assetId = assetId;
@@ -38,7 +47,6 @@ public class AssetTransfer {
     this.quantityQNT = quantityQNT;
     this.timestamp = timestamp;
   }
-
 
   public long getId() {
     return id;
@@ -67,5 +75,4 @@ public class AssetTransfer {
   public int getHeight() {
     return height;
   }
-
 }

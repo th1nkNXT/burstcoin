@@ -22,8 +22,15 @@ public final class GetAccountBlocks extends APIServlet.JsonRequestHandler {
   private final ParameterService parameterService;
   private final BlockService blockService;
 
-  GetAccountBlocks(Blockchain blockchain, ParameterService parameterService, BlockService blockService) {
-    super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER, TIMESTAMP_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER, INCLUDE_TRANSACTIONS_PARAMETER);
+  GetAccountBlocks(
+      Blockchain blockchain, ParameterService parameterService, BlockService blockService) {
+    super(
+        new APITag[] {APITag.ACCOUNTS},
+        ACCOUNT_PARAMETER,
+        TIMESTAMP_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER,
+        INCLUDE_TRANSACTIONS_PARAMETER);
     this.blockchain = blockchain;
     this.parameterService = parameterService;
     this.blockService = blockService;
@@ -37,11 +44,18 @@ public final class GetAccountBlocks extends APIServlet.JsonRequestHandler {
     int firstIndex = ParameterParser.getFirstIndex(req);
     int lastIndex = ParameterParser.getLastIndex(req);
 
-    boolean includeTransactions = Parameters.isTrue(req.getParameter(INCLUDE_TRANSACTIONS_PARAMETER));
+    boolean includeTransactions =
+        Parameters.isTrue(req.getParameter(INCLUDE_TRANSACTIONS_PARAMETER));
 
     JsonArray blocks = new JsonArray();
     for (Block block : blockchain.getBlocks(account, timestamp, firstIndex, lastIndex)) {
-      blocks.add(JSONData.block(block, includeTransactions, blockchain.getHeight(), blockService.getBlockReward(block), blockService.getScoopNum(block)));
+      blocks.add(
+          JSONData.block(
+              block,
+              includeTransactions,
+              blockchain.getHeight(),
+              blockService.getBlockReward(block),
+              blockService.getScoopNum(block)));
     }
 
     JsonObject response = new JsonObject();
@@ -49,5 +63,4 @@ public final class GetAccountBlocks extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

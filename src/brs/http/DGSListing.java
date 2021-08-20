@@ -15,8 +15,18 @@ public final class DGSListing extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  DGSListing(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, NAME_PARAMETER, DESCRIPTION_PARAMETER, TAGS_PARAMETER, QUANTITY_PARAMETER, PRICE_NQT_PARAMETER);
+  DGSListing(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        NAME_PARAMETER,
+        DESCRIPTION_PARAMETER,
+        TAGS_PARAMETER,
+        QUANTITY_PARAMETER,
+        PRICE_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -47,9 +57,9 @@ public final class DGSListing extends CreateTransaction {
     }
 
     Account account = parameterService.getSenderAccount(req);
-    Attachment attachment = new Attachment.DigitalGoodsListing(name, description, tags, quantity, priceNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsListing(
+            name, description, tags, quantity, priceNQT, blockchain.getHeight());
     return createTransaction(req, account, attachment);
-
   }
-
 }

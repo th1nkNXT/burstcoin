@@ -10,12 +10,8 @@ import org.jooq.Result;
 
 import java.util.Collection;
 
-/**
- * Store for both BlockchainImpl and BlockchainProcessorImpl
- */
-
+/** Store for both BlockchainImpl and BlockchainProcessorImpl */
 public interface BlockchainStore {
-
 
   Collection<Block> getBlocks(int from, int to);
 
@@ -32,11 +28,18 @@ public interface BlockchainStore {
   int getTransactionCount();
 
   Collection<Transaction> getAllTransactions();
-  
+
   long getAtBurnTotal();
 
-  Collection<Transaction> getTransactions(Account account, int numberOfConfirmations, byte type, byte subtype,
-                                                 int blockTimestamp, int from, int to, boolean includeIndirectIncoming);
+  Collection<Transaction> getTransactions(
+      Account account,
+      int numberOfConfirmations,
+      byte type,
+      byte subtype,
+      int blockTimestamp,
+      int from,
+      int to,
+      boolean includeIndirectIncoming);
 
   Collection<Transaction> getTransactions(DSLContext ctx, Result<TransactionRecord> rs);
 

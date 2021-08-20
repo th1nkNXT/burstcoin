@@ -15,7 +15,10 @@ final class SendMessage extends CreateTransaction {
   private final ParameterService parameterService;
 
   SendMessage(ParameterService parameterService, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.MESSAGES, APITag.CREATE_TRANSACTION}, apiTransactionManager, RECIPIENT_PARAMETER);
+    super(
+        new APITag[] {APITag.MESSAGES, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        RECIPIENT_PARAMETER);
     this.parameterService = parameterService;
   }
 
@@ -25,5 +28,4 @@ final class SendMessage extends CreateTransaction {
     Account account = parameterService.getSenderAccount(req);
     return createTransaction(req, account, recipient, 0, Attachment.ARBITRARY_MESSAGE);
   }
-
 }

@@ -45,25 +45,32 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
     accountServiceMock = mock(AccountService.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new SetRewardRecipient(parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
+    t =
+        new SetRewardRecipient(
+            parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
   }
 
   @Test
   public void processRequest() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
     final Account mockRecipientAccount = mock(Account.class);
 
-    when(mockRecipientAccount.getPublicKey()).thenReturn(Crypto.getPublicKey(TestConstants.TEST_SECRET_PHRASE));
+    when(mockRecipientAccount.getPublicKey())
+        .thenReturn(Crypto.getPublicKey(TestConstants.TEST_SECRET_PHRASE));
 
     when(parameterServiceMock.getAccount(eq(req))).thenReturn(mockSenderAccount);
     when(accountServiceMock.getAccount(eq(123L))).thenReturn(mockRecipientAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.BurstMiningRewardRecipientAssignment attachment = (Attachment.BurstMiningRewardRecipientAssignment) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.BurstMiningRewardRecipientAssignment attachment =
+        (Attachment.BurstMiningRewardRecipientAssignment)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(REWARD_RECIPIENT_ASSIGNMENT, attachment.getTransactionType());
@@ -71,7 +78,8 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_recipientAccountDoesNotExist_errorCode8() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
 
     when(parameterServiceMock.getAccount(eq(req))).thenReturn(mockSenderAccount);
@@ -80,8 +88,10 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_recipientAccountDoesNotHavePublicKey_errorCode8() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
+  public void processRequest_recipientAccountDoesNotHavePublicKey_errorCode8()
+      throws BurstException {
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
     final Account mockRecipientAccount = mock(Account.class);
 

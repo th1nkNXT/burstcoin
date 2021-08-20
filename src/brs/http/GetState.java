@@ -36,8 +36,16 @@ final class GetState extends APIServlet.JsonRequestHandler {
   private final PropertyService propertyService;
   private final List<String> apiAdminKeyList;
 
-  GetState(Blockchain blockchain, AssetExchange assetExchange, AccountService accountService, EscrowService escrowService,
-           AliasService aliasService, TimeService timeService, ATService atService, Generator generator, PropertyService propertyService) {
+  GetState(
+      Blockchain blockchain,
+      AssetExchange assetExchange,
+      AccountService accountService,
+      EscrowService escrowService,
+      AliasService aliasService,
+      TimeService timeService,
+      ATService atService,
+      Generator generator,
+      PropertyService propertyService) {
     super(new APITag[] {APITag.INFO}, INCLUDE_COUNTS_PARAMETER, API_KEY_PARAMETER);
     this.blockchain = blockchain;
     this.assetExchange = assetExchange;
@@ -47,7 +55,7 @@ final class GetState extends APIServlet.JsonRequestHandler {
     this.atService = atService;
     this.generator = generator;
     this.propertyService = propertyService;
-    
+
     apiAdminKeyList = propertyService.getStringList(Props.API_ADMIN_KEY_LIST);
   }
 
@@ -60,22 +68,24 @@ final class GetState extends APIServlet.JsonRequestHandler {
     response.addProperty("version", Burst.VERSION.toString());
     response.addProperty(TIME_RESPONSE, timeService.getEpochTime());
     response.addProperty("lastBlock", blockchain.getLastBlock().getStringId());
-    response.addProperty("cumulativeDifficulty", blockchain.getLastBlock().getCumulativeDifficulty().toString());
+    response.addProperty(
+        "cumulativeDifficulty", blockchain.getLastBlock().getCumulativeDifficulty().toString());
     response.addProperty("totalMinedNQT", blockchain.getTotalMined());
 
     if ("true".equalsIgnoreCase(req.getParameter(INCLUDE_COUNTS_PARAMETER))) {
       String apiKey = req.getParameter(API_KEY_PARAMETER);
-      if(!apiAdminKeyList.contains(apiKey)) {
+      if (!apiAdminKeyList.contains(apiKey)) {
         return ERROR_NOT_ALLOWED;
       }
-      
+
       long totalEffectiveBalance = accountService.getAllAccountsBalance();
       response.addProperty("totalEffectiveBalance", totalEffectiveBalance / Constants.ONE_BURST);
       response.addProperty("totalEffectiveBalanceNQT", totalEffectiveBalance);
-      
-      long totalCommitted = blockchain.getCommittedAmount(null, blockchain.getHeight(), blockchain.getHeight(), null);
+
+      long totalCommitted =
+          blockchain.getCommittedAmount(null, blockchain.getHeight(), blockchain.getHeight(), null);
       response.addProperty("totalCommittedNQT", totalCommitted);
-      
+
       response.addProperty("numberOfAccounts", accountService.getCount());
     }
 
@@ -91,21 +101,33 @@ final class GetState extends APIServlet.JsonRequestHandler {
     response.addProperty("numberOfTrades", assetExchange.getTradesCount());
     response.addProperty("numberOfTransfers", assetExchange.getAssetTransferCount());
     response.addProperty("numberOfAliases", aliasService.getAliasCount());
-    
+
     response.addProperty("numberOfPeers", Peers.getAllPeers().size());
     response.addProperty("numberOfUnlockedAccounts", generator.getAllGenerators().size());
     Peer lastBlockchainFeeder = Burst.getBlockchainProcessor().getLastBlockchainFeeder();
-    response.addProperty("lastBlockchainFeeder", lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
-    response.addProperty("lastBlockchainFeederHeight", Burst.getBlockchainProcessor().getLastBlockchainFeederHeight());
+    response.addProperty(
+        "lastBlockchainFeeder",
+        lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
+    response.addProperty(
+        "lastBlockchainFeederHeight",
+        Burst.getBlockchainProcessor().getLastBlockchainFeederHeight());
     response.addProperty("isScanning", Burst.getBlockchainProcessor().isScanning());
     response.addProperty("availableProcessors", Runtime.getRuntime().availableProcessors());
     response.addProperty("maxMemory", Runtime.getRuntime().maxMemory());
     response.addProperty("totalMemory", Runtime.getRuntime().totalMemory());
     response.addProperty("freeMemory", Runtime.getRuntime().freeMemory());
-    response.addProperty("indirectIncomingServiceEnabled", propertyService.getBoolean(Props.INDIRECT_INCOMING_SERVICE_ENABLE));
+    response.addProperty(
+        "indirectIncomingServiceEnabled",
+        propertyService.getBoolean(Props.INDIRECT_INCOMING_SERVICE_ENABLE));
     boolean grpcApiEnabled = propertyService.getBoolean(Props.API_V2_SERVER);
     response.addProperty("grpcApiEnabled", grpcApiEnabled);
-    if (grpcApiEnabled) response.addProperty("grpcApiPort", propertyService.getInt(propertyService.getBoolean(Props.DEV_TESTNET) ? Props.DEV_API_V2_PORT : Props.API_V2_PORT));
+    if (grpcApiEnabled)
+      response.addProperty(
+          "grpcApiPort",
+          propertyService.getInt(
+              propertyService.getBoolean(Props.DEV_TESTNET)
+                  ? Props.DEV_API_V2_PORT
+                  : Props.API_V2_PORT));
 
     return response;
   }

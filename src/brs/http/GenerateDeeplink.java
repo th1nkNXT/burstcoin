@@ -19,9 +19,8 @@ public class GenerateDeeplink extends APIServlet.JsonRequestHandler {
   private final Logger logger = LoggerFactory.getLogger(GenerateDeeplink.class);
   public static final GenerateDeeplink instance = new GenerateDeeplink();
 
-
   private GenerateDeeplink() {
-    super(new APITag[]{APITag.UTILS}, DOMAIN_PARAMETER, ACTION_PARAMETER, PAYLOAD_PARAMETER);
+    super(new APITag[] {APITag.UTILS}, DOMAIN_PARAMETER, ACTION_PARAMETER, PAYLOAD_PARAMETER);
   }
 
   @Override

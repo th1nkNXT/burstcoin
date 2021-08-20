@@ -10,18 +10,18 @@ import brs.services.AccountService;
 
 public class GetATHandler implements GrpcApiHandler<BrsApi.GetByIdRequest, BrsApi.AT> {
 
-    private final ATService atService;
-    private final AccountService accountService;
+  private final ATService atService;
+  private final AccountService accountService;
 
-    public GetATHandler(ATService atService, AccountService accountService) {
-        this.atService = atService;
-        this.accountService = accountService;
-    }
+  public GetATHandler(ATService atService, AccountService accountService) {
+    this.atService = atService;
+    this.accountService = accountService;
+  }
 
-    @Override
-    public BrsApi.AT handleRequest(BrsApi.GetByIdRequest getATRequest) throws Exception {
-        AT at = atService.getAT(getATRequest.getId());
-        if (at == null) throw new ApiException("AT not found");
-        return ProtoBuilder.buildAT(accountService, at);
-    }
+  @Override
+  public BrsApi.AT handleRequest(BrsApi.GetByIdRequest getATRequest) throws Exception {
+    AT at = atService.getAT(getATRequest.getId());
+    if (at == null) throw new ApiException("AT not found");
+    return ProtoBuilder.buildAT(accountService, at);
+  }
 }

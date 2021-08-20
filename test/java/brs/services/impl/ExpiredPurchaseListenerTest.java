@@ -26,7 +26,9 @@ public class ExpiredPurchaseListenerTest extends AbstractUnitTest {
     accountServiceMock = mock(AccountService.class);
     dgsGoodsStoreServiceMock = mock(DGSGoodsStoreService.class);
 
-    t = new DGSGoodsStoreServiceImpl.ExpiredPurchaseListener(accountServiceMock, dgsGoodsStoreServiceMock);
+    t =
+        new DGSGoodsStoreServiceImpl.ExpiredPurchaseListener(
+            accountServiceMock, dgsGoodsStoreServiceMock);
   }
 
   @Test
@@ -46,7 +48,8 @@ public class ExpiredPurchaseListenerTest extends AbstractUnitTest {
     when(expiredPurchase.getBuyerId()).thenReturn(purchaseBuyerId);
 
     final Collection<Purchase> mockIterator = mockCollection(expiredPurchase);
-    when(dgsGoodsStoreServiceMock.getExpiredPendingPurchases(eq(blockTimestamp))).thenReturn(mockIterator);
+    when(dgsGoodsStoreServiceMock.getExpiredPendingPurchases(eq(blockTimestamp)))
+        .thenReturn(mockIterator);
 
     t.notify(block);
 

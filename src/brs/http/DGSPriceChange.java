@@ -15,8 +15,15 @@ public final class DGSPriceChange extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  DGSPriceChange(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, GOODS_PARAMETER, PRICE_NQT_PARAMETER);
+  DGSPriceChange(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        GOODS_PARAMETER,
+        PRICE_NQT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
   }
@@ -29,8 +36,8 @@ public final class DGSPriceChange extends CreateTransaction {
     if (goods.isDelisted() || goods.getSellerId() != account.getId()) {
       return UNKNOWN_GOODS;
     }
-    Attachment attachment = new Attachment.DigitalGoodsPriceChange(goods.getId(), priceNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsPriceChange(goods.getId(), priceNQT, blockchain.getHeight());
     return createTransaction(req, account, attachment);
   }
-
 }

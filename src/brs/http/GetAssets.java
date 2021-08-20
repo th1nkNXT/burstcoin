@@ -19,7 +19,11 @@ public final class GetAssets extends APIServlet.JsonRequestHandler {
   private final AssetExchange assetExchange;
 
   public GetAssets(AssetExchange assetExchange) {
-    super(new APITag[]{APITag.AE}, ASSETS_PARAMETER, ASSETS_PARAMETER, ASSETS_PARAMETER); // limit to 3 for testing
+    super(
+        new APITag[] {APITag.AE},
+        ASSETS_PARAMETER,
+        ASSETS_PARAMETER,
+        ASSETS_PARAMETER); // limit to 3 for testing
     this.assetExchange = assetExchange;
   }
 
@@ -52,5 +56,4 @@ public final class GetAssets extends APIServlet.JsonRequestHandler {
     }
     return response;
   }
-
 }

@@ -19,8 +19,8 @@ public class MiningPlot {
 
   private final byte[] data = new byte[PLOT_SIZE];
 
-    public MiningPlot(long addr, long nonce, int blockHeight, FluxCapacitor fluxCapacitor) {
-      ByteBuffer baseBuffer = ByteBuffer.allocate(16);
+  public MiningPlot(long addr, long nonce, int blockHeight, FluxCapacitor fluxCapacitor) {
+    ByteBuffer baseBuffer = ByteBuffer.allocate(16);
     baseBuffer.putLong(addr);
     baseBuffer.putLong(nonce);
     byte[] base = baseBuffer.array();
@@ -39,15 +39,19 @@ public class MiningPlot {
     for (int i = 0; i < PLOT_SIZE; i++) {
       data[i] = (byte) (gendata[i] ^ finalhash[i % HASH_SIZE]);
     }
-    //PoC2 Rearrangement
+    // PoC2 Rearrangement
     if (fluxCapacitor.getValue(FluxValues.POC2, blockHeight)) {
       byte[] hashBuffer = new byte[HASH_SIZE];
-      int revPos = PLOT_SIZE - HASH_SIZE; //Start at second hash in last scoop
-      for (int pos = 32; pos < (PLOT_SIZE / 2); pos += 64) { //Start at second hash in first scoop
-        System.arraycopy(data, pos, hashBuffer, 0, HASH_SIZE); //Copy low scoop second hash to buffer
-        System.arraycopy(data, revPos, data, pos, HASH_SIZE); //Copy high scoop second hash to low scoop second hash
-        System.arraycopy(hashBuffer, 0, data, revPos, HASH_SIZE); //Copy buffer to high scoop second hash
-        revPos -= 64; //move backwards
+      int revPos = PLOT_SIZE - HASH_SIZE; // Start at second hash in last scoop
+      for (int pos = 32; pos < (PLOT_SIZE / 2); pos += 64) { // Start at second hash in first scoop
+        System.arraycopy(
+            data, pos, hashBuffer, 0, HASH_SIZE); // Copy low scoop second hash to buffer
+        System.arraycopy(
+            data, revPos, data, pos,
+            HASH_SIZE); // Copy high scoop second hash to low scoop second hash
+        System.arraycopy(
+            hashBuffer, 0, data, revPos, HASH_SIZE); // Copy buffer to high scoop second hash
+        revPos -= 64; // move backwards
       }
     }
   }

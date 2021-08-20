@@ -34,13 +34,18 @@ public class TransactionServiceImpl implements TransactionService {
     for (Appendix.AbstractAppendix appendage : transaction.getAppendages()) {
       appendage.validate(transaction);
     }
-    long minimumFeeNQT = transaction.getType().minimumFeeNQT(blockchain.getHeight(), transaction.getAppendagesSize());
+    long minimumFeeNQT =
+        transaction
+            .getType()
+            .minimumFeeNQT(blockchain.getHeight(), transaction.getAppendagesSize());
     if (transaction.getFeeNQT() < minimumFeeNQT) {
-      throw new BurstException.NotCurrentlyValidException(String.format("Transaction fee %d less than minimum fee %d at height %d",
-          transaction.getFeeNQT(), minimumFeeNQT, blockchain.getHeight()));
+      throw new BurstException.NotCurrentlyValidException(
+          String.format(
+              "Transaction fee %d less than minimum fee %d at height %d",
+              transaction.getFeeNQT(), minimumFeeNQT, blockchain.getHeight()));
     }
   }
-  
+
   @Override
   public void startNewBlock() {
     accountCommitmentRemovals.clear();
@@ -48,14 +53,14 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Override
   public boolean applyUnconfirmed(Transaction transaction) {
-    if(transaction.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
+    if (transaction.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
       // we only accept one removal per account per block
-      if(accountCommitmentRemovals.get(transaction.getSenderId()) != null)
-        return false;
+      if (accountCommitmentRemovals.get(transaction.getSenderId()) != null) return false;
       accountCommitmentRemovals.put(transaction.getSenderId(), transaction);
     }
     Account senderAccount = accountService.getAccount(transaction.getSenderId());
-    return senderAccount != null && transaction.getType().applyUnconfirmed(transaction, senderAccount);
+    return senderAccount != null
+        && transaction.getType().applyUnconfirmed(transaction, senderAccount);
   }
 
   @Override
@@ -73,5 +78,4 @@ public class TransactionServiceImpl implements TransactionService {
     final Account senderAccount = accountService.getAccount(transaction.getSenderId());
     transaction.getType().undoUnconfirmed(transaction, senderAccount);
   }
-
 }

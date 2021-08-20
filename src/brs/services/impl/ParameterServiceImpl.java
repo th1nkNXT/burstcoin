@@ -39,9 +39,15 @@ public class ParameterServiceImpl implements ParameterService {
   private final TransactionProcessor transactionProcessor;
   private final ATService atService;
 
-  public ParameterServiceImpl(AccountService accountService, AliasService aliasService, AssetExchange assetExchange, DGSGoodsStoreService dgsGoodsStoreService, Blockchain blockchain,
+  public ParameterServiceImpl(
+      AccountService accountService,
+      AliasService aliasService,
+      AssetExchange assetExchange,
+      DGSGoodsStoreService dgsGoodsStoreService,
+      Blockchain blockchain,
       BlockchainProcessor blockchainProcessor,
-      TransactionProcessor transactionProcessor, ATService atService) {
+      TransactionProcessor transactionProcessor,
+      ATService atService) {
     this.accountService = accountService;
     this.aliasService = aliasService;
     this.assetExchange = assetExchange;
@@ -69,27 +75,31 @@ public class ParameterServiceImpl implements ParameterService {
         throw new ParameterException(INCORRECT_HEIGHT);
       }
     }
-    
+
     try {
       BurstAddress accountAddress = Convert.parseAddress(accountId);
-      Account account = height >= 0 ? accountService.getAccount(accountAddress.getSignedLongId(), height)
-          : accountService.getAccount(accountAddress.getSignedLongId());
-      
-      if(account == null && accountAddress.getPublicKey() == null) {
+      Account account =
+          height >= 0
+              ? accountService.getAccount(accountAddress.getSignedLongId(), height)
+              : accountService.getAccount(accountAddress.getSignedLongId());
+
+      if (account == null && accountAddress.getPublicKey() == null) {
         throw new ParameterException(UNKNOWN_ACCOUNT);
       }
-      if(account == null) {
+      if (account == null) {
         account = new Account(accountAddress.getSignedLongId());
         account.setPublicKey(accountAddress.getPublicKey());
       }
-      if(account.getPublicKey() == null && accountAddress.getPublicKey() != null) {
+      if (account.getPublicKey() == null && accountAddress.getPublicKey() != null) {
         account.setPublicKey(accountAddress.getPublicKey());
       }
-      
-      if(accountAddress.getPublicKey() != null && account.getPublicKey() != null && !Arrays.equals(account.getPublicKey(), accountAddress.getPublicKey())) {
+
+      if (accountAddress.getPublicKey() != null
+          && account.getPublicKey() != null
+          && !Arrays.equals(account.getPublicKey(), accountAddress.getPublicKey())) {
         throw new ParameterException(INCORRECT_ACCOUNT);
       }
-      
+
       return account;
     } catch (RuntimeException e) {
       throw new ParameterException(INCORRECT_ACCOUNT);
@@ -210,7 +220,8 @@ public class ParameterServiceImpl implements ParameterService {
       throw new ParameterException(MISSING_PURCHASE);
     }
     try {
-      DigitalGoodsStore.Purchase purchase = dgsGoodsStoreService.getPurchase(Convert.parseUnsignedLong(purchaseIdString));
+      DigitalGoodsStore.Purchase purchase =
+          dgsGoodsStoreService.getPurchase(Convert.parseUnsignedLong(purchaseIdString));
       if (purchase == null) {
         throw new ParameterException(INCORRECT_PURCHASE);
       }
@@ -221,7 +232,9 @@ public class ParameterServiceImpl implements ParameterService {
   }
 
   @Override
-  public EncryptedData getEncryptedMessage(HttpServletRequest req, Account recipientAccount, byte[] publicKey) throws ParameterException {
+  public EncryptedData getEncryptedMessage(
+      HttpServletRequest req, Account recipientAccount, byte[] publicKey)
+      throws ParameterException {
     String data = Convert.emptyToNull(req.getParameter(ENCRYPTED_MESSAGE_DATA_PARAMETER));
     String nonce = Convert.emptyToNull(req.getParameter(ENCRYPTED_MESSAGE_NONCE_PARAMETER));
     if (data != null && nonce != null) {
@@ -239,10 +252,11 @@ public class ParameterServiceImpl implements ParameterService {
     String secretPhrase = getSecretPhrase(req);
     boolean isText = Parameters.isTrue(req.getParameter(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER));
     try {
-      byte[] plainMessageBytes = isText ? Convert.toBytes(plainMessage) : Convert.parseHexString(plainMessage);
-      if(recipientAccount != null && recipientAccount.getPublicKey() != null) {
+      byte[] plainMessageBytes =
+          isText ? Convert.toBytes(plainMessage) : Convert.parseHexString(plainMessage);
+      if (recipientAccount != null && recipientAccount.getPublicKey() != null) {
         return recipientAccount.encryptTo(plainMessageBytes, secretPhrase);
-      } else if(publicKey != null) {
+      } else if (publicKey != null) {
         return Account.encryptTo(plainMessageBytes, secretPhrase, publicKey);
       } else {
         throw new ParameterException(INCORRECT_RECIPIENT);
@@ -263,15 +277,18 @@ public class ParameterServiceImpl implements ParameterService {
         throw new ParameterException(INCORRECT_ENCRYPTED_MESSAGE);
       }
     }
-    String plainMessage = Convert.emptyToNull(req.getParameter(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER));
+    String plainMessage =
+        Convert.emptyToNull(req.getParameter(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER));
     if (plainMessage == null) {
       return null;
     }
     String secretPhrase = getSecretPhrase(req);
     Account senderAccount = accountService.getAccount(Crypto.getPublicKey(secretPhrase));
-    boolean isText = !Parameters.isFalse(req.getParameter(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER));
+    boolean isText =
+        !Parameters.isFalse(req.getParameter(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER));
     try {
-      byte[] plainMessageBytes = isText ? Convert.toBytes(plainMessage) : Convert.parseHexString(plainMessage);
+      byte[] plainMessageBytes =
+          isText ? Convert.toBytes(plainMessage) : Convert.parseHexString(plainMessage);
       return senderAccount.encryptTo(plainMessageBytes, secretPhrase);
     } catch (RuntimeException e) {
       throw new ParameterException(INCORRECT_PLAIN_MESSAGE);
@@ -289,7 +306,8 @@ public class ParameterServiceImpl implements ParameterService {
 
   @Override
   public int getNumberOfConfirmations(HttpServletRequest req) throws ParameterException {
-    String numberOfConfirmationsValue = Convert.emptyToNull(req.getParameter(NUMBER_OF_CONFIRMATIONS_PARAMETER));
+    String numberOfConfirmationsValue =
+        Convert.emptyToNull(req.getParameter(NUMBER_OF_CONFIRMATIONS_PARAMETER));
     if (numberOfConfirmationsValue != null) {
       try {
         int numberOfConfirmations = Integer.parseInt(numberOfConfirmationsValue);
@@ -325,7 +343,8 @@ public class ParameterServiceImpl implements ParameterService {
   }
 
   @Override
-  public Transaction parseTransaction(String transactionBytes, String transactionJSON) throws ParameterException {
+  public Transaction parseTransaction(String transactionBytes, String transactionJSON)
+      throws ParameterException {
     if (transactionBytes == null && transactionJSON == null) {
       throw new ParameterException(MISSING_TRANSACTION_BYTES_OR_JSON);
     }
@@ -334,10 +353,11 @@ public class ParameterServiceImpl implements ParameterService {
         byte[] bytes = Convert.parseHexString(transactionBytes);
         return transactionProcessor.parseTransaction(bytes);
       } catch (BurstException.ValidationException | RuntimeException e) {
-          logger.debug(e.getMessage(), e); // TODO remove?
+        logger.debug(e.getMessage(), e); // TODO remove?
         JsonObject response = new JsonObject();
         response.addProperty(ERROR_CODE_RESPONSE, 4);
-        response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Incorrect transactionBytes: " + e.toString());
+        response.addProperty(
+            ERROR_DESCRIPTION_RESPONSE, "Incorrect transactionBytes: " + e.toString());
         throw new ParameterException(response);
       }
     } else {
@@ -348,7 +368,8 @@ public class ParameterServiceImpl implements ParameterService {
         logger.debug(e.getMessage(), e);
         JsonObject response = new JsonObject();
         response.addProperty(ERROR_CODE_RESPONSE, 4);
-        response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Incorrect transactionJSON: " + e.toString());
+        response.addProperty(
+            ERROR_DESCRIPTION_RESPONSE, "Incorrect transactionJSON: " + e.toString());
         throw new ParameterException(response);
       }
     }
@@ -388,12 +409,12 @@ public class ParameterServiceImpl implements ParameterService {
   public boolean getIncludeIndirect(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(INCLUDE_INDIRECT_PARAMETER));
   }
-  
+
   @Override
   public boolean getAmountCommitted(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(GET_COMMITTED_AMOUNT_PARAMETER));
   }
-  
+
   @Override
   public boolean getEstimateCommitment(HttpServletRequest req) {
     return Boolean.parseBoolean(req.getParameter(ESTIMATE_COMMITMENT_PARAMETER));

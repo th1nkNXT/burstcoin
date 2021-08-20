@@ -1,8 +1,7 @@
 package brs.http.common;
 
 public class ResultFields {
-  private ResultFields() {
-  }
+  private ResultFields() {}
 
   public static final String ERROR_CODE_RESPONSE = "errorCode";
   public static final String ERROR_DESCRIPTION_RESPONSE = "errorDescription";
@@ -125,7 +124,8 @@ public class ResultFields {
   public static final String CONFIRMATIONS_RESPONSE = "confirmations";
   public static final String BLOCK_TIMESTAMP_RESPONSE = "blockTimestamp";
   public static final String SENDER_PUBLIC_KEY_RESPONSE = "senderPublicKey";
-  public static final String REFERENCED_TRANSACTION_FULL_HASH_RESPONSE = "referencedTransactionFullHash";
+  public static final String REFERENCED_TRANSACTION_FULL_HASH_RESPONSE =
+      "referencedTransactionFullHash";
   public static final String ATTACHMENT_RESPONSE = "attachment";
   public static final String EC_BLOCK_ID_RESPONSE = "ecBlockId";
   public static final String EC_BLOCK_HEIGHT_RESPONSE = "ecBlockHeight";
@@ -145,7 +145,8 @@ public class ResultFields {
   public static final String ESCROW_ID_RESPONSE = "escrowId";
   public static final String SUBSCRIPTION_ID_RESPONSE = "subscriptionId";
   public static final String CREATION_BYTES_RESPONSE = "creationBytes";
-  public static final String LAST_UNCONFIRMED_TRANSACTION_TIMESTAMP_RESPONSE = "lastUnconfirmedTransactionTimestamp";
+  public static final String LAST_UNCONFIRMED_TRANSACTION_TIMESTAMP_RESPONSE =
+      "lastUnconfirmedTransactionTimestamp";
   public static final String UNCONFIRMED_TRANSACTIONS_RESPONSE = "unconfirmedTransactions";
   public static final String UNCONFIRMED_TRANSACTIONS_IDS_RESPONSE = "unconfirmedTransactionIds";
   public static final String CHEAP_FEE_RESPONSE = "cheap";

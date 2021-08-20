@@ -42,7 +42,8 @@ public class GetBidOrderTest {
 
     when(mockAssetExchange.getBidOrder(eq(bidOrderId))).thenReturn(mockBid);
 
-    HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, bidOrderId));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, bidOrderId));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -53,9 +54,9 @@ public class GetBidOrderTest {
   public void processRequest_orderNotFoundUnknownOrder() throws BurstException {
     final long bidOrderId = 123L;
 
-    HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, bidOrderId));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, bidOrderId));
 
     assertEquals(UNKNOWN_ORDER, t.processRequest(req));
   }
-
 }

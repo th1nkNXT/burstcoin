@@ -20,8 +20,9 @@ final class GetRewardRecipient extends APIServlet.JsonRequestHandler {
   private final Blockchain blockchain;
   private final AccountService accountService;
 
-  GetRewardRecipient(ParameterService parameterService, Blockchain blockchain, AccountService accountService) {
-    super(new APITag[]{APITag.ACCOUNTS, APITag.MINING, APITag.INFO}, ACCOUNT_PARAMETER);
+  GetRewardRecipient(
+      ParameterService parameterService, Blockchain blockchain, AccountService accountService) {
+    super(new APITag[] {APITag.ACCOUNTS, APITag.MINING, APITag.INFO}, ACCOUNT_PARAMETER);
     this.parameterService = parameterService;
     this.blockchain = blockchain;
     this.accountService = accountService;
@@ -32,17 +33,19 @@ final class GetRewardRecipient extends APIServlet.JsonRequestHandler {
     JsonObject response = new JsonObject();
 
     final Account account = parameterService.getAccount(req);
-    Account.RewardRecipientAssignment assignment = accountService.getRewardRecipientAssignment(account);
+    Account.RewardRecipientAssignment assignment =
+        accountService.getRewardRecipientAssignment(account);
     long height = blockchain.getLastBlock().getHeight();
     if (assignment == null) {
       response.addProperty(REWARD_RECIPIENT_RESPONSE, Convert.toUnsignedLong(account.getId()));
     } else if (assignment.getFromHeight() > height + 1) {
-      response.addProperty(REWARD_RECIPIENT_RESPONSE, Convert.toUnsignedLong(assignment.getPrevRecipientId()));
+      response.addProperty(
+          REWARD_RECIPIENT_RESPONSE, Convert.toUnsignedLong(assignment.getPrevRecipientId()));
     } else {
-      response.addProperty(REWARD_RECIPIENT_RESPONSE, Convert.toUnsignedLong(assignment.getRecipientId()));
+      response.addProperty(
+          REWARD_RECIPIENT_RESPONSE, Convert.toUnsignedLong(assignment.getRecipientId()));
     }
 
     return response;
   }
-
 }

@@ -43,9 +43,8 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
   public void processRequest() throws BurstException {
     final long targetAccountId = 4L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ACCOUNT_PARAMETER, targetAccountId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, targetAccountId));
 
     final Account targetAccount = mock(Account.class);
     when(targetAccount.getId()).thenReturn(targetAccountId);
@@ -57,7 +56,8 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
 
     final Collection<RewardRecipientAssignment> assignmentIterator = mockCollection(assignment);
 
-    when(accountService.getAccountsWithRewardRecipient(eq(targetAccountId))).thenReturn(assignmentIterator);
+    when(accountService.getAccountsWithRewardRecipient(eq(targetAccountId)))
+        .thenReturn(assignmentIterator);
 
     final JsonObject resultOverview = (JsonObject) t.processRequest(req);
     assertNotNull(resultOverview);
@@ -71,9 +71,8 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
   public void processRequest_withRewardRecipientAssignmentKnown() throws BurstException {
     final long targetAccountId = 4L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ACCOUNT_PARAMETER, targetAccountId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, targetAccountId));
 
     final Account targetAccount = mock(Account.class);
     when(targetAccount.getId()).thenReturn(targetAccountId);
@@ -85,7 +84,8 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
 
     final Collection<RewardRecipientAssignment> assignmentIterator = mockCollection(assignment);
 
-    when(accountService.getAccountsWithRewardRecipient(eq(targetAccountId))).thenReturn(assignmentIterator);
+    when(accountService.getAccountsWithRewardRecipient(eq(targetAccountId)))
+        .thenReturn(assignmentIterator);
     when(accountService.getRewardRecipientAssignment(eq(targetAccount))).thenReturn(assignment);
 
     final JsonObject resultOverview = (JsonObject) t.processRequest(req);

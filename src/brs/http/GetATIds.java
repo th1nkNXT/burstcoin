@@ -31,5 +31,4 @@ final class GetATIds extends APIServlet.JsonRequestHandler {
     response.add(AT_IDS_RESPONSE, atIds);
     return response;
   }
-
 }

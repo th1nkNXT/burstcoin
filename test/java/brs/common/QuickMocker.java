@@ -52,12 +52,13 @@ public class QuickMocker {
   }
 
   public static HttpServletRequest httpServletRequestDefaultKeys(MockParam... parameters) {
-    final List<MockParam> paramsWithKeys = new ArrayList<>(Arrays.asList(
-        new MockParam(SECRET_PHRASE_PARAMETER, TestConstants.TEST_SECRET_PHRASE),
-        new MockParam(PUBLIC_KEY_PARAMETER, TestConstants.TEST_PUBLIC_KEY),
-        new MockParam(DEADLINE_PARAMETER, TestConstants.DEADLINE),
-        new MockParam(FEE_NQT_PARAMETER, TestConstants.FEE)
-    ));
+    final List<MockParam> paramsWithKeys =
+        new ArrayList<>(
+            Arrays.asList(
+                new MockParam(SECRET_PHRASE_PARAMETER, TestConstants.TEST_SECRET_PHRASE),
+                new MockParam(PUBLIC_KEY_PARAMETER, TestConstants.TEST_PUBLIC_KEY),
+                new MockParam(DEADLINE_PARAMETER, TestConstants.DEADLINE),
+                new MockParam(FEE_NQT_PARAMETER, TestConstants.FEE)));
 
     paramsWithKeys.addAll(Arrays.asList(parameters));
 
@@ -106,7 +107,5 @@ public class QuickMocker {
       this.key = key;
       this.value = value;
     }
-
   }
-
 }

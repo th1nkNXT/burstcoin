@@ -35,7 +35,8 @@ public interface VersionedBatchEntityTable<T> extends DerivedTable, EntityTable<
   Collection<T> getManyBy(Condition condition, int height, int from, int to);
 
   @Override
-  Collection<T> getManyBy(Condition condition, int height, int from, int to, List<SortField<?>> sort);
+  Collection<T> getManyBy(
+      Condition condition, int height, int from, int to, List<SortField<?>> sort);
 
   @Override
   Collection<T> getManyBy(DSLContext ctx, SelectQuery<? extends Record> query, boolean cache);

@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 
 public final class ParameterException extends BurstException {
 
-  private transient final JsonElement errorResponse;
+  private final transient JsonElement errorResponse;
 
   public ParameterException(JsonElement errorResponse) {
     this.errorResponse = errorResponse;
@@ -14,5 +14,4 @@ public final class ParameterException extends BurstException {
   JsonElement getErrorResponse() {
     return errorResponse;
   }
-
 }

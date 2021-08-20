@@ -31,7 +31,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   private static final List<Subscription> appliedSubscriptions = new ArrayList<>();
   private static final Set<Long> removeSubscriptions = new HashSet<>();
 
-  public SubscriptionServiceImpl(SubscriptionStore subscriptionStore, TransactionDb transactionDb, Blockchain blockchain, AliasService aliasService, AccountService accountService) {
+  public SubscriptionServiceImpl(
+      SubscriptionStore subscriptionStore,
+      TransactionDb transactionDb,
+      Blockchain blockchain,
+      AliasService aliasService,
+      AccountService accountService) {
     this.subscriptionStore = subscriptionStore;
     this.subscriptionTable = subscriptionStore.getSubscriptionTable();
     this.subscriptionDbKeyFactory = subscriptionStore.getSubscriptionDbKeyFactory();
@@ -57,9 +62,23 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   @Override
-  public void addSubscription(Account sender, Account recipient, Long id, Long amountNQT, int startTimestamp, int frequency) {
+  public void addSubscription(
+      Account sender,
+      Account recipient,
+      Long id,
+      Long amountNQT,
+      int startTimestamp,
+      int frequency) {
     final BurstKey dbKey = subscriptionDbKeyFactory.newKey(id);
-    final Subscription subscription = new Subscription(sender.getId(), recipient.getId(), id, amountNQT, frequency, startTimestamp + frequency, dbKey);
+    final Subscription subscription =
+        new Subscription(
+            sender.getId(),
+            recipient.getId(),
+            id,
+            amountNQT,
+            frequency,
+            startTimestamp + frequency,
+            dbKey);
 
     subscriptionTable.insert(subscription);
   }
@@ -81,15 +100,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
       apply(block, blockchainHeight, subscription);
       subscriptionTable.insert(subscription);
     }
-    if (! paymentTransactions.isEmpty()) {
+    if (!paymentTransactions.isEmpty()) {
       transactionDb.saveTransactions(paymentTransactions);
     }
     removeSubscriptions.forEach(this::removeSubscription);
   }
 
   private long getFee(int height) {
-	if (Burst.getFluxCapacitor().getValue(FluxValues.SODIUM, height))
-	  return Constants.FEE_QUANT;
+    if (Burst.getFluxCapacitor().getValue(FluxValues.SODIUM, height)) return Constants.FEE_QUANT;
     return Constants.ONE_BURST;
   }
 
@@ -105,7 +123,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   public long calculateFees(int timestamp, int height) {
     long totalFeeNQT = 0;
     List<Subscription> appliedUnconfirmedSubscriptions = new ArrayList<>();
-    for (Subscription subscription : subscriptionStore.getUpdateSubscriptions(timestamp)){
+    for (Subscription subscription : subscriptionStore.getUpdateSubscriptions(timestamp)) {
       if (removeSubscriptions.contains(subscription.getId())) {
         continue;
       }
@@ -113,7 +131,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         appliedUnconfirmedSubscriptions.add(subscription);
       }
     }
-    if (! appliedUnconfirmedSubscriptions.isEmpty()) {
+    if (!appliedUnconfirmedSubscriptions.isEmpty()) {
       for (Subscription subscription : appliedUnconfirmedSubscriptions) {
         totalFeeNQT = Convert.safeAdd(totalFeeNQT, getFee(height));
         undoUnconfirmed(subscription, height);
@@ -181,14 +199,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     accountService.addToBalanceNQT(sender, -totalAmountNQT);
     accountService.addToBalanceAndUnconfirmedBalanceNQT(recipient, subscription.getAmountNQT());
 
-    Attachment.AbstractAttachment attachment = new Attachment.AdvancedPaymentSubscriptionPayment(subscription.getId(), blockchainHeight);
-    Transaction.Builder builder = new Transaction.Builder((byte) 1,
-        sender.getPublicKey(), subscription.getAmountNQT(),
-        getFee(block.getHeight()),
-        subscription.getTimeNext(), (short) 1440, attachment);
+    Attachment.AbstractAttachment attachment =
+        new Attachment.AdvancedPaymentSubscriptionPayment(subscription.getId(), blockchainHeight);
+    Transaction.Builder builder =
+        new Transaction.Builder(
+            (byte) 1,
+            sender.getPublicKey(),
+            subscription.getAmountNQT(),
+            getFee(block.getHeight()),
+            subscription.getTimeNext(),
+            (short) 1440,
+            attachment);
 
     try {
-      builder.senderId(subscription.getSenderId())
+      builder
+          .senderId(subscription.getSenderId())
           .recipientId(subscription.getRecipientId())
           .blockId(block.getId())
           .height(block.getHeight())
@@ -205,5 +230,4 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     subscription.timeNextGetAndAdd(subscription.getFrequency());
   }
-
 }

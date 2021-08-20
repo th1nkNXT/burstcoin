@@ -49,7 +49,8 @@ final class GetMilestoneBlockIds implements PeerServlet.PeerRequestHandler {
       int blockchainHeight = blockchain.getHeight();
       String lastMilestoneBlockIdString = JSON.getAsString(request.get("lastMilestoneBlockId"));
       if (lastMilestoneBlockIdString != null) {
-        Block lastMilestoneBlock = blockchain.getBlock(Convert.parseUnsignedLong(lastMilestoneBlockIdString));
+        Block lastMilestoneBlock =
+            blockchain.getBlock(Convert.parseUnsignedLong(lastMilestoneBlockIdString));
         if (lastMilestoneBlock == null) {
           throw new IllegalStateException("Don't have block " + lastMilestoneBlockIdString);
         }
@@ -61,7 +62,8 @@ final class GetMilestoneBlockIds implements PeerServlet.PeerRequestHandler {
         jump = 10;
       } else {
         peer.blacklist("GetMilestoneBlockIds");
-        response.addProperty("error", "Old getMilestoneBlockIds protocol not supported, please upgrade");
+        response.addProperty(
+            "error", "Old getMilestoneBlockIds protocol not supported, please upgrade");
         return response;
       }
       blockId = blockchain.getBlockIdAtHeight(height);
@@ -80,5 +82,4 @@ final class GetMilestoneBlockIds implements PeerServlet.PeerRequestHandler {
 
     return response;
   }
-
 }

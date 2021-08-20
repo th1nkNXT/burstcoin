@@ -4,7 +4,6 @@ import brs.util.JSON;
 import com.google.gson.JsonElement;
 
 import static brs.http.common.ResultFields.ERROR_CODE_RESPONSE;
-
 ;
 
 public class JSONTestHelper {

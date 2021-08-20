@@ -26,12 +26,19 @@ public class AssetExchangeImpl implements AssetExchange {
   private final AssetServiceImpl assetService;
   private final OrderServiceImpl orderService;
 
-
-  public AssetExchangeImpl(AccountService accountService, TradeStore tradeStore, AccountStore accountStore, AssetTransferStore assetTransferStore, AssetStore assetStore, OrderStore orderStore) {
+  public AssetExchangeImpl(
+      AccountService accountService,
+      TradeStore tradeStore,
+      AccountStore accountStore,
+      AssetTransferStore assetTransferStore,
+      AssetStore assetStore,
+      OrderStore orderStore) {
     this.tradeService = new TradeServiceImpl(tradeStore);
     this.assetAccountService = new AssetAccountServiceImpl(accountStore);
     this.assetTransferService = new AssetTransferServiceImpl(assetTransferStore);
-    this.assetService = new AssetServiceImpl(this.assetAccountService, tradeService, assetStore, assetTransferService);
+    this.assetService =
+        new AssetServiceImpl(
+            this.assetAccountService, tradeService, assetStore, assetTransferService);
     this.orderService = new OrderServiceImpl(orderStore, accountService, tradeService);
   }
 
@@ -146,7 +153,8 @@ public class AssetExchangeImpl implements AssetExchange {
   }
 
   @Override
-  public Collection<AssetTransfer> getAccountAssetTransfers(long accountId, long assetId, int from, int to) {
+  public Collection<AssetTransfer> getAccountAssetTransfers(
+      long accountId, long assetId, int from, int to) {
     return assetTransferService.getAccountAssetTransfers(accountId, assetId, from, to);
   }
 
@@ -176,7 +184,8 @@ public class AssetExchangeImpl implements AssetExchange {
   }
 
   @Override
-  public Collection<Ask> getAskOrdersByAccountAsset(long accountId, long assetId, int from, int to) {
+  public Collection<Ask> getAskOrdersByAccountAsset(
+      long accountId, long assetId, int from, int to) {
     return orderService.getAskOrdersByAccountAsset(accountId, assetId, from, to);
   }
 
@@ -186,7 +195,8 @@ public class AssetExchangeImpl implements AssetExchange {
   }
 
   @Override
-  public Collection<Bid> getBidOrdersByAccountAsset(long accountId, long assetId, int from, int to) {
+  public Collection<Bid> getBidOrdersByAccountAsset(
+      long accountId, long assetId, int from, int to) {
     return orderService.getBidOrdersByAccountAsset(accountId, assetId, from, to);
   }
 

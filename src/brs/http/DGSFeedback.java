@@ -17,8 +17,15 @@ public final class DGSFeedback extends CreateTransaction {
   private final AccountService accountService;
   private final Blockchain blockchain;
 
-  DGSFeedback(ParameterService parameterService, Blockchain blockchain, AccountService accountService, APITransactionManager apiTransactionManager) {
-    super(new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, PURCHASE_PARAMETER);
+  DGSFeedback(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AccountService accountService,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        PURCHASE_PARAMETER);
     this.parameterService = parameterService;
     this.accountService = accountService;
     this.blockchain = blockchain;
@@ -37,9 +44,9 @@ public final class DGSFeedback extends CreateTransaction {
     }
 
     Account sellerAccount = accountService.getAccount(purchase.getSellerId());
-    Attachment attachment = new Attachment.DigitalGoodsFeedback(purchase.getId(), blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsFeedback(purchase.getId(), blockchain.getHeight());
 
     return createTransaction(req, buyerAccount, sellerAccount.getId(), 0, attachment);
   }
-
 }

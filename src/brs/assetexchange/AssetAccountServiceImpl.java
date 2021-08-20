@@ -27,5 +27,4 @@ class AssetAccountServiceImpl {
   public int getAssetAccountsCount(long assetId) {
     return accountStore.getAssetAccountsCount(assetId);
   }
-
 }

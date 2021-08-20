@@ -25,8 +25,17 @@ public final class GetAssetTransfers extends APIServlet.JsonRequestHandler {
   private final AccountService accountService;
   private final AssetExchange assetExchange;
 
-  GetAssetTransfers(ParameterService parameterService, AccountService accountService, AssetExchange assetExchange) {
-    super(new APITag[]{APITag.AE}, ASSET_PARAMETER, ACCOUNT_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER, INCLUDE_ASSET_INFO_PARAMETER);
+  GetAssetTransfers(
+      ParameterService parameterService,
+      AccountService accountService,
+      AssetExchange assetExchange) {
+    super(
+        new APITag[] {APITag.AE},
+        ASSET_PARAMETER,
+        ACCOUNT_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER,
+        INCLUDE_ASSET_INFO_PARAMETER);
     this.parameterService = parameterService;
     this.accountService = accountService;
     this.assetExchange = assetExchange;
@@ -53,7 +62,9 @@ public final class GetAssetTransfers extends APIServlet.JsonRequestHandler {
     } else {
       Asset asset = parameterService.getAsset(req);
       Account account = parameterService.getAccount(req);
-      transfers = assetExchange.getAccountAssetTransfers(account.getId(), asset.getId(), firstIndex, lastIndex);
+      transfers =
+          assetExchange.getAccountAssetTransfers(
+              account.getId(), asset.getId(), firstIndex, lastIndex);
     }
     for (AssetTransfer transfer : transfers) {
       final Asset asset = includeAssetInfo ? assetExchange.getAsset(transfer.getAssetId()) : null;

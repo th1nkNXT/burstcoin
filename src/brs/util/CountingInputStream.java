@@ -42,5 +42,4 @@ public class CountingInputStream extends FilterInputStream {
   public long getCount() {
     return count;
   }
-
 }

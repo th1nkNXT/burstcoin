@@ -40,9 +40,8 @@ public class GetAskOrderTest {
 
     when(mockAssetExchange.getAskOrder(eq(orderId))).thenReturn(mockOrder);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ORDER_PARAMETER, orderId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, orderId));
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -54,11 +53,9 @@ public class GetAskOrderTest {
 
     when(mockAssetExchange.getAskOrder(eq(orderId))).thenReturn(null);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ORDER_PARAMETER, orderId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, orderId));
 
     assertEquals(UNKNOWN_ORDER, t.processRequest(req));
   }
-
 }

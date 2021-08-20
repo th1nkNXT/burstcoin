@@ -58,5 +58,4 @@ public class GetAccountPublicKeyTest {
 
     assertEquals(JSON.emptyJSON, t.processRequest(req));
   }
-
 }

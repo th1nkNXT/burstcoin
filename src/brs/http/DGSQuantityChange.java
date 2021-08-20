@@ -16,8 +16,15 @@ public final class DGSQuantityChange extends CreateTransaction {
   private final ParameterService parameterService;
   private final Blockchain blockchain;
 
-  DGSQuantityChange(ParameterService parameterService, Blockchain blockchain, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager, GOODS_PARAMETER, DELTA_QUANTITY_PARAMETER);
+  DGSQuantityChange(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        GOODS_PARAMETER,
+        DELTA_QUANTITY_PARAMETER);
 
     this.parameterService = parameterService;
     this.blockchain = blockchain;
@@ -39,16 +46,17 @@ public final class DGSQuantityChange extends CreateTransaction {
         return MISSING_DELTA_QUANTITY;
       }
       deltaQuantity = Integer.parseInt(deltaQuantityString);
-      if (deltaQuantity > Constants.MAX_DGS_LISTING_QUANTITY || deltaQuantity < -Constants.MAX_DGS_LISTING_QUANTITY) {
+      if (deltaQuantity > Constants.MAX_DGS_LISTING_QUANTITY
+          || deltaQuantity < -Constants.MAX_DGS_LISTING_QUANTITY) {
         return INCORRECT_DELTA_QUANTITY;
       }
     } catch (NumberFormatException e) {
       return INCORRECT_DELTA_QUANTITY;
     }
 
-    Attachment attachment = new Attachment.DigitalGoodsQuantityChange(goods.getId(), deltaQuantity, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsQuantityChange(
+            goods.getId(), deltaQuantity, blockchain.getHeight());
     return createTransaction(req, account, attachment);
-
   }
-
 }

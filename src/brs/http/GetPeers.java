@@ -27,7 +27,12 @@ final class GetPeers extends APIServlet.JsonRequestHandler {
     String stateValue = Convert.emptyToNull(req.getParameter(STATE_PARAMETER));
 
     JsonArray peers = new JsonArray();
-    for (Peer peer : active ? Peers.getActivePeers() : stateValue != null ? Peers.getPeers(Peer.State.valueOf(stateValue)) : Peers.getAllPeers()) {
+    for (Peer peer :
+        active
+            ? Peers.getActivePeers()
+            : stateValue != null
+                ? Peers.getPeers(Peer.State.valueOf(stateValue))
+                : Peers.getAllPeers()) {
       peers.add(peer.getPeerAddress());
     }
 
@@ -35,5 +40,4 @@ final class GetPeers extends APIServlet.JsonRequestHandler {
     response.add("peers", peers);
     return response;
   }
-
 }

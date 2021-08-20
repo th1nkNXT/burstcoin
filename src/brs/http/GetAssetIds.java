@@ -36,5 +36,4 @@ public final class GetAssetIds extends APIServlet.JsonRequestHandler {
     response.add(ASSET_IDS_RESPONSE, assetIds);
     return response;
   }
-
 }

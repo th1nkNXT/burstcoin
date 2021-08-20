@@ -57,10 +57,13 @@ public class DGSDelistingTest extends AbstractTransactionTest {
     when(mockParameterService.getGoods(eq(req))).thenReturn(mockGoods);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsDelisting attachment = (Attachment.DigitalGoodsDelisting) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsDelisting attachment =
+        (Attachment.DigitalGoodsDelisting)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(DELISTING, attachment.getTransactionType());
@@ -98,5 +101,4 @@ public class DGSDelistingTest extends AbstractTransactionTest {
 
     assertEquals(UNKNOWN_GOODS, t.processRequest(req));
   }
-
 }

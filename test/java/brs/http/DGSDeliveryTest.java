@@ -46,7 +46,9 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
     accountServiceMock = mock(AccountService.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new DGSDelivery(parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
+    t =
+        new DGSDelivery(
+            parameterServiceMock, blockchainMock, accountServiceMock, apiTransactionManagerMock);
   }
 
   @Test
@@ -54,11 +56,11 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
     final long discountNQTParameter = 1;
     final String goodsToEncryptParameter = "beef";
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, discountNQTParameter),
-        new MockParam(GOODS_TO_ENCRYPT_PARAMETER, goodsToEncryptParameter),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(DISCOUNT_NQT_PARAMETER, discountNQTParameter),
+            new MockParam(GOODS_TO_ENCRYPT_PARAMETER, goodsToEncryptParameter),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE));
 
     final Account mockSellerAccount = mock(Account.class);
     final Account mockBuyerAccount = mock(Account.class);
@@ -77,10 +79,13 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
     when(accountServiceMock.getAccount(eq(mockPurchase.getBuyerId()))).thenReturn(mockBuyerAccount);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsDelivery attachment = (Attachment.DigitalGoodsDelivery) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsDelivery attachment =
+        (Attachment.DigitalGoodsDelivery)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(DELIVERY, attachment.getTransactionType());
@@ -88,7 +93,8 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_sellerAccountIdDifferentFromAccountSellerIdIsIncorrectPurchase() throws BurstException {
+  public void processRequest_sellerAccountIdDifferentFromAccountSellerIdIsIncorrectPurchase()
+      throws BurstException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -122,10 +128,10 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountNotAValidNumberIsIncorrectDGSDiscount() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, "Bob")
-    );
+  public void processRequest_dgsDiscountNotAValidNumberIsIncorrectDGSDiscount()
+      throws BurstException {
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DISCOUNT_NQT_PARAMETER, "Bob"));
 
     final Account mockSellerAccount = mock(Account.class);
     final Purchase mockPurchase = mock(Purchase.class);
@@ -143,9 +149,8 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_dgsDiscountNegativeIsIncorrectDGSDiscount() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, "-1")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DISCOUNT_NQT_PARAMETER, "-1"));
 
     final Account mockSellerAccount = mock(Account.class);
     final Purchase mockPurchase = mock(Purchase.class);
@@ -162,10 +167,11 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountOverMaxBalanceNQTIsIncorrectDGSDiscount() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, "" + (MAX_BALANCE_NQT + 1))
-    );
+  public void processRequest_dgsDiscountOverMaxBalanceNQTIsIncorrectDGSDiscount()
+      throws BurstException {
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(DISCOUNT_NQT_PARAMETER, "" + (MAX_BALANCE_NQT + 1)));
 
     final Account mockSellerAccount = mock(Account.class);
     final Purchase mockPurchase = mock(Purchase.class);
@@ -183,9 +189,8 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_dgsDiscountNegativeIsNotSafeMultiply() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, "99999999999")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(DISCOUNT_NQT_PARAMETER, "99999999999"));
 
     final Account mockSellerAccount = mock(Account.class);
     final Purchase mockPurchase = mock(Purchase.class);
@@ -205,11 +210,11 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_goodsToEncryptIsEmptyIsIncorrectDGSGoods() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(DISCOUNT_NQT_PARAMETER, "9"),
-        new MockParam(GOODS_TO_ENCRYPT_PARAMETER, ""),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(DISCOUNT_NQT_PARAMETER, "9"),
+            new MockParam(GOODS_TO_ENCRYPT_PARAMETER, ""),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE));
 
     final Account mockSellerAccount = mock(Account.class);
     final Purchase mockPurchase = mock(Purchase.class);
@@ -226,5 +231,4 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
 
     assertEquals(INCORRECT_DGS_GOODS, t.processRequest(req));
   }
-
 }

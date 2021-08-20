@@ -16,7 +16,7 @@ public final class GetAsset extends APIServlet.JsonRequestHandler {
   private final AssetExchange assetExchange;
 
   GetAsset(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[]{APITag.AE}, ASSET_PARAMETER);
+    super(new APITag[] {APITag.AE}, ASSET_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -31,5 +31,4 @@ public final class GetAsset extends APIServlet.JsonRequestHandler {
 
     return JSONData.asset(asset, tradeCount, transferCount, accountsCount);
   }
-
 }

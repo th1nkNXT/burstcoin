@@ -21,7 +21,12 @@ public final class GetAliases extends APIServlet.JsonRequestHandler {
   private final AliasService aliasService;
 
   GetAliases(ParameterService parameterService, AliasService aliasService) {
-    super(new APITag[]{APITag.ALIASES}, TIMESTAMP_PARAMETER, ACCOUNT_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER);
+    super(
+        new APITag[] {APITag.ALIASES},
+        TIMESTAMP_PARAMETER,
+        ACCOUNT_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER);
     this.parameterService = parameterService;
     this.aliasService = aliasService;
   }
@@ -34,7 +39,12 @@ public final class GetAliases extends APIServlet.JsonRequestHandler {
     int lastIndex = ParameterParser.getLastIndex(req);
 
     JsonArray aliases = new JsonArray();
-    FilteringIterator<Alias> aliasIterator = new FilteringIterator<>(aliasService.getAliasesByOwner(accountId, 0, -1), alias -> alias.getTimestamp() >= timestamp, firstIndex, lastIndex);
+    FilteringIterator<Alias> aliasIterator =
+        new FilteringIterator<>(
+            aliasService.getAliasesByOwner(accountId, 0, -1),
+            alias -> alias.getTimestamp() >= timestamp,
+            firstIndex,
+            lastIndex);
     while (aliasIterator.hasNext()) {
       final Alias alias = aliasIterator.next();
       final Offer offer = aliasService.getOffer(alias);
@@ -45,5 +55,4 @@ public final class GetAliases extends APIServlet.JsonRequestHandler {
     response.add(ALIASES_RESPONSE, aliases);
     return response;
   }
-
 }

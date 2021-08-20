@@ -57,7 +57,5 @@ final class GetTransaction extends APIServlet.JsonRequestHandler {
     } else {
       return JSONData.transaction(transaction, blockchain.getHeight());
     }
-
   }
-
 }

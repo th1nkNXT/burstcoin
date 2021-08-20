@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAssetTransfersTest extends AbstractUnitTest {
@@ -41,7 +40,7 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
   public void setUp() {
     mockParameterService = mock(ParameterService.class);
     mockAccountService = mock(AccountService.class);
-    mockAssetExchange= mock(AssetExchange.class);
+    mockAssetExchange = mock(AssetExchange.class);
 
     t = new GetAssetTransfers(mockParameterService, mockAccountService, mockAssetExchange);
   }
@@ -53,12 +52,12 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ASSET_PARAMETER, assetId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Asset mockAsset = mock(Asset.class);
     when(mockAsset.getId()).thenReturn(assetId);
@@ -68,7 +67,8 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
 
     when(mockParameterService.getAsset(eq(req))).thenReturn(mockAsset);
 
-    when(mockAssetExchange.getAssetTransfers(eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockAssetTransferIterator);
+    when(mockAssetExchange.getAssetTransfers(eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAssetTransferIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -81,12 +81,12 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ACCOUNT_PARAMETER, accountId),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(accountId);
@@ -96,7 +96,8 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
 
     when(mockParameterService.getAccount(eq(req))).thenReturn(mockAccount);
 
-    when(mockAccountService.getAssetTransfers(eq(accountId), eq(firstIndex), eq(lastIndex))).thenReturn(mockAssetTransferIterator);
+    when(mockAccountService.getAssetTransfers(eq(accountId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAssetTransferIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -110,13 +111,13 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
     final int lastIndex = 1;
     final boolean includeAssetInfo = true;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ASSET_PARAMETER, assetId),
-      new MockParam(ACCOUNT_PARAMETER, accountId),
-      new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-      new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-      new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ASSET_PARAMETER, assetId),
+            new MockParam(ACCOUNT_PARAMETER, accountId),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, includeAssetInfo));
 
     final Asset mockAsset = mock(Asset.class);
     when(mockAsset.getId()).thenReturn(assetId);
@@ -134,7 +135,9 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
 
     when(mockAssetExchange.getAsset(eq(mockAssetTransfer.getAssetId()))).thenReturn(mockAsset);
 
-    when(mockAssetExchange.getAccountAssetTransfers(eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex))).thenReturn(mockAssetTransferIterator);
+    when(mockAssetExchange.getAccountAssetTransfers(
+            eq(accountId), eq(assetId), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAssetTransferIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -147,5 +150,4 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
     assertEquals("" + assetId, JSON.getAsString(transferInfoResult.get(ASSET_RESPONSE)));
     assertEquals(mockAsset.getName(), JSON.getAsString(transferInfoResult.get(NAME_RESPONSE)));
   }
-
 }

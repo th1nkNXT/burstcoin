@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import static brs.http.common.Parameters.*;
 
-
 final class SubmitNonce extends APIServlet.JsonRequestHandler {
 
   private final Map<Long, String> passphrases;
@@ -33,16 +32,34 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
   private final Generator generator;
   private final int checkPointHeight;
 
-
-  SubmitNonce(PropertyService propertyService, AccountService accountService, Blockchain blockchain, Generator generator) {
-    super(new APITag[] {APITag.MINING}, SECRET_PHRASE_PARAMETER, NONCE_PARAMETER, ACCOUNT_ID_PARAMETER, BLOCK_HEIGHT_PARAMETER);
+  SubmitNonce(
+      PropertyService propertyService,
+      AccountService accountService,
+      Blockchain blockchain,
+      Generator generator) {
+    super(
+        new APITag[] {APITag.MINING},
+        SECRET_PHRASE_PARAMETER,
+        NONCE_PARAMETER,
+        ACCOUNT_ID_PARAMETER,
+        BLOCK_HEIGHT_PARAMETER);
     BurstCrypto burstCrypto = BurstCrypto.getInstance();
-    this.passphrases = propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES)
-            .stream()
-            .collect(Collectors.toMap(passphrase -> burstCrypto.getBurstAddressFromPassphrase(passphrase).getBurstID().getSignedLongId(), Function.identity()));
+    this.passphrases =
+        propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES).stream()
+            .collect(
+                Collectors.toMap(
+                    passphrase ->
+                        burstCrypto
+                            .getBurstAddressFromPassphrase(passphrase)
+                            .getBurstID()
+                            .getSignedLongId(),
+                    Function.identity()));
     this.allowOtherSoloMiners = propertyService.getBoolean(Props.ALLOW_OTHER_SOLO_MINERS);
-    this.checkPointHeight = propertyService.getInt(propertyService.getBoolean(Props.DEV_TESTNET) ?
-    				Props.DEV_CHECKPOINT_HEIGHT : Props.BRS_CHECKPOINT_HEIGHT);
+    this.checkPointHeight =
+        propertyService.getInt(
+            propertyService.getBoolean(Props.DEV_TESTNET)
+                ? Props.DEV_CHECKPOINT_HEIGHT
+                : Props.BRS_CHECKPOINT_HEIGHT);
 
     this.accountService = accountService;
     this.blockchain = blockchain;
@@ -64,11 +81,12 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
       try {
         int height = Integer.parseInt(submissionHeight);
         if (height < checkPointHeight) {
-            response.addProperty("result", "Given block height smaller than the check point height");
-            return response;
+          response.addProperty("result", "Given block height smaller than the check point height");
+          return response;
         }
         if (height != blockchain.getHeight() + 1) {
-          response.addProperty("result", "Given block height does not match current blockchain height");
+          response.addProperty(
+              "result", "Given block height does not match current blockchain height");
           return response;
         }
       } catch (NumberFormatException e) {
@@ -88,21 +106,26 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
       if (passphrases.containsKey(accountIdLong)) {
         secret = passphrases.get(accountIdLong);
       } else {
-        response.addProperty("result", "Missing Passphrase and account passphrase not in solo mining config");
+        response.addProperty(
+            "result", "Missing Passphrase and account passphrase not in solo mining config");
         return response;
       }
     }
 
     if (!allowOtherSoloMiners && !passphrases.containsValue(secret)) {
-      response.addProperty("result", "This account is not allowed to mine on this node as the whitelist is enabled and it is not whitelisted.");
+      response.addProperty(
+          "result",
+          "This account is not allowed to mine on this node as the whitelist is enabled and it is"
+              + " not whitelisted.");
       return response;
     }
 
     byte[] secretPublicKey = Crypto.getPublicKey(secret);
     Account secretAccount = accountService.getAccount(secretPublicKey);
-    if(secretAccount != null) {
+    if (secretAccount != null) {
       try {
-        SubmitNonceHandler.verifySecretAccount(accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId));
+        SubmitNonceHandler.verifySecretAccount(
+            accountService, blockchain, secretAccount, Convert.parseUnsignedLong(accountId));
       } catch (ApiException e) {
         response.addProperty("result", e.getMessage());
         return response;
@@ -110,21 +133,19 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
     }
 
     Generator.GeneratorState generatorState = null;
-    if(accountId == null || secretAccount == null) {
+    if (accountId == null || secretAccount == null) {
       generatorState = generator.addNonce(secret, nonce);
-    }
-    else {
+    } else {
       Account genAccount = accountService.getAccount(Convert.parseUnsignedLong(accountId));
-      if(genAccount == null || genAccount.getPublicKey() == null) {
+      if (genAccount == null || genAccount.getPublicKey() == null) {
         response.addProperty("result", "Passthrough mining requires public key in blockchain");
-      }
-      else {
+      } else {
         byte[] publicKey = genAccount.getPublicKey();
         generatorState = generator.addNonce(secret, nonce, publicKey);
       }
     }
 
-    if(generatorState == null) {
+    if (generatorState == null) {
       response.addProperty("result", "failed to create generator");
       return response;
     }

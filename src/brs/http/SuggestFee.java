@@ -14,7 +14,7 @@ public class SuggestFee extends APIServlet.JsonRequestHandler {
   private final FeeSuggestionCalculator feeSuggestionCalculator;
 
   public SuggestFee(FeeSuggestionCalculator feeSuggestionCalculator) {
-    super(new APITag[]{APITag.FEES});
+    super(new APITag[] {APITag.FEES});
     this.feeSuggestionCalculator = feeSuggestionCalculator;
   }
 
@@ -30,5 +30,4 @@ public class SuggestFee extends APIServlet.JsonRequestHandler {
 
     return response;
   }
-
 }

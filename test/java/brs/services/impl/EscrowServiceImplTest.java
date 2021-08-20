@@ -42,9 +42,10 @@ public class EscrowServiceImplTest {
     when(mockEscrowStore.getEscrowTable()).thenReturn(mockEscrowTable);
     when(mockEscrowStore.getEscrowDbKeyFactory()).thenReturn(mockEscrowDbKeyFactory);
 
-    t = new EscrowServiceImpl(mockEscrowStore, blockchainMock, aliasServiceMock, accountServiceMock);
+    t =
+        new EscrowServiceImpl(
+            mockEscrowStore, blockchainMock, aliasServiceMock, accountServiceMock);
   }
-
 
   @Test
   public void getAllEscrowTransactions() {

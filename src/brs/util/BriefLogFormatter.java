@@ -10,13 +10,13 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-/**
- * A Java logging formatter that writes more compact output than the default
- */
+/** A Java logging formatter that writes more compact output than the default */
 class BriefLogFormatter extends Formatter {
 
   /** Format used for log messages */
-  private static final ThreadLocal<MessageFormat> messageFormat = ThreadLocal.withInitial(() -> new MessageFormat("[{1}] {0,date,yyyy-MM-dd HH:mm:ss} {4} - {2}\n{3}"));
+  private static final ThreadLocal<MessageFormat> messageFormat =
+      ThreadLocal.withInitial(
+          () -> new MessageFormat("[{1}] {0,date,yyyy-MM-dd HH:mm:ss} {4} - {2}\n{3}"));
 
   /** LoggerConfigurator instance at the top of the name tree */
   private static final Logger logger = Logger.getLogger("");
@@ -24,22 +24,19 @@ class BriefLogFormatter extends Formatter {
   /** singleton BriefLogFormatter instance */
   private static final BriefLogFormatter briefLogFormatter = new BriefLogFormatter();
 
-  /**
-   * Configures JDK logging to use this class for everything
-   */
+  /** Configures JDK logging to use this class for everything */
   static void init() {
     Handler[] handlers = logger.getHandlers();
-    for (Handler handler : handlers)
-      handler.setFormatter(briefLogFormatter);
+    for (Handler handler : handlers) handler.setFormatter(briefLogFormatter);
   }
 
   /**
    * Format the log record as follows:
    *
-   *     Date Level Message ExceptionTrace
+   * <p>Date Level Message ExceptionTrace
    *
-   * @param       logRecord       The log record
-   * @return                      The formatted string
+   * @param logRecord The log record
+   * @return The formatted string
    */
   @Override
   public String format(LogRecord logRecord) {
@@ -64,5 +61,4 @@ class BriefLogFormatter extends Formatter {
   }
 
   private BriefLogFormatter() {}
-
 }

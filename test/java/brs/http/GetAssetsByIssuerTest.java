@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAssetsByIssuerTest extends AbstractUnitTest {
@@ -48,11 +47,10 @@ public class GetAssetsByIssuerTest extends AbstractUnitTest {
     final int firstIndex = 1;
     final int lastIndex = 2;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex)
-    );
-
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(1l);
@@ -70,7 +68,9 @@ public class GetAssetsByIssuerTest extends AbstractUnitTest {
 
     final Collection<Asset> mockAssetIterator = mockCollection(mockAsset);
 
-    when(mockAssetExchange.getAssetsIssuedBy(eq(mockAccount.getId()), eq(firstIndex), eq(lastIndex))).thenReturn(mockAssetIterator);
+    when(mockAssetExchange.getAssetsIssuedBy(
+            eq(mockAccount.getId()), eq(firstIndex), eq(lastIndex)))
+        .thenReturn(mockAssetIterator);
     when(mockAssetExchange.getAssetAccountsCount(eq(mockAssetId))).thenReturn(1);
     when(mockAssetExchange.getTransferCount(eq(mockAssetId))).thenReturn(2);
     when(mockAssetExchange.getTradeCount(eq(mockAssetId))).thenReturn(3);
@@ -90,13 +90,14 @@ public class GetAssetsByIssuerTest extends AbstractUnitTest {
     assertNotNull(assetResult);
 
     assertEquals(mockAsset.getName(), JSON.getAsString(assetResult.get(NAME_RESPONSE)));
-    assertEquals(mockAsset.getDescription(), JSON.getAsString(assetResult.get(DESCRIPTION_RESPONSE)));
+    assertEquals(
+        mockAsset.getDescription(), JSON.getAsString(assetResult.get(DESCRIPTION_RESPONSE)));
     assertEquals(mockAsset.getDecimals(), JSON.getAsByte(assetResult.get(DECIMALS_RESPONSE)));
-    assertEquals("" + mockAsset.getQuantityQNT(), JSON.getAsString(assetResult.get(QUANTITY_QNT_RESPONSE)));
+    assertEquals(
+        "" + mockAsset.getQuantityQNT(), JSON.getAsString(assetResult.get(QUANTITY_QNT_RESPONSE)));
     assertEquals("" + mockAsset.getId(), JSON.getAsString(assetResult.get(ASSET_RESPONSE)));
     assertEquals(1, JSON.getAsInt(assetResult.get(NUMBER_OF_ACCOUNTS_RESPONSE)));
     assertEquals(2, JSON.getAsInt(assetResult.get(NUMBER_OF_TRANSFERS_RESPONSE)));
     assertEquals(3, JSON.getAsInt(assetResult.get(NUMBER_OF_TRADES_RESPONSE)));
   }
-
 }

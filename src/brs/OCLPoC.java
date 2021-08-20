@@ -19,8 +19,7 @@ import java.util.Locale;
 import static org.jocl.CL.*;
 
 final class OCLPoC {
-  private OCLPoC() {
-  }
+  private OCLPoC() {}
 
   private static final Logger logger = LoggerFactory.getLogger(OCLPoC.class);
 
@@ -40,17 +39,18 @@ final class OCLPoC {
   private static final Object oclLock = new Object();
 
   private static final long BUFFER_PER_ITEM = (long) MiningPlot.PLOT_SIZE + 16;
-  private static final long MEM_PER_ITEM = 8 // id
-      + 8 // nonce
-      + BUFFER_PER_ITEM // buffer
-      + 4 // scoop num
-      + MiningPlot.SCOOP_SIZE; // output scoop
+  private static final long MEM_PER_ITEM =
+      8 // id
+          + 8 // nonce
+          + BUFFER_PER_ITEM // buffer
+          + 4 // scoop num
+          + MiningPlot.SCOOP_SIZE; // output scoop
 
   static {
     PropertyService propertyService = Burst.getPropertyService();
     HASHES_PER_ENQUEUE = propertyService.getInt(Props.GPU_HASHES_PER_BATCH);
     MEM_PERCENT = propertyService.getInt(Props.GPU_MEM_PERCENT);
-    
+
     try {
       boolean autoChoose = propertyService.getBoolean(Props.GPU_AUTODETECT);
       setExceptionsEnabled(true);
@@ -132,10 +132,10 @@ final class OCLPoC {
 
       long[] genGroupSize = new long[1];
       long[] getGroupSize = new long[1];
-      clGetKernelWorkGroupInfo(genKernel, device, CL_KERNEL_WORK_GROUP_SIZE, 8,
-          Pointer.to(genGroupSize), null);
-      clGetKernelWorkGroupInfo(getKernel, device, CL_KERNEL_WORK_GROUP_SIZE, 8,
-          Pointer.to(getGroupSize), null);
+      clGetKernelWorkGroupInfo(
+          genKernel, device, CL_KERNEL_WORK_GROUP_SIZE, 8, Pointer.to(genGroupSize), null);
+      clGetKernelWorkGroupInfo(
+          getKernel, device, CL_KERNEL_WORK_GROUP_SIZE, 8, Pointer.to(getGroupSize), null);
 
       MAX_GROUP_ITEMS = Math.min(genGroupSize[0], getGroupSize[0]);
 
@@ -170,7 +170,8 @@ final class OCLPoC {
     return maxItems;
   }
 
-  public static void validatePoC(HashMap<Block, Block> blocks, int pocVersion, BlockService blockService) {
+  public static void validatePoC(
+      HashMap<Block, Block> blocks, int pocVersion, BlockService blockService) {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("starting ocl verify for: {}", blocks.size());
@@ -220,16 +221,37 @@ final class OCLPoC {
         cl_mem scoopOutMem = null;
 
         try {
-          idMem = clCreateBuffer(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 8L * blocks.size(),
-              Pointer.to(ids), null);
-          nonceMem = clCreateBuffer(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-              8L * blocks.size(), Pointer.to(nonces), null);
-          bufferMem = clCreateBuffer(ctx, CL_MEM_READ_WRITE,
-              (long) (MiningPlot.PLOT_SIZE + 16) * blocks.size(), null, null);
-          scoopNumMem = clCreateBuffer(ctx, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-              4L * blocks.size(), Pointer.to(scoopNums), null);
-          scoopOutMem = clCreateBuffer(ctx, CL_MEM_READ_WRITE,
-              (long) MiningPlot.SCOOP_SIZE * blocks.size(), null, null);
+          idMem =
+              clCreateBuffer(
+                  ctx,
+                  CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                  8L * blocks.size(),
+                  Pointer.to(ids),
+                  null);
+          nonceMem =
+              clCreateBuffer(
+                  ctx,
+                  CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                  8L * blocks.size(),
+                  Pointer.to(nonces),
+                  null);
+          bufferMem =
+              clCreateBuffer(
+                  ctx,
+                  CL_MEM_READ_WRITE,
+                  (long) (MiningPlot.PLOT_SIZE + 16) * blocks.size(),
+                  null,
+                  null);
+          scoopNumMem =
+              clCreateBuffer(
+                  ctx,
+                  CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                  4L * blocks.size(),
+                  Pointer.to(scoopNums),
+                  null);
+          scoopOutMem =
+              clCreateBuffer(
+                  ctx, CL_MEM_READ_WRITE, (long) MiningPlot.SCOOP_SIZE * blocks.size(), null, null);
 
           int[] totalSize = new int[] {blocks.size()};
 
@@ -247,8 +269,16 @@ final class OCLPoC {
             st[0] = (c + step) > 8192 ? 8192 - c : step;
             clSetKernelArg(genKernel, 3, Sizeof.cl_int, Pointer.to(cur));
             clSetKernelArg(genKernel, 4, Sizeof.cl_int, Pointer.to(st));
-            clEnqueueNDRangeKernel(queue, genKernel, 1, null, new long[] {jobSize},
-                new long[] {MAX_GROUP_ITEMS}, 0, null, null);
+            clEnqueueNDRangeKernel(
+                queue,
+                genKernel,
+                1,
+                null,
+                new long[] {jobSize},
+                new long[] {MAX_GROUP_ITEMS},
+                0,
+                null,
+                null);
 
             c += st[0];
           }
@@ -258,19 +288,43 @@ final class OCLPoC {
             clSetKernelArg(getKernel2, 1, Sizeof.cl_mem, Pointer.to(bufferMem));
             clSetKernelArg(getKernel2, 2, Sizeof.cl_mem, Pointer.to(scoopOutMem));
             clSetKernelArg(getKernel2, 3, Sizeof.cl_int, Pointer.to(totalSize));
-            clEnqueueNDRangeKernel(queue, getKernel2, 1, null, new long[] {jobSize},
-                new long[] {MAX_GROUP_ITEMS}, 0, null, null);
+            clEnqueueNDRangeKernel(
+                queue,
+                getKernel2,
+                1,
+                null,
+                new long[] {jobSize},
+                new long[] {MAX_GROUP_ITEMS},
+                0,
+                null,
+                null);
           } else {
             clSetKernelArg(getKernel, 0, Sizeof.cl_mem, Pointer.to(scoopNumMem));
             clSetKernelArg(getKernel, 1, Sizeof.cl_mem, Pointer.to(bufferMem));
             clSetKernelArg(getKernel, 2, Sizeof.cl_mem, Pointer.to(scoopOutMem));
             clSetKernelArg(getKernel, 3, Sizeof.cl_int, Pointer.to(totalSize));
-            clEnqueueNDRangeKernel(queue, getKernel, 1, null, new long[] {jobSize},
-                new long[] {MAX_GROUP_ITEMS}, 0, null, null);
+            clEnqueueNDRangeKernel(
+                queue,
+                getKernel,
+                1,
+                null,
+                new long[] {jobSize},
+                new long[] {MAX_GROUP_ITEMS},
+                0,
+                null,
+                null);
           }
 
-          clEnqueueReadBuffer(queue, scoopOutMem, true, 0,
-              (long) MiningPlot.SCOOP_SIZE * blocks.size(), Pointer.to(scoopsOut), 0, null, null);
+          clEnqueueReadBuffer(
+              queue,
+              scoopOutMem,
+              true,
+              0,
+              (long) MiningPlot.SCOOP_SIZE * blocks.size(),
+              Pointer.to(scoopsOut),
+              0,
+              null,
+              null);
         } catch (Exception e) {
           logger.info("GPU error. Try to set a lower value on GPU.HashesPerBatch in properties.");
           return;
@@ -300,16 +354,19 @@ final class OCLPoC {
       ByteBuffer scoopsBuffer = ByteBuffer.wrap(scoopsOut);
       byte[] scoop = new byte[MiningPlot.SCOOP_SIZE];
 
-      blocks.keySet().forEach(block -> {
-        try {
-          scoopsBuffer.get(scoop);
-          blockService.preVerify(block, blocks.get(block), scoop);
-        } catch ( InterruptedException e ) {
-          Thread.currentThread().interrupt();
-        } catch (BlockchainProcessor.BlockNotAcceptedException e) {
-          throw new PreValidateFailException("Block failed to prevalidate", e, block);
-        }
-      });
+      blocks
+          .keySet()
+          .forEach(
+              block -> {
+                try {
+                  scoopsBuffer.get(scoop);
+                  blockService.preVerify(block, blocks.get(block), scoop);
+                } catch (InterruptedException e) {
+                  Thread.currentThread().interrupt();
+                } catch (BlockchainProcessor.BlockNotAcceptedException e) {
+                  throw new PreValidateFailException("Block failed to prevalidate", e, block);
+                }
+              });
       if (logger.isDebugEnabled()) {
         logger.debug("finished rest: {}", blocks.size());
       }
@@ -355,8 +412,8 @@ final class OCLPoC {
   // find out
   private static boolean checkLittleEndian(cl_device_id device) {
     long[] endianLittle = new long[1];
-    clGetDeviceInfo(device, CL_DEVICE_ENDIAN_LITTLE, Sizeof.cl_long, Pointer.to(endianLittle),
-        null);
+    clGetDeviceInfo(
+        device, CL_DEVICE_ENDIAN_LITTLE, Sizeof.cl_long, Pointer.to(endianLittle), null);
     return endianLittle[0] == 1;
   }
 
@@ -402,8 +459,12 @@ final class OCLPoC {
       long[] platformNameSize = new long[1];
       clGetPlatformInfo(platforms[pfi], CL_PLATFORM_NAME, 0, null, platformNameSize);
       byte[] platformNameChars = new byte[(int) platformNameSize[0]];
-      clGetPlatformInfo(platforms[pfi], CL_PLATFORM_NAME, platformNameChars.length,
-          Pointer.to(platformNameChars), null);
+      clGetPlatformInfo(
+          platforms[pfi],
+          CL_PLATFORM_NAME,
+          platformNameChars.length,
+          Pointer.to(platformNameChars),
+          null);
       String platformName = new String(platformNameChars);
 
       logger.info("Platform {}: {}", pfi, platformName);
@@ -432,11 +493,12 @@ final class OCLPoC {
         }
 
         long[] clock = new long[1];
-        clGetDeviceInfo(devices[dvi], CL_DEVICE_MAX_CLOCK_FREQUENCY, Sizeof.cl_long,
-            Pointer.to(clock), null);
+        clGetDeviceInfo(
+            devices[dvi], CL_DEVICE_MAX_CLOCK_FREQUENCY, Sizeof.cl_long, Pointer.to(clock), null);
 
-        long maxItemsAtOnce = Math.min(calculateMaxItemsByMem(devices[dvi]),
-            (long) getComputeUnits(devices[dvi]) * 256);
+        long maxItemsAtOnce =
+            Math.min(
+                calculateMaxItemsByMem(devices[dvi]), (long) getComputeUnits(devices[dvi]) * 256);
 
         long score = maxItemsAtOnce * clock[0];
 
@@ -482,7 +544,7 @@ final class OCLPoC {
   }
 
   public static class PreValidateFailException extends RuntimeException {
-    transient final Block block;
+    final transient Block block;
 
     PreValidateFailException(String message, Throwable cause, Block block) {
       super(message, cause);

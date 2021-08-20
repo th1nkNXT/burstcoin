@@ -38,7 +38,8 @@ public class AssetTransferServiceImplTest {
 
     final Collection<AssetTransfer> mockAssetTransferIterator = mock(Collection.class);
 
-    when(mockAssetTransferStore.getAssetTransfers(eq(assetId), eq(from), eq(to))).thenReturn(mockAssetTransferIterator);
+    when(mockAssetTransferStore.getAssetTransfers(eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAssetTransferIterator);
 
     assertEquals(mockAssetTransferIterator, t.getAssetTransfers(assetId, from, to));
   }
@@ -52,9 +53,12 @@ public class AssetTransferServiceImplTest {
 
     final Collection<AssetTransfer> mockAccountAssetTransferIterator = mock(Collection.class);
 
-    when(mockAssetTransferStore.getAccountAssetTransfers(eq(accountId), eq(assetId), eq(from), eq(to))).thenReturn(mockAccountAssetTransferIterator);
+    when(mockAssetTransferStore.getAccountAssetTransfers(
+            eq(accountId), eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAccountAssetTransferIterator);
 
-    assertEquals(mockAccountAssetTransferIterator, t.getAccountAssetTransfers(accountId, assetId, from, to));
+    assertEquals(
+        mockAccountAssetTransferIterator, t.getAccountAssetTransfers(accountId, assetId, from, to));
   }
 
   @Test
@@ -71,4 +75,3 @@ public class AssetTransferServiceImplTest {
     assertEquals(5, t.getAssetTransferCount());
   }
 }
-

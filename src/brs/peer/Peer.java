@@ -10,7 +10,9 @@ public interface Peer extends Comparable<Peer> {
   void connect(int currentTime);
 
   enum State {
-    NON_CONNECTED, CONNECTED, DISCONNECTED;
+    NON_CONNECTED,
+    CONNECTED,
+    DISCONNECTED;
 
     public static State fromProtobuf(BrsApi.PeerState peer) {
       switch (peer) {

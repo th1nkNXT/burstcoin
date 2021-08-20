@@ -9,16 +9,18 @@ import java.nio.ByteBuffer;
 public class EncryptedData {
   private static final EncryptedData EMPTY_DATA = new EncryptedData(new byte[0], new byte[0]);
 
-  public static EncryptedData encrypt(byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey) {
+  public static EncryptedData encrypt(
+      byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey) {
     if (plaintext.length == 0) {
       return EMPTY_DATA;
     }
-    BurstEncryptedMessage message = Crypto.burstCrypto.encryptBytesMessage(plaintext, myPrivateKey, theirPublicKey);
+    BurstEncryptedMessage message =
+        Crypto.burstCrypto.encryptBytesMessage(plaintext, myPrivateKey, theirPublicKey);
     return new EncryptedData(message.getData(), message.getNonce());
   }
 
   public static EncryptedData readEncryptedData(ByteBuffer buffer, int length, int maxLength)
-    throws BurstException.NotValidException {
+      throws BurstException.NotValidException {
     if (length == 0) {
       return EMPTY_DATA;
     }
@@ -44,7 +46,8 @@ public class EncryptedData {
     if (data.length == 0) {
       return data;
     }
-    return Crypto.burstCrypto.decryptMessage(new BurstEncryptedMessage(data, nonce, false), myPrivateKey, theirPublicKey);
+    return Crypto.burstCrypto.decryptMessage(
+        new BurstEncryptedMessage(data, nonce, false), myPrivateKey, theirPublicKey);
   }
 
   public byte[] getData() {

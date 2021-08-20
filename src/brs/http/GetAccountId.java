@@ -35,7 +35,9 @@ public final class GetAccountId extends APIServlet.JsonRequestHandler {
       address = BurstCrypto.getInstance().getBurstAddressFromPublic(publicKey);
       publicKeyString = Convert.toHexString(publicKey);
     } else if (publicKeyString != null) {
-      address = BurstCrypto.getInstance().getBurstAddressFromPublic(Convert.parseHexString(publicKeyString));
+      address =
+          BurstCrypto.getInstance()
+              .getBurstAddressFromPublic(Convert.parseHexString(publicKeyString));
     } else {
       return MISSING_SECRET_PHRASE_OR_PUBLIC_KEY;
     }
@@ -52,5 +54,4 @@ public final class GetAccountId extends APIServlet.JsonRequestHandler {
   boolean requirePost() {
     return true;
   }
-
 }

@@ -24,7 +24,13 @@ public final class GetTrades extends APIServlet.JsonRequestHandler {
   private final AssetExchange assetExchange;
 
   GetTrades(ParameterService parameterService, AssetExchange assetExchange) {
-    super(new APITag[] {APITag.AE}, ASSET_PARAMETER, ACCOUNT_PARAMETER, FIRST_INDEX_PARAMETER, LAST_INDEX_PARAMETER, INCLUDE_ASSET_INFO_PARAMETER);
+    super(
+        new APITag[] {APITag.AE},
+        ASSET_PARAMETER,
+        ACCOUNT_PARAMETER,
+        FIRST_INDEX_PARAMETER,
+        LAST_INDEX_PARAMETER,
+        INCLUDE_ASSET_INFO_PARAMETER);
     this.parameterService = parameterService;
     this.assetExchange = assetExchange;
   }
@@ -51,7 +57,9 @@ public final class GetTrades extends APIServlet.JsonRequestHandler {
     } else {
       Asset asset = parameterService.getAsset(req);
       Account account = parameterService.getAccount(req);
-      trades = assetExchange.getAccountAssetTrades(account.getId(), asset.getId(), firstIndex, lastIndex);
+      trades =
+          assetExchange.getAccountAssetTrades(
+              account.getId(), asset.getId(), firstIndex, lastIndex);
     }
     for (Trade trade : trades) {
       final Asset asset = includeAssetInfo ? assetExchange.getAsset(trade.getAssetId()) : null;

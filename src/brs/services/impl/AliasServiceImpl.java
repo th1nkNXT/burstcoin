@@ -51,7 +51,8 @@ public class AliasServiceImpl implements AliasService {
   }
 
   @Override
-  public void addOrUpdateAlias(Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
+  public void addOrUpdateAlias(
+      Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
     Alias alias = getAlias(attachment.getAliasName());
     if (alias == null) {
       BurstKey aliasDBId = aliasDbKeyFactory.newKey(transaction.getId());

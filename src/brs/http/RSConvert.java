@@ -36,5 +36,4 @@ final class RSConvert extends APIServlet.JsonRequestHandler {
       return INCORRECT_ACCOUNT;
     }
   }
-
 }

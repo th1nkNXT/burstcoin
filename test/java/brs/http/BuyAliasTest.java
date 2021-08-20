@@ -50,7 +50,9 @@ public class BuyAliasTest extends AbstractTransactionTest {
   @Test
   public void processRequest() throws BurstException {
     mockStatic(Burst.class);
-    final HttpServletRequest req = QuickMocker.httpServletRequestDefaultKeys(new MockParam(AMOUNT_NQT_PARAMETER, "" + Constants.ONE_BURST));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequestDefaultKeys(
+            new MockParam(AMOUNT_NQT_PARAMETER, "" + Constants.ONE_BURST));
 
     final Offer mockOfferOnAlias = mock(Offer.class);
 
@@ -66,10 +68,13 @@ public class BuyAliasTest extends AbstractTransactionTest {
     when(parameterServiceMock.getAlias(eq(req))).thenReturn(mockAlias);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.MessagingAliasBuy attachment = (Attachment.MessagingAliasBuy) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.MessagingAliasBuy attachment =
+        (Attachment.MessagingAliasBuy)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ALIAS_BUY, attachment.getTransactionType());
@@ -78,7 +83,8 @@ public class BuyAliasTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_aliasNotForSale() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(AMOUNT_NQT_PARAMETER, "3"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(AMOUNT_NQT_PARAMETER, "3"));
     final Alias mockAlias = mock(Alias.class);
 
     when(parameterServiceMock.getAlias(eq(req))).thenReturn(mockAlias);
@@ -87,5 +93,4 @@ public class BuyAliasTest extends AbstractTransactionTest {
 
     assertEquals(INCORRECT_ALIAS_NOTFORSALE, t.processRequest(req));
   }
-
 }

@@ -8,7 +8,7 @@ public interface TransactionService {
   boolean verifyPublicKey(Transaction transaction);
 
   void validate(Transaction transaction) throws BurstException.ValidationException;
-  
+
   void startNewBlock();
 
   boolean applyUnconfirmed(Transaction transaction);

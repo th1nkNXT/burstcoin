@@ -19,9 +19,20 @@ public final class DGSDelivery extends CreateTransaction {
   private final AccountService accountService;
   private final Blockchain blockchain;
 
-  DGSDelivery(ParameterService parameterService, Blockchain blockchain, AccountService accountService, APITransactionManager apiTransactionManager) {
-    super(new APITag[]{APITag.DGS, APITag.CREATE_TRANSACTION}, apiTransactionManager,
-        PURCHASE_PARAMETER, DISCOUNT_NQT_PARAMETER, GOODS_TO_ENCRYPT_PARAMETER, GOODS_IS_TEXT_PARAMETER, GOODS_DATA_PARAMETER, GOODS_NONCE_PARAMETER);
+  DGSDelivery(
+      ParameterService parameterService,
+      Blockchain blockchain,
+      AccountService accountService,
+      APITransactionManager apiTransactionManager) {
+    super(
+        new APITag[] {APITag.DGS, APITag.CREATE_TRANSACTION},
+        apiTransactionManager,
+        PURCHASE_PARAMETER,
+        DISCOUNT_NQT_PARAMETER,
+        GOODS_TO_ENCRYPT_PARAMETER,
+        GOODS_IS_TEXT_PARAMETER,
+        GOODS_DATA_PARAMETER,
+        GOODS_NONCE_PARAMETER);
     this.parameterService = parameterService;
     this.accountService = accountService;
     this.blockchain = blockchain;
@@ -73,9 +84,9 @@ public final class DGSDelivery extends CreateTransaction {
       encryptedGoods = buyerAccount.encryptTo(goodsBytes, secretPhrase);
     }
 
-    Attachment attachment = new Attachment.DigitalGoodsDelivery(purchase.getId(), encryptedGoods, goodsIsText, discountNQT, blockchain.getHeight());
+    Attachment attachment =
+        new Attachment.DigitalGoodsDelivery(
+            purchase.getId(), encryptedGoods, goodsIsText, discountNQT, blockchain.getHeight());
     return createTransaction(req, sellerAccount, buyerAccount.getId(), 0, attachment);
-
   }
-
 }

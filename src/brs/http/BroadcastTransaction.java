@@ -25,8 +25,14 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
   private final ParameterService parameterService;
   private final TransactionService transactionService;
 
-  public BroadcastTransaction(TransactionProcessor transactionProcessor, ParameterService parameterService, TransactionService transactionService) {
-    super(new APITag[]{APITag.TRANSACTIONS}, TRANSACTION_BYTES_PARAMETER, TRANSACTION_JSON_PARAMETER);
+  public BroadcastTransaction(
+      TransactionProcessor transactionProcessor,
+      ParameterService parameterService,
+      TransactionService transactionService) {
+    super(
+        new APITag[] {APITag.TRANSACTIONS},
+        TRANSACTION_BYTES_PARAMETER,
+        TRANSACTION_JSON_PARAMETER);
 
     this.transactionProcessor = transactionProcessor;
     this.parameterService = parameterService;
@@ -37,15 +43,14 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
   JsonElement processRequest(HttpServletRequest req) throws BurstException {
 
     String transactionBytes = Convert.emptyToNull(req.getParameter(TRANSACTION_BYTES_PARAMETER));
-    if(transactionBytes == null) {
+    if (transactionBytes == null) {
       // Check the body
       try {
         transactionBytes = Convert.emptyToNull(req.getReader().readLine());
-        if(transactionBytes != null) {
+        if (transactionBytes != null) {
           transactionBytes = transactionBytes.replace("\"", "");
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         transactionBytes = null;
       }
     }
@@ -54,7 +59,8 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
     JsonObject response = new JsonObject();
     try {
       transactionService.validate(transaction);
-      response.addProperty(NUMBER_PEERS_SENT_TO_RESPONSE, transactionProcessor.broadcast(transaction));
+      response.addProperty(
+          NUMBER_PEERS_SENT_TO_RESPONSE, transactionProcessor.broadcast(transaction));
       response.addProperty(TRANSACTION_RESPONSE, transaction.getStringId());
       response.addProperty(FULL_HASH_RESPONSE, transaction.getFullHash());
     } catch (BurstException.ValidationException | RuntimeException e) {
@@ -64,12 +70,10 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
       response.addProperty(ERROR_RESPONSE, e.getMessage());
     }
     return response;
-
   }
 
   @Override
   boolean requirePost() {
     return true;
   }
-
 }

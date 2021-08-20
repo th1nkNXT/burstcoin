@@ -149,14 +149,15 @@ final class ParameterParser {
     }
     return recipientId;
   }
-  
+
   static String getRecipientPublicKey(HttpServletRequest req) throws ParameterException {
-    String recipientPublicKeyValue = Convert.emptyToNull(req.getParameter(RECIPIENT_PUBLIC_KEY_PARAMETER));
-    if(recipientPublicKeyValue == null) {
+    String recipientPublicKeyValue =
+        Convert.emptyToNull(req.getParameter(RECIPIENT_PUBLIC_KEY_PARAMETER));
+    if (recipientPublicKeyValue == null) {
       // check for extended addresses
       String recipientValue = Convert.emptyToNull(req.getParameter(RECIPIENT_PARAMETER));
       BurstAddress address = BurstAddress.fromEither(recipientValue);
-      if(address!=null && address.getPublicKey() != null) {
+      if (address != null && address.getPublicKey() != null) {
         recipientPublicKeyValue = Hex.toHexString(address.getPublicKey());
       }
     }
@@ -216,13 +217,12 @@ final class ParameterParser {
     return lastIndex;
   }
 
-  private ParameterParser() {
-  } // never
+  private ParameterParser() {} // never
 
   public static byte[] getCreationBytes(HttpServletRequest req) throws ParameterException {
     try {
       String creationBytes = req.getParameter(CREATION_BYTES_PARAMETER);
-      if(creationBytes == null) {
+      if (creationBytes == null) {
         // Check the body for the creationBytes as an alternative
         creationBytes = req.getReader().readLine();
         creationBytes = creationBytes.replace("\"", "");
@@ -239,7 +239,7 @@ final class ParameterParser {
     bf.order(ByteOrder.LITTLE_ENDIAN);
     bf.put(Convert.parseHexString(hex));
 
-      return Convert.toUnsignedLong(bf.getLong(0));
+    return Convert.toUnsignedLong(bf.getLong(0));
   }
 
   public static long getAmountNQT(HttpServletRequest req) throws ParameterException {

@@ -12,7 +12,7 @@ public interface Time {
   final class EpochTime implements Time {
 
     public int getTime() {
-      return (int)((System.currentTimeMillis() - Constants.EPOCH_BEGINNING + 500) / 1000);
+      return (int) ((System.currentTimeMillis() - Constants.EPOCH_BEGINNING + 500) / 1000);
     }
 
     public long getTimeInMillis() {
@@ -36,7 +36,7 @@ public interface Time {
     }
 
     public int getTime() {
-      return time + (int)((System.currentTimeMillis() - systemStartTime) / (1000 / multiplier));
+      return time + (int) ((System.currentTimeMillis() - systemStartTime) / (1000 / multiplier));
     }
 
     public long getTimeInMillis() {

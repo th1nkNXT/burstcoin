@@ -17,7 +17,6 @@ final class GetBlocksFromHeight implements PeerServlet.PeerRequestHandler {
     this.blockchain = blockchain;
   }
 
-
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
     JsonObject response = new JsonObject();
@@ -29,15 +28,15 @@ final class GetBlocksFromHeight implements PeerServlet.PeerRequestHandler {
     } catch (Exception ignored) {
     }
 
-    //small failsafe
-    if(numBlocks < 1 || numBlocks > 1400) {
-    	numBlocks = 100;
+    // small failsafe
+    if (numBlocks < 1 || numBlocks > 1400) {
+      numBlocks = 100;
     }
-    if(blockHeight < 0) {
-    	blockHeight = 0;
+    if (blockHeight < 0) {
+      blockHeight = 0;
     }
-    	    
-    long blockId =  blockchain.getBlockIdAtHeight(blockHeight);
+
+    long blockId = blockchain.getBlockIdAtHeight(blockHeight);
     Collection<? extends Block> blocks = blockchain.getBlocksAfter(blockId, numBlocks);
     JsonArray nextBlocksArray = new JsonArray();
     for (Block nextBlock : blocks) {
@@ -46,5 +45,4 @@ final class GetBlocksFromHeight implements PeerServlet.PeerRequestHandler {
     response.add("nextBlocks", nextBlocksArray);
     return response;
   }
-
 }

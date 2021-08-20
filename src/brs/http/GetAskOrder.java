@@ -28,5 +28,4 @@ public final class GetAskOrder extends APIServlet.JsonRequestHandler {
     }
     return JSONData.askOrder(askOrder);
   }
-
 }

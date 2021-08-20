@@ -50,12 +50,15 @@ public interface Attachment extends Appendix {
     }
 
     @Override
-    public final void apply(Transaction transaction, Account senderAccount, Account recipientAccount) {
+    public final void apply(
+        Transaction transaction, Account senderAccount, Account recipientAccount) {
       getTransactionType().apply(transaction, senderAccount, recipientAccount);
     }
 
-    public static AbstractAttachment parseProtobufMessage(Any attachment) throws InvalidProtocolBufferException, BurstException.NotValidException {
-      // Yes, this is fairly horrible. I wish there was a better way to do this but any does not let us switch on its contained class.
+    public static AbstractAttachment parseProtobufMessage(Any attachment)
+        throws InvalidProtocolBufferException, BurstException.NotValidException {
+      // Yes, this is fairly horrible. I wish there was a better way to do this but any does not let
+      // us switch on its contained class.
       if (attachment.is(BrsApi.OrdinaryPaymentAttachment.class)) {
         return ORDINARY_PAYMENT;
       } else if (attachment.is(BrsApi.ArbitraryMessageAttachment.class)) {
@@ -65,9 +68,11 @@ public interface Attachment extends Appendix {
       } else if (attachment.is(BrsApi.MultiOutAttachment.class)) {
         return new PaymentMultiOutCreation(attachment.unpack(BrsApi.MultiOutAttachment.class));
       } else if (attachment.is(BrsApi.MultiOutSameAttachment.class)) {
-        return new PaymentMultiSameOutCreation(attachment.unpack(BrsApi.MultiOutSameAttachment.class));
+        return new PaymentMultiSameOutCreation(
+            attachment.unpack(BrsApi.MultiOutSameAttachment.class));
       } else if (attachment.is(BrsApi.AliasAssignmentAttachment.class)) {
-        return new MessagingAliasAssignment(attachment.unpack(BrsApi.AliasAssignmentAttachment.class));
+        return new MessagingAliasAssignment(
+            attachment.unpack(BrsApi.AliasAssignmentAttachment.class));
       } else if (attachment.is(BrsApi.AliasSellAttachment.class)) {
         return new MessagingAliasSell(attachment.unpack(BrsApi.AliasSellAttachment.class));
       } else if (attachment.is(BrsApi.AliasBuyAttachment.class)) {
@@ -75,57 +80,76 @@ public interface Attachment extends Appendix {
       } else if (attachment.is(BrsApi.AccountInfoAttachment.class)) {
         return new MessagingAccountInfo(attachment.unpack(BrsApi.AccountInfoAttachment.class));
       } else if (attachment.is(BrsApi.AssetIssuanceAttachment.class)) {
-        return new ColoredCoinsAssetIssuance(attachment.unpack(BrsApi.AssetIssuanceAttachment.class));
+        return new ColoredCoinsAssetIssuance(
+            attachment.unpack(BrsApi.AssetIssuanceAttachment.class));
       } else if (attachment.is(BrsApi.AssetTransferAttachment.class)) {
-        return new ColoredCoinsAssetTransfer(attachment.unpack(BrsApi.AssetTransferAttachment.class));
+        return new ColoredCoinsAssetTransfer(
+            attachment.unpack(BrsApi.AssetTransferAttachment.class));
       } else if (attachment.is(BrsApi.AssetOrderPlacementAttachment.class)) {
-        BrsApi.AssetOrderPlacementAttachment placementAttachment = attachment.unpack(BrsApi.AssetOrderPlacementAttachment.class);
+        BrsApi.AssetOrderPlacementAttachment placementAttachment =
+            attachment.unpack(BrsApi.AssetOrderPlacementAttachment.class);
         if (placementAttachment.getType() == BrsApi.OrderType.ASK) {
           return new ColoredCoinsAskOrderPlacement(placementAttachment);
         } else if (placementAttachment.getType() == BrsApi.OrderType.BID) {
           return new ColoredCoinsBidOrderPlacement(placementAttachment);
         }
       } else if (attachment.is(BrsApi.AssetOrderCancellationAttachment.class)) {
-        BrsApi.AssetOrderCancellationAttachment placementAttachment = attachment.unpack(BrsApi.AssetOrderCancellationAttachment.class);
+        BrsApi.AssetOrderCancellationAttachment placementAttachment =
+            attachment.unpack(BrsApi.AssetOrderCancellationAttachment.class);
         if (placementAttachment.getType() == BrsApi.OrderType.ASK) {
           return new ColoredCoinsAskOrderCancellation(placementAttachment);
         } else if (placementAttachment.getType() == BrsApi.OrderType.BID) {
           return new ColoredCoinsBidOrderCancellation(placementAttachment);
         }
       } else if (attachment.is(BrsApi.DigitalGoodsListingAttachment.class)) {
-        return new DigitalGoodsListing(attachment.unpack(BrsApi.DigitalGoodsListingAttachment.class));
+        return new DigitalGoodsListing(
+            attachment.unpack(BrsApi.DigitalGoodsListingAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsDelistingAttachment.class)) {
-        return new DigitalGoodsDelisting(attachment.unpack(BrsApi.DigitalGoodsDelistingAttachment.class));
+        return new DigitalGoodsDelisting(
+            attachment.unpack(BrsApi.DigitalGoodsDelistingAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsPriceChangeAttachment.class)) {
-        return new DigitalGoodsPriceChange(attachment.unpack(BrsApi.DigitalGoodsPriceChangeAttachment.class));
+        return new DigitalGoodsPriceChange(
+            attachment.unpack(BrsApi.DigitalGoodsPriceChangeAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsQuantityChangeAttachment.class)) {
-        return new DigitalGoodsQuantityChange(attachment.unpack(BrsApi.DigitalGoodsQuantityChangeAttachment.class));
+        return new DigitalGoodsQuantityChange(
+            attachment.unpack(BrsApi.DigitalGoodsQuantityChangeAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsPurchaseAttachment.class)) {
-        return new DigitalGoodsPurchase(attachment.unpack(BrsApi.DigitalGoodsPurchaseAttachment.class));
+        return new DigitalGoodsPurchase(
+            attachment.unpack(BrsApi.DigitalGoodsPurchaseAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsDeliveryAttachment.class)) {
-        return new DigitalGoodsDelivery(attachment.unpack(BrsApi.DigitalGoodsDeliveryAttachment.class));
+        return new DigitalGoodsDelivery(
+            attachment.unpack(BrsApi.DigitalGoodsDeliveryAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsFeedbackAttachment.class)) {
-        return new DigitalGoodsFeedback(attachment.unpack(BrsApi.DigitalGoodsFeedbackAttachment.class));
+        return new DigitalGoodsFeedback(
+            attachment.unpack(BrsApi.DigitalGoodsFeedbackAttachment.class));
       } else if (attachment.is(BrsApi.DigitalGoodsRefundAttachment.class)) {
         return new DigitalGoodsRefund(attachment.unpack(BrsApi.DigitalGoodsRefundAttachment.class));
       } else if (attachment.is(BrsApi.EffectiveBalanceLeasingAttachment.class)) {
-        return new AccountControlEffectiveBalanceLeasing(attachment.unpack(BrsApi.EffectiveBalanceLeasingAttachment.class));
+        return new AccountControlEffectiveBalanceLeasing(
+            attachment.unpack(BrsApi.EffectiveBalanceLeasingAttachment.class));
       } else if (attachment.is(BrsApi.RewardRecipientAssignmentAttachment.class)) {
-        return new BurstMiningRewardRecipientAssignment(attachment.unpack(BrsApi.RewardRecipientAssignmentAttachment.class));
+        return new BurstMiningRewardRecipientAssignment(
+            attachment.unpack(BrsApi.RewardRecipientAssignmentAttachment.class));
       } else if (attachment.is(BrsApi.EscrowCreationAttachment.class)) {
-        return new AdvancedPaymentEscrowCreation(attachment.unpack(BrsApi.EscrowCreationAttachment.class));
+        return new AdvancedPaymentEscrowCreation(
+            attachment.unpack(BrsApi.EscrowCreationAttachment.class));
       } else if (attachment.is(BrsApi.EscrowSignAttachment.class)) {
         return new AdvancedPaymentEscrowSign(attachment.unpack(BrsApi.EscrowSignAttachment.class));
       } else if (attachment.is(BrsApi.EscrowResultAttachment.class)) {
-        return new AdvancedPaymentEscrowResult(attachment.unpack(BrsApi.EscrowResultAttachment.class));
+        return new AdvancedPaymentEscrowResult(
+            attachment.unpack(BrsApi.EscrowResultAttachment.class));
       } else if (attachment.is(BrsApi.SubscriptionSubscribeAttachment.class)) {
-        return new AdvancedPaymentSubscriptionSubscribe(attachment.unpack(BrsApi.SubscriptionSubscribeAttachment.class));
+        return new AdvancedPaymentSubscriptionSubscribe(
+            attachment.unpack(BrsApi.SubscriptionSubscribeAttachment.class));
       } else if (attachment.is(BrsApi.SubscriptionCancelAttachment.class)) {
-        return new AdvancedPaymentSubscriptionCancel(attachment.unpack(BrsApi.SubscriptionCancelAttachment.class));
+        return new AdvancedPaymentSubscriptionCancel(
+            attachment.unpack(BrsApi.SubscriptionCancelAttachment.class));
       } else if (attachment.is(BrsApi.SubscriptionPaymentAttachment.class)) {
-        return new AdvancedPaymentSubscriptionPayment(attachment.unpack(BrsApi.SubscriptionPaymentAttachment.class));
+        return new AdvancedPaymentSubscriptionPayment(
+            attachment.unpack(BrsApi.SubscriptionPaymentAttachment.class));
       } else if (attachment.is(BrsApi.ATCreationAttachment.class)) {
-        return new AutomatedTransactionsCreation(attachment.unpack(BrsApi.ATCreationAttachment.class));
+        return new AutomatedTransactionsCreation(
+            attachment.unpack(BrsApi.ATCreationAttachment.class));
       }
       // Default to ordinary payment
       return ORDINARY_PAYMENT;
@@ -144,58 +168,58 @@ public interface Attachment extends Appendix {
     }
 
     @Override
-    final void putMyBytes(ByteBuffer buffer) {
-    }
+    final void putMyBytes(ByteBuffer buffer) {}
 
     @Override
-    final void putMyJSON(JsonObject json) {
-    }
+    final void putMyJSON(JsonObject json) {}
 
     @Override
     final boolean verifyVersion(byte transactionVersion) {
       return true;
     }
-
   }
 
-  EmptyAttachment ORDINARY_PAYMENT = new EmptyAttachment() {
+  EmptyAttachment ORDINARY_PAYMENT =
+      new EmptyAttachment() {
 
-    @Override
-    public Any getProtobufMessage() {
-      return Any.pack(BrsApi.OrdinaryPaymentAttachment.getDefaultInstance());
-    }
+        @Override
+        public Any getProtobufMessage() {
+          return Any.pack(BrsApi.OrdinaryPaymentAttachment.getDefaultInstance());
+        }
 
-    @Override
-    String getAppendixName() {
-      return "OrdinaryPayment";
-    }
+        @Override
+        String getAppendixName() {
+          return "OrdinaryPayment";
+        }
 
-    @Override
-    public TransactionType getTransactionType() {
-      return TransactionType.Payment.ORDINARY;
-    }
-
-  };
+        @Override
+        public TransactionType getTransactionType() {
+          return TransactionType.Payment.ORDINARY;
+        }
+      };
 
   class PaymentMultiOutCreation extends AbstractAttachment {
 
     private final ArrayList<ArrayList<Long>> recipients = new ArrayList<>();
 
-    PaymentMultiOutCreation(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    PaymentMultiOutCreation(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
 
       int numberOfRecipients = Byte.toUnsignedInt(buffer.get());
-      HashMap<Long,Boolean> recipientOf = new HashMap<>(numberOfRecipients);
+      HashMap<Long, Boolean> recipientOf = new HashMap<>(numberOfRecipients);
 
       for (int i = 0; i < numberOfRecipients; ++i) {
         long recipientId = buffer.getLong();
         long amountNQT = buffer.getLong();
 
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi out transaction");
 
         if (amountNQT <= 0)
-          throw new BurstException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
@@ -210,7 +234,7 @@ public interface Attachment extends Appendix {
       super(attachmentData);
 
       JsonArray receipientsJson = JSON.getAsJsonArray(attachmentData.get(RECIPIENTS_PARAMETER));
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
 
       for (JsonElement recipientObject : receipientsJson) {
         JsonArray recipient = JSON.getAsJsonArray(recipientObject);
@@ -218,57 +242,69 @@ public interface Attachment extends Appendix {
         long recipientId = new BigInteger(JSON.getAsString(recipient.get(0))).longValue();
         long amountNQT = JSON.getAsLong(recipient.get(1));
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi out transaction");
 
-        if (amountNQT  <=0)
-          throw new BurstException.NotValidException("Insufficient amountNQT on multi out transaction");
+        if (amountNQT <= 0)
+          throw new BurstException.NotValidException(
+              "Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
-      if (receipientsJson.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || receipientsJson.size() <= 1) {
-        throw new BurstException.NotValidException("Invalid number of recipients listed on multi out transaction");
+      if (receipientsJson.size() > Constants.MAX_MULTI_OUT_RECIPIENTS
+          || receipientsJson.size() <= 1) {
+        throw new BurstException.NotValidException(
+            "Invalid number of recipients listed on multi out transaction");
       }
     }
 
-    public PaymentMultiOutCreation(Collection<Entry<String, Long>> recipients, int blockchainHeight) throws BurstException.NotValidException {
+    public PaymentMultiOutCreation(Collection<Entry<String, Long>> recipients, int blockchainHeight)
+        throws BurstException.NotValidException {
       super(blockchainHeight);
 
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
-      for(Entry<String, Long> recipient : recipients ) {
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
+      for (Entry<String, Long> recipient : recipients) {
         long recipientId = (new BigInteger(recipient.getKey())).longValue();
-        long amountNQT   = recipient.getValue();
+        long amountNQT = recipient.getValue();
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi out transaction");
 
         if (amountNQT <= 0)
-          throw new BurstException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (recipients.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new BurstException.NotValidException("Invalid number of recipients listed on multi out transaction");
+        throw new BurstException.NotValidException(
+            "Invalid number of recipients listed on multi out transaction");
       }
     }
 
-    PaymentMultiOutCreation(BrsApi.MultiOutAttachment attachment) throws BurstException.NotValidException {
+    PaymentMultiOutCreation(BrsApi.MultiOutAttachment attachment)
+        throws BurstException.NotValidException {
       super(((byte) attachment.getVersion()));
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
       for (BrsApi.MultiOutAttachment.MultiOutRecipient recipient : attachment.getRecipientsList()) {
         long recipientId = recipient.getRecipient();
         long amountNQT = recipient.getAmount();
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi out transaction");
 
-        if (amountNQT  <=0)
-          throw new BurstException.NotValidException("Insufficient amountNQT on multi out transaction");
+        if (amountNQT <= 0)
+          throw new BurstException.NotValidException(
+              "Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (recipients.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new BurstException.NotValidException("Invalid number of recipients listed on multi out transaction");
+        throw new BurstException.NotValidException(
+            "Invalid number of recipients listed on multi out transaction");
       }
     }
 
@@ -285,7 +321,11 @@ public interface Attachment extends Appendix {
     @Override
     void putMyBytes(ByteBuffer buffer) {
       buffer.put((byte) this.recipients.size());
-      this.recipients.forEach((a) -> { buffer.putLong(a.get(0)); buffer.putLong(a.get(1)); });
+      this.recipients.forEach(
+          (a) -> {
+            buffer.putLong(a.get(0));
+            buffer.putLong(a.get(1));
+          });
     }
 
     @Override
@@ -293,12 +333,14 @@ public interface Attachment extends Appendix {
       final JsonArray recipientsJSON = new JsonArray();
 
       this.recipients.stream()
-        .map(recipient -> {
-          final JsonArray recipientJSON = new JsonArray();
-          recipientJSON.add(Convert.toUnsignedLong(recipient.get(0)));
-          recipientJSON.add(recipient.get(1).toString());
-          return recipientJSON;
-        }).forEach(recipientsJSON::add);
+          .map(
+              recipient -> {
+                final JsonArray recipientJSON = new JsonArray();
+                recipientJSON.add(Convert.toUnsignedLong(recipient.get(0)));
+                recipientJSON.add(recipient.get(1).toString());
+                return recipientJSON;
+              })
+          .forEach(recipientsJSON::add);
 
       attachment.add(RECIPIENTS_RESPONSE, recipientsJSON);
     }
@@ -310,7 +352,7 @@ public interface Attachment extends Appendix {
 
     public Long getAmountNQT() {
       long amountNQT = 0;
-      for ( ArrayList<Long> recipient : recipients ) {
+      for (ArrayList<Long> recipient : recipients) {
         amountNQT = Convert.safeAdd(amountNQT, recipient.get(1));
       }
       return amountNQT;
@@ -322,10 +364,11 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      BrsApi.MultiOutAttachment.Builder builder =  BrsApi.MultiOutAttachment.newBuilder()
-              .setVersion(getVersion());
+      BrsApi.MultiOutAttachment.Builder builder =
+          BrsApi.MultiOutAttachment.newBuilder().setVersion(getVersion());
       for (ArrayList<Long> recipient : recipients) {
-        builder.addRecipients(BrsApi.MultiOutAttachment.MultiOutRecipient.newBuilder()
+        builder.addRecipients(
+            BrsApi.MultiOutAttachment.MultiOutRecipient.newBuilder()
                 .setRecipient(recipient.get(0))
                 .setAmount(recipient.get(1)));
       }
@@ -337,17 +380,19 @@ public interface Attachment extends Appendix {
 
     private final ArrayList<Long> recipients = new ArrayList<>();
 
-    PaymentMultiSameOutCreation(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    PaymentMultiSameOutCreation(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
 
       int numberOfRecipients = Byte.toUnsignedInt(buffer.get());
-      HashMap<Long,Boolean> recipientOf = new HashMap<>(numberOfRecipients);
+      HashMap<Long, Boolean> recipientOf = new HashMap<>(numberOfRecipients);
 
       for (int i = 0; i < numberOfRecipients; ++i) {
         long recipientId = buffer.getLong();
 
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
@@ -362,29 +407,33 @@ public interface Attachment extends Appendix {
       super(attachmentData);
 
       JsonArray recipientsJson = JSON.getAsJsonArray(attachmentData.get(RECIPIENTS_PARAMETER));
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
 
       for (JsonElement recipient : recipientsJson) {
         long recipientId = new BigInteger(JSON.getAsString(recipient)).longValue();
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
-      if (recipientsJson.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipientsJson.size() <= 1) {
+      if (recipientsJson.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS
+          || recipientsJson.size() <= 1) {
         throw new BurstException.NotValidException(
             "Invalid number of recipients listed on multi same out transaction");
       }
     }
 
-    public PaymentMultiSameOutCreation(Collection<Long> recipients, int blockchainHeight) throws BurstException.NotValidException {
+    public PaymentMultiSameOutCreation(Collection<Long> recipients, int blockchainHeight)
+        throws BurstException.NotValidException {
       super(blockchainHeight);
 
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
-      for(Long recipientId : recipients ) {
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
+      for (Long recipientId : recipients) {
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
@@ -395,19 +444,21 @@ public interface Attachment extends Appendix {
       }
     }
 
-    PaymentMultiSameOutCreation(BrsApi.MultiOutSameAttachment attachment) throws BurstException.NotValidException {
+    PaymentMultiSameOutCreation(BrsApi.MultiOutSameAttachment attachment)
+        throws BurstException.NotValidException {
       super(((byte) attachment.getVersion()));
-      HashMap<Long,Boolean> recipientOf = new HashMap<>();
-      for(Long recipientId : attachment.getRecipientsList()) {
+      HashMap<Long, Boolean> recipientOf = new HashMap<>();
+      for (Long recipientId : attachment.getRecipientsList()) {
         if (recipientOf.containsKey(recipientId))
-          throw new BurstException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new BurstException.NotValidException(
+              "Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
       if (recipients.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipients.size() <= 1) {
         throw new BurstException.NotValidException(
-                "Invalid number of recipients listed on multi same out transaction");
+            "Invalid number of recipients listed on multi same out transaction");
       }
     }
 
@@ -445,7 +496,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.MultiOutSameAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.MultiOutSameAttachment.newBuilder()
               .setVersion(getVersion())
               .addAllRecipients(recipients)
               .build());
@@ -453,59 +505,61 @@ public interface Attachment extends Appendix {
   }
 
   // the message payload is in the Appendix
-  EmptyAttachment ARBITRARY_MESSAGE = new EmptyAttachment() {
+  EmptyAttachment ARBITRARY_MESSAGE =
+      new EmptyAttachment() {
 
-    @Override
-    public Any getProtobufMessage() {
-      return Any.pack(BrsApi.ArbitraryMessageAttachment.getDefaultInstance());
-    }
+        @Override
+        public Any getProtobufMessage() {
+          return Any.pack(BrsApi.ArbitraryMessageAttachment.getDefaultInstance());
+        }
 
-    @Override
-      String getAppendixName() {
-        return "ArbitraryMessage";
-      }
+        @Override
+        String getAppendixName() {
+          return "ArbitraryMessage";
+        }
 
-      @Override
-      public TransactionType getTransactionType() {
-        return TransactionType.Messaging.ARBITRARY_MESSAGE;
-      }
+        @Override
+        public TransactionType getTransactionType() {
+          return TransactionType.Messaging.ARBITRARY_MESSAGE;
+        }
+      };
 
-    };
+  EmptyAttachment AT_PAYMENT =
+      new EmptyAttachment() {
 
-  EmptyAttachment AT_PAYMENT = new EmptyAttachment() {
+        @Override
+        public Any getProtobufMessage() {
+          return Any.pack(BrsApi.ATPaymentAttachment.getDefaultInstance());
+        }
 
-    @Override
-    public Any getProtobufMessage() {
-      return Any.pack(BrsApi.ATPaymentAttachment.getDefaultInstance());
-    }
+        @Override
+        public TransactionType getTransactionType() {
+          return TransactionType.AutomatedTransactions.AT_PAYMENT;
+        }
 
-    @Override
-      public TransactionType getTransactionType() {
-        return TransactionType.AutomatedTransactions.AT_PAYMENT;
-      }
-
-      @Override
-      String getAppendixName() {
-        return "AT Payment";
-      }
-
-
-    };
+        @Override
+        String getAppendixName() {
+          return "AT Payment";
+        }
+      };
 
   class MessagingAliasAssignment extends AbstractAttachment {
 
     private final String aliasName;
     private final String aliasURI;
 
-    MessagingAliasAssignment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    MessagingAliasAssignment(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH).trim();
-      aliasURI = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ALIAS_URI_LENGTH).trim();
+      aliasURI =
+          Convert.readString(buffer, buffer.getShort(), Constants.MAX_ALIAS_URI_LENGTH).trim();
     }
 
     MessagingAliasAssignment(JsonObject attachmentData) {
       super(attachmentData);
-      aliasName = (Convert.nullToEmpty(JSON.getAsString(attachmentData.get(ALIAS_PARAMETER)))).trim();
+      aliasName =
+          (Convert.nullToEmpty(JSON.getAsString(attachmentData.get(ALIAS_PARAMETER)))).trim();
       aliasURI = (Convert.nullToEmpty(JSON.getAsString(attachmentData.get(URI_PARAMETER)))).trim();
     }
 
@@ -535,7 +589,7 @@ public interface Attachment extends Appendix {
     void putMyBytes(ByteBuffer buffer) {
       byte[] alias = Convert.toBytes(this.aliasName);
       byte[] uri = Convert.toBytes(this.aliasURI);
-      buffer.put((byte)alias.length);
+      buffer.put((byte) alias.length);
       buffer.put(alias);
       buffer.putShort((short) uri.length);
       buffer.put(uri);
@@ -562,7 +616,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AliasAssignmentAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AliasAssignmentAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(aliasName)
               .setUri(aliasURI)
@@ -575,7 +630,8 @@ public interface Attachment extends Appendix {
     private final String aliasName;
     private final long priceNQT;
 
-    MessagingAliasSell(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    MessagingAliasSell(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH);
       this.priceNQT = buffer.getLong();
@@ -617,7 +673,7 @@ public interface Attachment extends Appendix {
     @Override
     void putMyBytes(ByteBuffer buffer) {
       byte[] aliasBytes = Convert.toBytes(aliasName);
-      buffer.put((byte)aliasBytes.length);
+      buffer.put((byte) aliasBytes.length);
       buffer.put(aliasBytes);
       buffer.putLong(priceNQT);
     }
@@ -628,17 +684,18 @@ public interface Attachment extends Appendix {
       attachment.addProperty(PRICE_NQT_RESPONSE, priceNQT);
     }
 
-    public String getAliasName(){
+    public String getAliasName() {
       return aliasName;
     }
 
-    public long getPriceNQT(){
+    public long getPriceNQT() {
       return priceNQT;
     }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AliasSellAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AliasSellAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(aliasName)
               .setPrice(priceNQT)
@@ -650,7 +707,8 @@ public interface Attachment extends Appendix {
 
     private final String aliasName;
 
-    MessagingAliasBuy(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    MessagingAliasBuy(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH);
     }
@@ -688,7 +746,7 @@ public interface Attachment extends Appendix {
     @Override
     void putMyBytes(ByteBuffer buffer) {
       byte[] aliasBytes = Convert.toBytes(aliasName);
-      buffer.put((byte)aliasBytes.length);
+      buffer.put((byte) aliasBytes.length);
       buffer.put(aliasBytes);
     }
 
@@ -697,13 +755,14 @@ public interface Attachment extends Appendix {
       attachment.addProperty(ALIAS_RESPONSE, aliasName);
     }
 
-    public String getAliasName(){
+    public String getAliasName() {
       return aliasName;
     }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AliasBuyAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AliasBuyAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(aliasName)
               .build());
@@ -715,16 +774,19 @@ public interface Attachment extends Appendix {
     private final String name;
     private final String description;
 
-    MessagingAccountInfo(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    MessagingAccountInfo(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.name = Convert.readString(buffer, buffer.get(), Constants.MAX_ACCOUNT_NAME_LENGTH);
-      this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ACCOUNT_DESCRIPTION_LENGTH);
+      this.description =
+          Convert.readString(buffer, buffer.getShort(), Constants.MAX_ACCOUNT_DESCRIPTION_LENGTH);
     }
 
     MessagingAccountInfo(JsonObject attachmentData) {
       super(attachmentData);
       this.name = Convert.nullToEmpty(JSON.getAsString(attachmentData.get(NAME_PARAMETER)));
-      this.description = Convert.nullToEmpty(JSON.getAsString(attachmentData.get(DESCRIPTION_PARAMETER)));
+      this.description =
+          Convert.nullToEmpty(JSON.getAsString(attachmentData.get(DESCRIPTION_PARAMETER)));
     }
 
     public MessagingAccountInfo(String name, String description, int blockchainHeight) {
@@ -753,7 +815,7 @@ public interface Attachment extends Appendix {
     void putMyBytes(ByteBuffer buffer) {
       byte[] putName = Convert.toBytes(this.name);
       byte[] putDescription = Convert.toBytes(this.description);
-      buffer.put((byte)putName.length);
+      buffer.put((byte) putName.length);
       buffer.put(putName);
       buffer.putShort((short) putDescription.length);
       buffer.put(putDescription);
@@ -780,7 +842,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AccountInfoAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AccountInfoAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(name)
               .setDescription(description)
@@ -795,10 +858,12 @@ public interface Attachment extends Appendix {
     private final long quantityQNT;
     private final byte decimals;
 
-    ColoredCoinsAssetIssuance(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    ColoredCoinsAssetIssuance(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.name = Convert.readString(buffer, buffer.get(), Constants.MAX_ASSET_NAME_LENGTH);
-      this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ASSET_DESCRIPTION_LENGTH);
+      this.description =
+          Convert.readString(buffer, buffer.getShort(), Constants.MAX_ASSET_DESCRIPTION_LENGTH);
       this.quantityQNT = buffer.getLong();
       this.decimals = buffer.get();
     }
@@ -806,12 +871,14 @@ public interface Attachment extends Appendix {
     ColoredCoinsAssetIssuance(JsonObject attachmentData) {
       super(attachmentData);
       this.name = JSON.getAsString(attachmentData.get(NAME_PARAMETER));
-      this.description = Convert.nullToEmpty(JSON.getAsString(attachmentData.get(DESCRIPTION_PARAMETER)));
+      this.description =
+          Convert.nullToEmpty(JSON.getAsString(attachmentData.get(DESCRIPTION_PARAMETER)));
       this.quantityQNT = JSON.getAsLong(attachmentData.get(QUANTITY_QNT_PARAMETER));
       this.decimals = JSON.getAsByte(attachmentData.get(DECIMALS_PARAMETER));
     }
 
-    public ColoredCoinsAssetIssuance(String name, String description, long quantityQNT, byte decimals, int blockchainHeight) {
+    public ColoredCoinsAssetIssuance(
+        String name, String description, long quantityQNT, byte decimals, int blockchainHeight) {
       super(blockchainHeight);
       this.name = name;
       this.description = Convert.nullToEmpty(description);
@@ -820,11 +887,11 @@ public interface Attachment extends Appendix {
     }
 
     ColoredCoinsAssetIssuance(BrsApi.AssetIssuanceAttachment attachment) {
-        super((byte) attachment.getVersion());
-        this.name = attachment.getName();
-        this.description = attachment.getDescription();
-        this.quantityQNT = attachment.getQuantity();
-        this.decimals = (byte) attachment.getDecimals();
+      super((byte) attachment.getVersion());
+      this.name = attachment.getName();
+      this.description = attachment.getDescription();
+      this.quantityQNT = attachment.getQuantity();
+      this.decimals = (byte) attachment.getDecimals();
     }
 
     @Override
@@ -841,7 +908,7 @@ public interface Attachment extends Appendix {
     void putMyBytes(ByteBuffer buffer) {
       byte[] name = Convert.toBytes(this.name);
       byte[] description = Convert.toBytes(this.description);
-      buffer.put((byte)name.length);
+      buffer.put((byte) name.length);
       buffer.put(name);
       buffer.putShort((short) description.length);
       buffer.put(description);
@@ -880,7 +947,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AssetIssuanceAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AssetIssuanceAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(name)
               .setDescription(description)
@@ -896,18 +964,27 @@ public interface Attachment extends Appendix {
     private final long quantityQNT;
     private final String comment;
 
-    ColoredCoinsAssetTransfer(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    ColoredCoinsAssetTransfer(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.assetId = buffer.getLong();
       this.quantityQNT = buffer.getLong();
-      this.comment = getVersion() == 0 ? Convert.readString(buffer, buffer.getShort(), Constants.MAX_ASSET_TRANSFER_COMMENT_LENGTH) : null;
+      this.comment =
+          getVersion() == 0
+              ? Convert.readString(
+                  buffer, buffer.getShort(), Constants.MAX_ASSET_TRANSFER_COMMENT_LENGTH)
+              : null;
     }
 
     ColoredCoinsAssetTransfer(JsonObject attachmentData) {
       super(attachmentData);
-      this.assetId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ASSET_PARAMETER)));
+      this.assetId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ASSET_PARAMETER)));
       this.quantityQNT = JSON.getAsLong(attachmentData.get(QUANTITY_QNT_PARAMETER));
-      this.comment = getVersion() == 0 ? Convert.nullToEmpty(JSON.getAsString(attachmentData.get(COMMENT_PARAMETER))) : null;
+      this.comment =
+          getVersion() == 0
+              ? Convert.nullToEmpty(JSON.getAsString(attachmentData.get(COMMENT_PARAMETER)))
+              : null;
     }
 
     public ColoredCoinsAssetTransfer(long assetId, long quantityQNT, int blockchainHeight) {
@@ -918,10 +995,10 @@ public interface Attachment extends Appendix {
     }
 
     ColoredCoinsAssetTransfer(BrsApi.AssetTransferAttachment attachment) {
-        super((byte) attachment.getVersion());
-        this.assetId = attachment.getAsset();
-        this.quantityQNT = attachment.getQuantity();
-        this.comment = attachment.getComment();
+      super((byte) attachment.getVersion());
+      this.assetId = attachment.getAsset();
+      this.quantityQNT = attachment.getQuantity();
+      this.comment = attachment.getComment();
     }
 
     @Override
@@ -973,7 +1050,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AssetTransferAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AssetTransferAttachment.newBuilder()
               .setVersion(getVersion())
               .setAsset(assetId)
               .setQuantity(quantityQNT)
@@ -997,12 +1075,14 @@ public interface Attachment extends Appendix {
 
     private ColoredCoinsOrderPlacement(JsonObject attachmentData) {
       super(attachmentData);
-      this.assetId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ASSET_PARAMETER)));
+      this.assetId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ASSET_PARAMETER)));
       this.quantityQNT = JSON.getAsLong(attachmentData.get(QUANTITY_QNT_PARAMETER));
       this.priceNQT = JSON.getAsLong(attachmentData.get(PRICE_NQT_PARAMETER));
     }
 
-    private ColoredCoinsOrderPlacement(long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
+    private ColoredCoinsOrderPlacement(
+        long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
       super(blockchainHeight);
       this.assetId = assetId;
       this.quantityQNT = quantityQNT;
@@ -1037,7 +1117,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AssetOrderPlacementAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AssetOrderPlacementAttachment.newBuilder()
               .setVersion(getVersion())
               .setAsset(assetId)
               .setQuantity(quantityQNT)
@@ -1071,13 +1152,15 @@ public interface Attachment extends Appendix {
       super(attachmentData);
     }
 
-    public ColoredCoinsAskOrderPlacement(long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
+    public ColoredCoinsAskOrderPlacement(
+        long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
       super(assetId, quantityQNT, priceNQT, blockchainHeight);
     }
 
     ColoredCoinsAskOrderPlacement(BrsApi.AssetOrderPlacementAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -1094,7 +1177,6 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.ColoredCoins.ASK_ORDER_PLACEMENT;
     }
-
   }
 
   final class ColoredCoinsBidOrderPlacement extends ColoredCoinsOrderPlacement {
@@ -1107,13 +1189,15 @@ public interface Attachment extends Appendix {
       super(attachmentData);
     }
 
-    public ColoredCoinsBidOrderPlacement(long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
+    public ColoredCoinsBidOrderPlacement(
+        long assetId, long quantityQNT, long priceNQT, int blockchainHeight) {
       super(assetId, quantityQNT, priceNQT, blockchainHeight);
     }
 
     ColoredCoinsBidOrderPlacement(BrsApi.AssetOrderPlacementAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -1130,7 +1214,6 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.ColoredCoins.BID_ORDER_PLACEMENT;
     }
-
   }
 
   abstract class ColoredCoinsOrderCancellation extends AbstractAttachment {
@@ -1144,7 +1227,8 @@ public interface Attachment extends Appendix {
 
     private ColoredCoinsOrderCancellation(JsonObject attachmentData) {
       super(attachmentData);
-      this.orderId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ORDER_PARAMETER)));
+      this.orderId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ORDER_PARAMETER)));
     }
 
     private ColoredCoinsOrderCancellation(long orderId, int blockchainHeight) {
@@ -1174,7 +1258,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.AssetOrderCancellationAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.AssetOrderCancellationAttachment.newBuilder()
               .setVersion(getVersion())
               .setOrder(orderId)
               .setType(getType())
@@ -1204,7 +1289,8 @@ public interface Attachment extends Appendix {
 
     ColoredCoinsAskOrderCancellation(BrsApi.AssetOrderCancellationAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -1221,7 +1307,6 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.ColoredCoins.ASK_ORDER_CANCELLATION;
     }
-
   }
 
   final class ColoredCoinsBidOrderCancellation extends ColoredCoinsOrderCancellation {
@@ -1240,7 +1325,8 @@ public interface Attachment extends Appendix {
 
     ColoredCoinsBidOrderCancellation(BrsApi.AssetOrderCancellationAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -1257,7 +1343,6 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.ColoredCoins.BID_ORDER_CANCELLATION;
     }
-
   }
 
   final class DigitalGoodsListing extends AbstractAttachment {
@@ -1268,11 +1353,16 @@ public interface Attachment extends Appendix {
     private final int quantity;
     private final long priceNQT;
 
-    DigitalGoodsListing(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    DigitalGoodsListing(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
-      this.name = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_NAME_LENGTH);
-      this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_DESCRIPTION_LENGTH);
-      this.tags = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_TAGS_LENGTH);
+      this.name =
+          Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_NAME_LENGTH);
+      this.description =
+          Convert.readString(
+              buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_DESCRIPTION_LENGTH);
+      this.tags =
+          Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_TAGS_LENGTH);
       this.quantity = buffer.getInt();
       this.priceNQT = buffer.getLong();
     }
@@ -1286,7 +1376,13 @@ public interface Attachment extends Appendix {
       this.priceNQT = JSON.getAsLong(attachmentData.get(PRICE_NQT_PARAMETER));
     }
 
-    public DigitalGoodsListing(String name, String description, String tags, int quantity, long priceNQT, int blockchainHeight) {
+    public DigitalGoodsListing(
+        String name,
+        String description,
+        String tags,
+        int quantity,
+        long priceNQT,
+        int blockchainHeight) {
       super(blockchainHeight);
       this.name = name;
       this.description = description;
@@ -1311,8 +1407,14 @@ public interface Attachment extends Appendix {
 
     @Override
     int getMySize() {
-      return 2 + Convert.toBytes(name).length + 2 + Convert.toBytes(description).length + 2
-          + Convert.toBytes(tags).length + 4 + 8;
+      return 2
+          + Convert.toBytes(name).length
+          + 2
+          + Convert.toBytes(description).length
+          + 2
+          + Convert.toBytes(tags).length
+          + 4
+          + 8;
     }
 
     @Override
@@ -1344,19 +1446,30 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.LISTING;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+      return name;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+      return description;
+    }
 
-    public String getTags() { return tags; }
+    public String getTags() {
+      return tags;
+    }
 
-    public int getQuantity() { return quantity; }
+    public int getQuantity() {
+      return quantity;
+    }
 
-    public long getPriceNQT() { return priceNQT; }
+    public long getPriceNQT() {
+      return priceNQT;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsListingAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsListingAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(name)
               .setDescription(description)
@@ -1378,7 +1491,8 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsDelisting(JsonObject attachmentData) {
       super(attachmentData);
-      this.goodsId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
+      this.goodsId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
     }
 
     public DigitalGoodsDelisting(long goodsId, int blockchainHeight) {
@@ -1416,11 +1530,14 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.DELISTING;
     }
 
-    public long getGoodsId() { return goodsId; }
+    public long getGoodsId() {
+      return goodsId;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsDelistingAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsDelistingAttachment.newBuilder()
               .setVersion(getVersion())
               .setGoods(goodsId)
               .build());
@@ -1440,7 +1557,8 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsPriceChange(JsonObject attachmentData) {
       super(attachmentData);
-      this.goodsId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
+      this.goodsId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
       this.priceNQT = JSON.getAsLong(attachmentData.get(PRICE_NQT_PARAMETER));
     }
 
@@ -1483,13 +1601,18 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.PRICE_CHANGE;
     }
 
-    public long getGoodsId() { return goodsId; }
+    public long getGoodsId() {
+      return goodsId;
+    }
 
-    public long getPriceNQT() { return priceNQT; }
+    public long getPriceNQT() {
+      return priceNQT;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsPriceChangeAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsPriceChangeAttachment.newBuilder()
               .setVersion(getVersion())
               .setGoods(goodsId)
               .setPrice(priceNQT)
@@ -1510,7 +1633,8 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsQuantityChange(JsonObject attachmentData) {
       super(attachmentData);
-      this.goodsId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
+      this.goodsId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
       this.deltaQuantity = JSON.getAsInt(attachmentData.get(DELTA_QUANTITY_PARAMETER));
     }
 
@@ -1553,13 +1677,18 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.QUANTITY_CHANGE;
     }
 
-    public long getGoodsId() { return goodsId; }
+    public long getGoodsId() {
+      return goodsId;
+    }
 
-    public int getDeltaQuantity() { return deltaQuantity; }
+    public int getDeltaQuantity() {
+      return deltaQuantity;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsQuantityChangeAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsQuantityChangeAttachment.newBuilder()
               .setVersion(getVersion())
               .setGoods(goodsId)
               .setDeltaQuantity(deltaQuantity)
@@ -1584,13 +1713,20 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsPurchase(JsonObject attachmentData) {
       super(attachmentData);
-      this.goodsId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
+      this.goodsId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(GOODS_PARAMETER)));
       this.quantity = JSON.getAsInt(attachmentData.get(QUANTITY_PARAMETER));
       this.priceNQT = JSON.getAsLong(attachmentData.get(PRICE_NQT_PARAMETER));
-      this.deliveryDeadlineTimestamp = JSON.getAsInt(attachmentData.get(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER));
+      this.deliveryDeadlineTimestamp =
+          JSON.getAsInt(attachmentData.get(DELIVERY_DEADLINE_TIMESTAMP_PARAMETER));
     }
 
-    public DigitalGoodsPurchase(long goodsId, int quantity, long priceNQT, int deliveryDeadlineTimestamp, int blockchainHeight) {
+    public DigitalGoodsPurchase(
+        long goodsId,
+        int quantity,
+        long priceNQT,
+        int deliveryDeadlineTimestamp,
+        int blockchainHeight) {
       super(blockchainHeight);
       this.goodsId = goodsId;
       this.quantity = quantity;
@@ -1637,17 +1773,26 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.PURCHASE;
     }
 
-    public long getGoodsId() { return goodsId; }
+    public long getGoodsId() {
+      return goodsId;
+    }
 
-    public int getQuantity() { return quantity; }
+    public int getQuantity() {
+      return quantity;
+    }
 
-    public long getPriceNQT() { return priceNQT; }
+    public long getPriceNQT() {
+      return priceNQT;
+    }
 
-    public int getDeliveryDeadlineTimestamp() { return deliveryDeadlineTimestamp; }
+    public int getDeliveryDeadlineTimestamp() {
+      return deliveryDeadlineTimestamp;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsPurchaseAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsPurchaseAttachment.newBuilder()
               .setVersion(getVersion())
               .setGoods(goodsId)
               .setQuantity(quantity)
@@ -1664,7 +1809,8 @@ public interface Attachment extends Appendix {
     private final long discountNQT;
     private final boolean goodsIsText;
 
-    DigitalGoodsDelivery(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    DigitalGoodsDelivery(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.purchaseId = buffer.getLong();
       int length = buffer.getInt();
@@ -1678,14 +1824,23 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsDelivery(JsonObject attachmentData) {
       super(attachmentData);
-      this.purchaseId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
-      this.goods = new EncryptedData(Convert.parseHexString(JSON.getAsString(attachmentData.get(GOODS_DATA_PARAMETER))),
-                                     Convert.parseHexString(JSON.getAsString(attachmentData.get(GOODS_NONCE_PARAMETER))));
+      this.purchaseId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
+      this.goods =
+          new EncryptedData(
+              Convert.parseHexString(JSON.getAsString(attachmentData.get(GOODS_DATA_PARAMETER))),
+              Convert.parseHexString(JSON.getAsString(attachmentData.get(GOODS_NONCE_PARAMETER))));
       this.discountNQT = JSON.getAsLong(attachmentData.get(DISCOUNT_NQT_PARAMETER));
-      this.goodsIsText = Boolean.TRUE.equals(JSON.getAsBoolean(attachmentData.get(GOODS_IS_TEXT_PARAMETER)));
+      this.goodsIsText =
+          Boolean.TRUE.equals(JSON.getAsBoolean(attachmentData.get(GOODS_IS_TEXT_PARAMETER)));
     }
 
-    public DigitalGoodsDelivery(long purchaseId, EncryptedData goods, boolean goodsIsText, long discountNQT, int blockchainHeight) {
+    public DigitalGoodsDelivery(
+        long purchaseId,
+        EncryptedData goods,
+        boolean goodsIsText,
+        long discountNQT,
+        int blockchainHeight) {
       super(blockchainHeight);
       this.purchaseId = purchaseId;
       this.goods = goods;
@@ -1714,7 +1869,8 @@ public interface Attachment extends Appendix {
     @Override
     void putMyBytes(ByteBuffer buffer) {
       buffer.putLong(purchaseId);
-      buffer.putInt(goodsIsText ? goods.getData().length | Integer.MIN_VALUE : goods.getData().length);
+      buffer.putInt(
+          goodsIsText ? goods.getData().length | Integer.MIN_VALUE : goods.getData().length);
       buffer.put(goods.getData());
       buffer.put(goods.getNonce());
       buffer.putLong(discountNQT);
@@ -1734,11 +1890,17 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.DELIVERY;
     }
 
-    public long getPurchaseId() { return purchaseId; }
+    public long getPurchaseId() {
+      return purchaseId;
+    }
 
-    public EncryptedData getGoods() { return goods; }
+    public EncryptedData getGoods() {
+      return goods;
+    }
 
-    public long getDiscountNQT() { return discountNQT; }
+    public long getDiscountNQT() {
+      return discountNQT;
+    }
 
     public boolean goodsIsText() {
       return goodsIsText;
@@ -1746,7 +1908,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsDeliveryAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsDeliveryAttachment.newBuilder()
               .setVersion(getVersion())
               .setPurchase(purchaseId)
               .setDiscount(discountNQT)
@@ -1767,7 +1930,8 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsFeedback(JsonObject attachmentData) {
       super(attachmentData);
-      this.purchaseId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
+      this.purchaseId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
     }
 
     public DigitalGoodsFeedback(long purchaseId, int blockchainHeight) {
@@ -1805,11 +1969,14 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.FEEDBACK;
     }
 
-    public long getPurchaseId() { return purchaseId; }
+    public long getPurchaseId() {
+      return purchaseId;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsFeedbackAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsFeedbackAttachment.newBuilder()
               .setVersion(getVersion())
               .setPurchase(purchaseId)
               .build());
@@ -1829,7 +1996,8 @@ public interface Attachment extends Appendix {
 
     DigitalGoodsRefund(JsonObject attachmentData) {
       super(attachmentData);
-      this.purchaseId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
+      this.purchaseId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(PURCHASE_PARAMETER)));
       this.refundNQT = JSON.getAsLong(attachmentData.get(REFUND_NQT_PARAMETER));
     }
 
@@ -1872,13 +2040,18 @@ public interface Attachment extends Appendix {
       return TransactionType.DigitalGoods.REFUND;
     }
 
-    public long getPurchaseId() { return purchaseId; }
+    public long getPurchaseId() {
+      return purchaseId;
+    }
 
-    public long getRefundNQT() { return refundNQT; }
+    public long getRefundNQT() {
+      return refundNQT;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.DigitalGoodsRefundAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.DigitalGoodsRefundAttachment.newBuilder()
               .setVersion(getVersion())
               .setPurchase(purchaseId)
               .setRefund(refundNQT)
@@ -1941,7 +2114,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.EffectiveBalanceLeasingAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.EffectiveBalanceLeasingAttachment.newBuilder()
               .setVersion(getVersion())
               .setPeriod(period)
               .build());
@@ -1993,13 +2167,10 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.RewardRecipientAssignmentAttachment.newBuilder()
-              .setVersion(getVersion())
-              .build());
+      return Any.pack(
+          BrsApi.RewardRecipientAssignmentAttachment.newBuilder().setVersion(getVersion()).build());
     }
-    
   }
-  
 
   abstract class CommitmentAttachment extends AbstractAttachment {
 
@@ -2025,7 +2196,7 @@ public interface Attachment extends Appendix {
       this.amountNQT = attachment.getAmount();
       attachment.getType();
     }
-    
+
     public long getAmountNQT() {
       return amountNQT;
     }
@@ -2047,7 +2218,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.CommitmentAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.CommitmentAttachment.newBuilder()
               .setVersion(getVersion())
               .setAmount(amountNQT)
               .setType(getType())
@@ -2056,7 +2228,7 @@ public interface Attachment extends Appendix {
 
     protected abstract BrsApi.CommitmentType getType();
   }
-  
+
   final class CommitmentAdd extends CommitmentAttachment {
 
     CommitmentAdd(ByteBuffer buffer, byte transactionVersion) {
@@ -2073,7 +2245,8 @@ public interface Attachment extends Appendix {
 
     CommitmentAdd(BrsApi.CommitmentAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -2090,9 +2263,8 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.BurstMining.COMMITMENT_ADD;
     }
-
   }
-  
+
   final class CommitmentRemove extends CommitmentAttachment {
 
     CommitmentRemove(ByteBuffer buffer, byte transactionVersion) {
@@ -2109,7 +2281,8 @@ public interface Attachment extends Appendix {
 
     CommitmentRemove(BrsApi.CommitmentAttachment attachment) {
       super(attachment);
-      if (attachment.getType() != getType()) throw new IllegalArgumentException("Type does not match");
+      if (attachment.getType() != getType())
+        throw new IllegalArgumentException("Type does not match");
     }
 
     @Override
@@ -2126,10 +2299,8 @@ public interface Attachment extends Appendix {
     public TransactionType getTransactionType() {
       return TransactionType.BurstMining.COMMITMENT_REMOVE;
     }
-    
   }
-  
-  
+
   final class AdvancedPaymentEscrowCreation extends AbstractAttachment {
 
     private final Long amountNQT;
@@ -2138,69 +2309,85 @@ public interface Attachment extends Appendix {
     private final int deadline;
     private final Escrow.DecisionType deadlineAction;
 
-    AdvancedPaymentEscrowCreation(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+    AdvancedPaymentEscrowCreation(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
       this.amountNQT = buffer.getLong();
       this.deadline = buffer.getInt();
       this.deadlineAction = Escrow.byteToDecision(buffer.get());
       this.requiredSigners = buffer.get();
       byte totalSigners = buffer.get();
-      if(totalSigners > 10 || totalSigners <= 0) {
-        throw new BurstException.NotValidException("Invalid number of signers listed on create escrow transaction");
+      if (totalSigners > 10 || totalSigners <= 0) {
+        throw new BurstException.NotValidException(
+            "Invalid number of signers listed on create escrow transaction");
       }
-      for(int i = 0; i < totalSigners; i++) {
-        if(!this.signers.add(buffer.getLong())) {
+      for (int i = 0; i < totalSigners; i++) {
+        if (!this.signers.add(buffer.getLong())) {
           throw new BurstException.NotValidException("Duplicate signer on escrow creation");
         }
       }
     }
 
-    AdvancedPaymentEscrowCreation(JsonObject attachmentData) throws BurstException.NotValidException {
+    AdvancedPaymentEscrowCreation(JsonObject attachmentData)
+        throws BurstException.NotValidException {
       super(attachmentData);
-      this.amountNQT = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(AMOUNT_NQT_PARAMETER)));
+      this.amountNQT =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(AMOUNT_NQT_PARAMETER)));
       this.deadline = JSON.getAsInt(attachmentData.get(DEADLINE_PARAMETER));
-      this.deadlineAction = Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DEADLINE_ACTION_PARAMETER)));
+      this.deadlineAction =
+          Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DEADLINE_ACTION_PARAMETER)));
       this.requiredSigners = JSON.getAsByte(attachmentData.get(REQUIRED_SIGNERS_PARAMETER));
       int totalSigners = (JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER))).size();
-      if(totalSigners > 10 || totalSigners <= 0) {
-        throw new BurstException.NotValidException("Invalid number of signers listed on create escrow transaction");
+      if (totalSigners > 10 || totalSigners <= 0) {
+        throw new BurstException.NotValidException(
+            "Invalid number of signers listed on create escrow transaction");
       }
       JsonArray signersJson = JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER));
       for (JsonElement aSignersJson : signersJson) {
         this.signers.add(Convert.parseUnsignedLong(JSON.getAsString(aSignersJson)));
       }
-      if(this.signers.size() != (JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER))).size()) {
+      if (this.signers.size()
+          != (JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER))).size()) {
         throw new BurstException.NotValidException("Duplicate signer on escrow creation");
       }
     }
 
-    public AdvancedPaymentEscrowCreation(Long amountNQT, int deadline, Escrow.DecisionType deadlineAction,
-                                         int requiredSigners, Collection<Long> signers, int blockchainHeight) throws BurstException.NotValidException {
+    public AdvancedPaymentEscrowCreation(
+        Long amountNQT,
+        int deadline,
+        Escrow.DecisionType deadlineAction,
+        int requiredSigners,
+        Collection<Long> signers,
+        int blockchainHeight)
+        throws BurstException.NotValidException {
       super(blockchainHeight);
       this.amountNQT = amountNQT;
       this.deadline = deadline;
       this.deadlineAction = deadlineAction;
-      this.requiredSigners = (byte)requiredSigners;
-      if(signers.size() > 10 || signers.isEmpty()) {
-        throw new BurstException.NotValidException("Invalid number of signers listed on create escrow transaction");
+      this.requiredSigners = (byte) requiredSigners;
+      if (signers.size() > 10 || signers.isEmpty()) {
+        throw new BurstException.NotValidException(
+            "Invalid number of signers listed on create escrow transaction");
       }
       this.signers.addAll(signers);
-      if(this.signers.size() != signers.size()) {
+      if (this.signers.size() != signers.size()) {
         throw new BurstException.NotValidException("Duplicate signer on escrow creation");
       }
     }
 
-    AdvancedPaymentEscrowCreation(BrsApi.EscrowCreationAttachment attachment) throws BurstException.NotValidException {
+    AdvancedPaymentEscrowCreation(BrsApi.EscrowCreationAttachment attachment)
+        throws BurstException.NotValidException {
       super((byte) attachment.getVersion());
       this.amountNQT = attachment.getAmount();
       this.requiredSigners = (byte) attachment.getRequiredSigners();
       this.deadline = attachment.getDeadline();
       this.deadlineAction = Escrow.protoBufToDecision(attachment.getDeadlineAction());
       this.signers.addAll(attachment.getSignersList());
-      if(signers.size() > 10 || signers.isEmpty()) {
-        throw new BurstException.NotValidException("Invalid number of signers listed on create escrow transaction");
+      if (signers.size() > 10 || signers.isEmpty()) {
+        throw new BurstException.NotValidException(
+            "Invalid number of signers listed on create escrow transaction");
       }
-      if(this.signers.size() != attachment.getSignersList().size()) {
+      if (this.signers.size() != attachment.getSignersList().size()) {
         throw new BurstException.NotValidException("Duplicate signer on escrow creation");
       }
     }
@@ -2232,10 +2419,11 @@ public interface Attachment extends Appendix {
     void putMyJSON(JsonObject attachment) {
       attachment.addProperty(AMOUNT_NQT_RESPONSE, Convert.toUnsignedLong(this.amountNQT));
       attachment.addProperty(DEADLINE_RESPONSE, this.deadline);
-      attachment.addProperty(DEADLINE_ACTION_RESPONSE, Escrow.decisionToString(this.deadlineAction));
-      attachment.addProperty(REQUIRED_SIGNERS_RESPONSE, (int)this.requiredSigners);
+      attachment.addProperty(
+          DEADLINE_ACTION_RESPONSE, Escrow.decisionToString(this.deadlineAction));
+      attachment.addProperty(REQUIRED_SIGNERS_RESPONSE, (int) this.requiredSigners);
       JsonArray ids = new JsonArray();
-      for(Long signer : this.signers) {
+      for (Long signer : this.signers) {
         ids.add(Convert.toUnsignedLong(signer));
       }
       attachment.add(SIGNERS_RESPONSE, ids);
@@ -2246,21 +2434,34 @@ public interface Attachment extends Appendix {
       return TransactionType.AdvancedPayment.ESCROW_CREATION;
     }
 
-    public Long getAmountNQT() { return amountNQT; }
+    public Long getAmountNQT() {
+      return amountNQT;
+    }
 
-    public int getDeadline() { return deadline; }
+    public int getDeadline() {
+      return deadline;
+    }
 
-    public Escrow.DecisionType getDeadlineAction() { return deadlineAction; }
+    public Escrow.DecisionType getDeadlineAction() {
+      return deadlineAction;
+    }
 
-    public int getRequiredSigners() { return (int)requiredSigners; }
+    public int getRequiredSigners() {
+      return (int) requiredSigners;
+    }
 
-    public Collection<Long> getSigners() { return Collections.unmodifiableCollection(signers); }
+    public Collection<Long> getSigners() {
+      return Collections.unmodifiableCollection(signers);
+    }
 
-    public int getTotalSigners() { return signers.size(); }
+    public int getTotalSigners() {
+      return signers.size();
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.EscrowCreationAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.EscrowCreationAttachment.newBuilder()
               .setVersion(getVersion())
               .setAmount(amountNQT)
               .setRequiredSigners(requiredSigners)
@@ -2284,11 +2485,14 @@ public interface Attachment extends Appendix {
 
     AdvancedPaymentEscrowSign(JsonObject attachmentData) {
       super(attachmentData);
-      this.escrowId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ESCROW_ID_PARAMETER)));
-      this.decision = Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DECISION_PARAMETER)));
+      this.escrowId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ESCROW_ID_PARAMETER)));
+      this.decision =
+          Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DECISION_PARAMETER)));
     }
 
-    public AdvancedPaymentEscrowSign(Long escrowId, Escrow.DecisionType decision, int blockchainHeight) {
+    public AdvancedPaymentEscrowSign(
+        Long escrowId, Escrow.DecisionType decision, int blockchainHeight) {
       super(blockchainHeight);
       this.escrowId = escrowId;
       this.decision = decision;
@@ -2327,13 +2531,18 @@ public interface Attachment extends Appendix {
       return TransactionType.AdvancedPayment.ESCROW_SIGN;
     }
 
-    public Long getEscrowId() { return this.escrowId; }
+    public Long getEscrowId() {
+      return this.escrowId;
+    }
 
-    public Escrow.DecisionType getDecision() { return this.decision; }
+    public Escrow.DecisionType getDecision() {
+      return this.decision;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.EscrowSignAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.EscrowSignAttachment.newBuilder()
               .setVersion(getVersion())
               .setEscrow(escrowId)
               .setDecision(Escrow.decisionToProtobuf(decision))
@@ -2354,11 +2563,14 @@ public interface Attachment extends Appendix {
 
     AdvancedPaymentEscrowResult(JsonObject attachmentData) {
       super(attachmentData);
-      this.escrowId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ESCROW_ID_PARAMETER)));
-      this.decision = Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DECISION_PARAMETER)));
+      this.escrowId =
+          Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(ESCROW_ID_PARAMETER)));
+      this.decision =
+          Escrow.stringToDecision(JSON.getAsString(attachmentData.get(DECISION_PARAMETER)));
     }
 
-    public AdvancedPaymentEscrowResult(Long escrowId, Escrow.DecisionType decision, int blockchainHeight) {
+    public AdvancedPaymentEscrowResult(
+        Long escrowId, Escrow.DecisionType decision, int blockchainHeight) {
       super(blockchainHeight);
       this.escrowId = escrowId;
       this.decision = decision;
@@ -2399,7 +2611,8 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.EscrowResultAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.EscrowResultAttachment.newBuilder()
               .setVersion(getVersion())
               .setEscrow(this.escrowId)
               .setDecision(Escrow.decisionToProtobuf(decision))
@@ -2456,11 +2669,14 @@ public interface Attachment extends Appendix {
       return TransactionType.AdvancedPayment.SUBSCRIPTION_SUBSCRIBE;
     }
 
-    public Integer getFrequency() { return this.frequency; }
+    public Integer getFrequency() {
+      return this.frequency;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.SubscriptionSubscribeAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.SubscriptionSubscribeAttachment.newBuilder()
               .setVersion(getVersion())
               .setFrequency(frequency)
               .build());
@@ -2478,7 +2694,9 @@ public interface Attachment extends Appendix {
 
     AdvancedPaymentSubscriptionCancel(JsonObject attachmentData) {
       super(attachmentData);
-      this.subscriptionId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(SUBSCRIPTION_ID_PARAMETER)));
+      this.subscriptionId =
+          Convert.parseUnsignedLong(
+              JSON.getAsString(attachmentData.get(SUBSCRIPTION_ID_PARAMETER)));
     }
 
     public AdvancedPaymentSubscriptionCancel(Long subscriptionId, int blockchainHeight) {
@@ -2516,11 +2734,14 @@ public interface Attachment extends Appendix {
       return TransactionType.AdvancedPayment.SUBSCRIPTION_CANCEL;
     }
 
-    public Long getSubscriptionId() { return this.subscriptionId; }
+    public Long getSubscriptionId() {
+      return this.subscriptionId;
+    }
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.SubscriptionCancelAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.SubscriptionCancelAttachment.newBuilder()
               .setVersion(getVersion())
               .setSubscription(subscriptionId)
               .build());
@@ -2538,7 +2759,9 @@ public interface Attachment extends Appendix {
 
     AdvancedPaymentSubscriptionPayment(JsonObject attachmentData) {
       super(attachmentData);
-      this.subscriptionId = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(SUBSCRIPTION_ID_PARAMETER)));
+      this.subscriptionId =
+          Convert.parseUnsignedLong(
+              JSON.getAsString(attachmentData.get(SUBSCRIPTION_ID_PARAMETER)));
     }
 
     public AdvancedPaymentSubscriptionPayment(Long subscriptionId, int blockchainHeight) {
@@ -2578,34 +2801,38 @@ public interface Attachment extends Appendix {
 
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.SubscriptionPaymentAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.SubscriptionPaymentAttachment.newBuilder()
               .setVersion(getVersion())
               .setSubscription(subscriptionId)
               .build());
     }
   }
 
-  final class AutomatedTransactionsCreation extends AbstractAttachment{
+  final class AutomatedTransactionsCreation extends AbstractAttachment {
 
     private final String name;
     private final String description;
     private final byte[] creationBytes;
 
-    AutomatedTransactionsCreation(ByteBuffer buffer,
-                                  byte transactionVersion) throws BurstException.NotValidException {
+    AutomatedTransactionsCreation(ByteBuffer buffer, byte transactionVersion)
+        throws BurstException.NotValidException {
       super(buffer, transactionVersion);
 
-      this.name = Convert.readString( buffer , buffer.get() , Constants.MAX_AUTOMATED_TRANSACTION_NAME_LENGTH );
-      this.description = Convert.readString( buffer , buffer.getShort() , Constants.MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH );
+      this.name =
+          Convert.readString(buffer, buffer.get(), Constants.MAX_AUTOMATED_TRANSACTION_NAME_LENGTH);
+      this.description =
+          Convert.readString(
+              buffer, buffer.getShort(), Constants.MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH);
 
       // rest of the parsing is at related; code comes from
       // public AtMachineState( byte[] atId, byte[] creator, byte[] creationBytes, int height ) {
       int startPosition = buffer.position();
       buffer.getShort();
 
-      buffer.getShort(); //future: reserved for future needs
+      buffer.getShort(); // future: reserved for future needs
 
-      int pageSize = ( int ) AtConstants.getInstance().pageSize( Burst.getBlockchain().getHeight() );
+      int pageSize = (int) AtConstants.getInstance().pageSize(Burst.getBlockchain().getHeight());
       short codePages = buffer.getShort();
       short dataPages = buffer.getShort();
       buffer.getShort();
@@ -2614,43 +2841,35 @@ public interface Attachment extends Appendix {
       buffer.getLong();
 
       int codeLen;
-      if ( codePages * pageSize < pageSize + 1 ) {
-	      codeLen = buffer.get();
-	      if ( codeLen < 0 )
-	        codeLen += (Byte.MAX_VALUE + 1) * 2;
+      if (codePages * pageSize < pageSize + 1) {
+        codeLen = buffer.get();
+        if (codeLen < 0) codeLen += (Byte.MAX_VALUE + 1) * 2;
+      } else if (codePages * pageSize < Short.MAX_VALUE + 1) {
+        codeLen = buffer.getShort();
+        if (codeLen < 0) codeLen += (Short.MAX_VALUE + 1) * 2;
+      } else {
+        codeLen = buffer.getInt();
       }
-      else if ( codePages * pageSize < Short.MAX_VALUE + 1 ) {
-	    codeLen = buffer.getShort();
-	    if( codeLen < 0 )
-	      codeLen += (Short.MAX_VALUE + 1) * 2;
-      }
-      else {
-	      codeLen = buffer.getInt();
-      }
-      byte[] code = new byte[ codeLen ];
-      buffer.get( code, 0, codeLen );
+      byte[] code = new byte[codeLen];
+      buffer.get(code, 0, codeLen);
 
       int dataLen;
-      if ( dataPages * pageSize < 257 ) {
-	      dataLen = buffer.get();
-	      if ( dataLen < 0 )
-	        dataLen += (Byte.MAX_VALUE + 1) * 2;
+      if (dataPages * pageSize < 257) {
+        dataLen = buffer.get();
+        if (dataLen < 0) dataLen += (Byte.MAX_VALUE + 1) * 2;
+      } else if (dataPages * pageSize < Short.MAX_VALUE + 1) {
+        dataLen = buffer.getShort();
+        if (dataLen < 0) dataLen += (Short.MAX_VALUE + 1) * 2;
+      } else {
+        dataLen = buffer.getInt();
       }
-      else if ( dataPages * pageSize < Short.MAX_VALUE + 1 ) {
-	      dataLen = buffer.getShort();
-	      if ( dataLen < 0 )
-	        dataLen += (Short.MAX_VALUE + 1) * 2;
-      }
-      else {
-	      dataLen = buffer.getInt();
-      }
-      byte[] data = new byte[ dataLen ];
-      buffer.get( data, 0, dataLen );
+      byte[] data = new byte[dataLen];
+      buffer.get(data, 0, dataLen);
 
       int endPosition = buffer.position();
       buffer.position(startPosition);
-      byte[] dst = new byte[ endPosition - startPosition ];
-      buffer.get( dst , 0 , endPosition - startPosition );
+      byte[] dst = new byte[endPosition - startPosition];
+      buffer.get(dst, 0, endPosition - startPosition);
       this.creationBytes = dst;
     }
 
@@ -2660,11 +2879,12 @@ public interface Attachment extends Appendix {
       this.name = JSON.getAsString(attachmentData.get(NAME_PARAMETER));
       this.description = JSON.getAsString(attachmentData.get(DESCRIPTION_PARAMETER));
 
-      this.creationBytes = Convert.parseHexString(JSON.getAsString(attachmentData.get(CREATION_BYTES_PARAMETER)));
-
+      this.creationBytes =
+          Convert.parseHexString(JSON.getAsString(attachmentData.get(CREATION_BYTES_PARAMETER)));
     }
 
-    public AutomatedTransactionsCreation( String name, String description , byte[] creationBytes, int blockchainHeight) {
+    public AutomatedTransactionsCreation(
+        String name, String description, byte[] creationBytes, int blockchainHeight) {
       super(blockchainHeight);
       this.name = name;
       this.description = description;
@@ -2687,42 +2907,51 @@ public interface Attachment extends Appendix {
     String getAppendixName() {
       return "AutomatedTransactionsCreation";
     }
+
     @Override
     int getMySize() {
-      return 1 + Convert.toBytes( name ).length + 2 + Convert.toBytes( description ).length + creationBytes.length;
+      return 1
+          + Convert.toBytes(name).length
+          + 2
+          + Convert.toBytes(description).length
+          + creationBytes.length;
     }
 
     @Override
     void putMyBytes(ByteBuffer buffer) {
-      byte[] nameBytes = Convert.toBytes( name );
-      buffer.put( ( byte ) nameBytes.length );
-      buffer.put( nameBytes );
-      byte[] descriptionBytes = Convert.toBytes( description );
-      buffer.putShort( ( short ) descriptionBytes.length );
-      buffer.put( descriptionBytes );
+      byte[] nameBytes = Convert.toBytes(name);
+      buffer.put((byte) nameBytes.length);
+      buffer.put(nameBytes);
+      byte[] descriptionBytes = Convert.toBytes(description);
+      buffer.putShort((short) descriptionBytes.length);
+      buffer.put(descriptionBytes);
 
-      buffer.put( creationBytes );
+      buffer.put(creationBytes);
     }
 
     @Override
     void putMyJSON(JsonObject attachment) {
       attachment.addProperty(NAME_RESPONSE, name);
       attachment.addProperty(DESCRIPTION_RESPONSE, description);
-      attachment.addProperty(CREATION_BYTES_RESPONSE, Convert.toHexString( creationBytes ) );
+      attachment.addProperty(CREATION_BYTES_RESPONSE, Convert.toHexString(creationBytes));
     }
 
-    public String getName() { return name; }
+    public String getName() {
+      return name;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+      return description;
+    }
 
     public byte[] getCreationBytes() {
       return creationBytes;
     }
 
-
     @Override
     public Any getProtobufMessage() {
-      return Any.pack(BrsApi.ATCreationAttachment.newBuilder()
+      return Any.pack(
+          BrsApi.ATCreationAttachment.newBuilder()
               .setVersion(getVersion())
               .setName(name)
               .setDescription(description)
@@ -2730,5 +2959,4 @@ public interface Attachment extends Appendix {
               .build());
     }
   }
-
 }

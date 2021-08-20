@@ -34,15 +34,14 @@ public class GetDGSPurchaseTest {
     t = new GetDGSPurchase(mockParameterService);
   }
 
-
   @Test
   public void processRequest() throws BurstException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final EncryptedData mockEncryptedData = mock(EncryptedData.class);
 
-    when(mockEncryptedData.getData()).thenReturn(new byte[]{(byte) 1});
-    when(mockEncryptedData.getNonce()).thenReturn(new byte[]{(byte) 1});
+    when(mockEncryptedData.getData()).thenReturn(new byte[] {(byte) 1});
+    when(mockEncryptedData.getNonce()).thenReturn(new byte[] {(byte) 1});
 
     final List<EncryptedData> mockEncryptedDataList = Arrays.asList(mockEncryptedData);
 
@@ -80,10 +79,13 @@ public class GetDGSPurchaseTest {
     assertEquals(mockPurchase.getQuantity(), JSON.getAsInt(result.get(QUANTITY_RESPONSE)));
     assertEquals("" + mockPurchase.getBuyerId(), JSON.getAsString(result.get(BUYER_RESPONSE)));
     assertEquals(mockPurchase.getTimestamp(), JSON.getAsInt(result.get(TIMESTAMP_RESPONSE)));
-    assertEquals(mockPurchase.getDeliveryDeadlineTimestamp(), JSON.getAsInt(result.get(DELIVERY_DEADLINE_TIMESTAMP_RESPONSE)));
+    assertEquals(
+        mockPurchase.getDeliveryDeadlineTimestamp(),
+        JSON.getAsInt(result.get(DELIVERY_DEADLINE_TIMESTAMP_RESPONSE)));
     assertEquals(mockPurchase.isPending(), JSON.getAsBoolean(result.get(PENDING_RESPONSE)));
-    assertEquals("" + mockPurchase.getDiscountNQT(), JSON.getAsString(result.get(DISCOUNT_NQT_RESPONSE)));
-    assertEquals("" + mockPurchase.getRefundNQT(), JSON.getAsString(result.get(REFUND_NQT_RESPONSE)));
+    assertEquals(
+        "" + mockPurchase.getDiscountNQT(), JSON.getAsString(result.get(DISCOUNT_NQT_RESPONSE)));
+    assertEquals(
+        "" + mockPurchase.getRefundNQT(), JSON.getAsString(result.get(REFUND_NQT_RESPONSE)));
   }
-
 }

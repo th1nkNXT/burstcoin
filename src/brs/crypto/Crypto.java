@@ -10,8 +10,7 @@ import java.security.NoSuchAlgorithmException;
 public final class Crypto {
   static final BurstCrypto burstCrypto = BurstCrypto.getInstance();
 
-  private Crypto() {
-  } //never
+  private Crypto() {} // never
 
   public static MessageDigest sha256() {
     return burstCrypto.getSha256();
@@ -25,7 +24,7 @@ public final class Crypto {
     return burstCrypto.getRipeMD160();
   }
 
-  public static MessageDigest md5() {// TODO unit test
+  public static MessageDigest md5() { // TODO unit test
     try {
       return MessageDigest.getInstance("MD5"); // TODO burstkit4j integration
     } catch (NoSuchAlgorithmException e) {
@@ -42,18 +41,20 @@ public final class Crypto {
   }
 
   public static byte[] sign(byte[] message, String secretPhrase) {
-      return burstCrypto.sign(message, secretPhrase);
+    return burstCrypto.sign(message, secretPhrase);
   }
 
-  public static boolean verify(byte[] signature, byte[] message, byte[] publicKey, boolean enforceCanonical) {
-      return burstCrypto.verify(signature, message, publicKey, enforceCanonical);
+  public static boolean verify(
+      byte[] signature, byte[] message, byte[] publicKey, boolean enforceCanonical) {
+    return burstCrypto.verify(signature, message, publicKey, enforceCanonical);
   }
 
   public static byte[] aesEncrypt(byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey) {
     return burstCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey);
   }
 
-  public static byte[] aesEncrypt(byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
+  public static byte[] aesEncrypt(
+      byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
     return burstCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey, nonce);
   }
 
@@ -61,7 +62,8 @@ public final class Crypto {
     return burstCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey);
   }
 
-  public static byte[] aesDecrypt(byte[] ivCiphertext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
+  public static byte[] aesDecrypt(
+      byte[] ivCiphertext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
     return burstCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey, nonce);
   }
 

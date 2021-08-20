@@ -19,64 +19,63 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAccountsWithNameTest extends AbstractUnitTest {
 
-    private AccountService accountService;
+  private AccountService accountService;
 
-    private GetAccountsWithName t;
+  private GetAccountsWithName t;
 
-    @Before
-    public void setUp() {
-        accountService = mock(AccountService.class);
+  @Before
+  public void setUp() {
+    accountService = mock(AccountService.class);
 
-        t = new GetAccountsWithName(accountService);
-    }
+    t = new GetAccountsWithName(accountService);
+  }
 
-    @Test
-    public void processRequest() throws BurstException {
-        final long targetAccountId = 4L;
-        final String targetAccountName = "exampleAccountName";
+  @Test
+  public void processRequest() throws BurstException {
+    final long targetAccountId = 4L;
+    final String targetAccountName = "exampleAccountName";
 
-        final HttpServletRequest req = QuickMocker.httpServletRequest(
-                new QuickMocker.MockParam(NAME_PARAMETER, targetAccountName)
-        );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new QuickMocker.MockParam(NAME_PARAMETER, targetAccountName));
 
-        final Account targetAccount = mock(Account.class);
-        when(targetAccount.getId()).thenReturn(targetAccountId);
-        when(targetAccount.getName()).thenReturn(targetAccountName);
+    final Account targetAccount = mock(Account.class);
+    when(targetAccount.getId()).thenReturn(targetAccountId);
+    when(targetAccount.getName()).thenReturn(targetAccountName);
 
-        final Collection<Account> mockIterator = mockCollection(targetAccount);
+    final Collection<Account> mockIterator = mockCollection(targetAccount);
 
-        when(accountService.getAccountsWithName(targetAccountName)).thenReturn(mockIterator);
+    when(accountService.getAccountsWithName(targetAccountName)).thenReturn(mockIterator);
 
-        final JsonObject resultOverview = (JsonObject) t.processRequest(req);
-        assertNotNull(resultOverview);
+    final JsonObject resultOverview = (JsonObject) t.processRequest(req);
+    assertNotNull(resultOverview);
 
-        final JsonArray resultList = (JsonArray) resultOverview.get(ACCOUNTS_RESPONSE);
-        assertNotNull(resultList);
-        assertEquals(1, resultList.size());
-    }
+    final JsonArray resultList = (JsonArray) resultOverview.get(ACCOUNTS_RESPONSE);
+    assertNotNull(resultList);
+    assertEquals(1, resultList.size());
+  }
 
-    @Test
-    public void processRequest_noAccountFound() throws BurstException {
-        final String targetAccountName = "exampleAccountName";
+  @Test
+  public void processRequest_noAccountFound() throws BurstException {
+    final String targetAccountName = "exampleAccountName";
 
-        final HttpServletRequest req = QuickMocker.httpServletRequest(
-                new QuickMocker.MockParam(NAME_PARAMETER, targetAccountName)
-        );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new QuickMocker.MockParam(NAME_PARAMETER, targetAccountName));
 
-        final Collection<Account> mockIterator = mockCollection();
+    final Collection<Account> mockIterator = mockCollection();
 
-        when(accountService.getAccountsWithName(targetAccountName)).thenReturn(mockIterator);
+    when(accountService.getAccountsWithName(targetAccountName)).thenReturn(mockIterator);
 
-        final JsonObject resultOverview = (JsonObject) t.processRequest(req);
-        assertNotNull(resultOverview);
+    final JsonObject resultOverview = (JsonObject) t.processRequest(req);
+    assertNotNull(resultOverview);
 
-        final JsonArray resultList = (JsonArray) resultOverview.get(ACCOUNTS_RESPONSE);
-        assertNotNull(resultList);
-        assertEquals(0, resultList.size());
-    }
+    final JsonArray resultList = (JsonArray) resultOverview.get(ACCOUNTS_RESPONSE);
+    assertNotNull(resultList);
+    assertEquals(0, resultList.size());
+  }
 }

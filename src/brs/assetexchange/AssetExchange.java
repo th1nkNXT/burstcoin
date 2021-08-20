@@ -84,5 +84,4 @@ public interface AssetExchange {
   Collection<Ask> getSortedAskOrders(long assetId, int from, int to);
 
   Collection<Bid> getSortedBidOrders(long assetId, int from, int to);
-
 }

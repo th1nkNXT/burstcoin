@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
-
 ;
 
 public class GetAccountTest extends AbstractUnitTest {
@@ -60,7 +59,7 @@ public class GetAccountTest extends AbstractUnitTest {
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(mockAccountId);
-    when(mockAccount.getPublicKey()).thenReturn(new byte[]{(byte) 1});
+    when(mockAccount.getPublicKey()).thenReturn(new byte[] {(byte) 1});
     when(mockAccount.getName()).thenReturn(mockAccountName);
     when(mockAccount.getDescription()).thenReturn(mockAccountDescription);
 
@@ -71,7 +70,8 @@ public class GetAccountTest extends AbstractUnitTest {
     when(mockAccountAsset.getUnconfirmedQuantityQNT()).thenReturn(mockUnconfirmedQuantityNQT);
     when(mockAccountAsset.getQuantityQNT()).thenReturn(balanceNQT);
     Collection<AccountAsset> mockAssetOverview = mockCollection(mockAccountAsset);
-    when(accountServiceMock.getAssets(eq(mockAccountId), eq(0), eq(-1))).thenReturn(mockAssetOverview);
+    when(accountServiceMock.getAssets(eq(mockAccountId), eq(0), eq(-1)))
+        .thenReturn(mockAssetOverview);
 
     final JsonObject response = (JsonObject) t.processRequest(req);
     assertEquals("01", JSON.getAsString(response.get(PUBLIC_KEY_RESPONSE)));
@@ -85,11 +85,15 @@ public class GetAccountTest extends AbstractUnitTest {
     assertEquals("" + mockAssetId, JSON.getAsString(balanceResponse.get(ASSET_RESPONSE)));
     assertEquals("" + balanceNQT, JSON.getAsString(balanceResponse.get(BALANCE_QNT_RESPONSE)));
 
-    final JsonArray unconfirmedBalanceResponses = (JsonArray) response.get(UNCONFIRMED_ASSET_BALANCES_RESPONSE);
+    final JsonArray unconfirmedBalanceResponses =
+        (JsonArray) response.get(UNCONFIRMED_ASSET_BALANCES_RESPONSE);
     assertNotNull(unconfirmedBalanceResponses);
     assertEquals(1, unconfirmedBalanceResponses.size());
     final JsonObject unconfirmedBalanceResponse = (JsonObject) unconfirmedBalanceResponses.get(0);
-    assertEquals("" + mockAssetId, JSON.getAsString(unconfirmedBalanceResponse.get(ASSET_RESPONSE)));
-    assertEquals("" + mockUnconfirmedQuantityNQT, JSON.getAsString(unconfirmedBalanceResponse.get(UNCONFIRMED_BALANCE_QNT_RESPONSE)));
+    assertEquals(
+        "" + mockAssetId, JSON.getAsString(unconfirmedBalanceResponse.get(ASSET_RESPONSE)));
+    assertEquals(
+        "" + mockUnconfirmedQuantityNQT,
+        JSON.getAsString(unconfirmedBalanceResponse.get(UNCONFIRMED_BALANCE_QNT_RESPONSE)));
   }
 }

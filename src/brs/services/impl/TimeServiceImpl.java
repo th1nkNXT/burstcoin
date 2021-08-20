@@ -24,5 +24,4 @@ public class TimeServiceImpl implements TimeService {
   public void setTime(FasterTime t) {
     time.set(t);
   }
-
 }

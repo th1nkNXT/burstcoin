@@ -21,7 +21,6 @@ import static brs.http.common.ResultFields.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-
 ;
 
 public class GetAllTradesTest extends AbstractUnitTest {
@@ -43,12 +42,12 @@ public class GetAllTradesTest extends AbstractUnitTest {
     final int firstIndex = 0;
     final int lastIndex = 1;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(TIMESTAMP_PARAMETER, timestamp),
-      new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-      new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-      new MockParam(INCLUDE_ASSET_INFO_PARAMETER, true)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(TIMESTAMP_PARAMETER, timestamp),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, true));
 
     final long mockAssetId = 123L;
     final String mockAssetName = "mockAssetName";
@@ -88,12 +87,12 @@ public class GetAllTradesTest extends AbstractUnitTest {
     final int firstIndex = 0;
     final int lastIndex = 1;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(TIMESTAMP_PARAMETER, timestamp),
-        new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
-        new MockParam(LAST_INDEX_PARAMETER, lastIndex),
-        new MockParam(INCLUDE_ASSET_INFO_PARAMETER, false)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(TIMESTAMP_PARAMETER, timestamp),
+            new MockParam(FIRST_INDEX_PARAMETER, firstIndex),
+            new MockParam(LAST_INDEX_PARAMETER, lastIndex),
+            new MockParam(INCLUDE_ASSET_INFO_PARAMETER, false));
 
     final long mockAssetId = 123L;
     final long priceNQT = 123L;
@@ -122,5 +121,4 @@ public class GetAllTradesTest extends AbstractUnitTest {
 
     verify(mockAssetExchange, never()).getAsset(eq(mockAssetId));
   }
-
 }

@@ -28,7 +28,11 @@ public class DBCacheManagerImpl {
     this.statisticsManager = statisticsManager;
     statisticsEnabled = true;
 
-    caches.put("account", CacheConfigurationBuilder.newCacheConfigurationBuilder(BurstKey.class, Account.class, ResourcePoolsBuilder.heap(8192)).build());
+    caches.put(
+        "account",
+        CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                BurstKey.class, Account.class, ResourcePoolsBuilder.heap(8192))
+            .build());
 
     CacheManagerBuilder cacheBuilder = CacheManagerBuilder.newCacheManagerBuilder();
     for (Map.Entry<String, CacheConfiguration<BurstKey, ?>> cache : caches.entrySet()) {
@@ -38,7 +42,7 @@ public class DBCacheManagerImpl {
   }
 
   public void close() {
-    if ( cacheManager.getStatus().equals(Status.AVAILABLE) ) {
+    if (cacheManager.getStatus().equals(Status.AVAILABLE)) {
       cacheManager.close();
     }
   }
@@ -54,9 +58,8 @@ public class DBCacheManagerImpl {
 
   public void flushCache() {
     for (Map.Entry<String, CacheConfiguration<BurstKey, ?>> cacheEntry : caches.entrySet()) {
-      Cache<?,?> cache = getEHCache(cacheEntry.getKey(), cacheEntry.getValue().getValueType());
-      if ( cache != null )
-        cache.clear();
+      Cache<?, ?> cache = getEHCache(cacheEntry.getKey(), cacheEntry.getValue().getValueType());
+      if (cache != null) cache.clear();
     }
   }
 }

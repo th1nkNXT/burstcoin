@@ -7,18 +7,17 @@ import brs.db.VersionedEntityTable;
 
 import java.util.Collection;
 
-/**
- * Interface for Database operations related to Accounts
- */
+/** Interface for Database operations related to Accounts */
 public interface AccountStore {
 
   VersionedBatchEntityTable<Account> getAccountTable();
-  
+
   long getAllAccountsBalance();
 
   VersionedEntityTable<Account.RewardRecipientAssignment> getRewardRecipientAssignmentTable();
 
-  BurstKey.LongKeyFactory<Account.RewardRecipientAssignment> getRewardRecipientAssignmentKeyFactory();
+  BurstKey.LongKeyFactory<Account.RewardRecipientAssignment>
+      getRewardRecipientAssignmentKeyFactory();
 
   BurstKey.LinkKeyFactory<Account.AccountAsset> getAccountAssetKeyFactory();
 

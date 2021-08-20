@@ -39,5 +39,4 @@ public class GetTimeTest {
 
     assertEquals(currentEpochTime, JSON.getAsInt(result.get(TIME_RESPONSE)));
   }
-
 }

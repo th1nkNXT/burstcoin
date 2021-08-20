@@ -25,7 +25,13 @@ public final class DecryptFrom extends APIServlet.JsonRequestHandler {
   private final ParameterService parameterService;
 
   DecryptFrom(ParameterService parameterService) {
-    super(new APITag[]{APITag.MESSAGES}, ACCOUNT_PARAMETER, DATA_PARAMETER, NONCE_PARAMETER, DECRYPTED_MESSAGE_IS_TEXT_PARAMETER, SECRET_PHRASE_PARAMETER);
+    super(
+        new APITag[] {APITag.MESSAGES},
+        ACCOUNT_PARAMETER,
+        DATA_PARAMETER,
+        NONCE_PARAMETER,
+        DECRYPTED_MESSAGE_IS_TEXT_PARAMETER,
+        SECRET_PHRASE_PARAMETER);
     this.parameterService = parameterService;
   }
 
@@ -43,12 +49,13 @@ public final class DecryptFrom extends APIServlet.JsonRequestHandler {
     try {
       byte[] decrypted = account.decryptFrom(encryptedData, secretPhrase);
       JsonObject response = new JsonObject();
-      response.addProperty(DECRYPTED_MESSAGE_RESPONSE, isText ? Convert.toString(decrypted) : Convert.toHexString(decrypted));
+      response.addProperty(
+          DECRYPTED_MESSAGE_RESPONSE,
+          isText ? Convert.toString(decrypted) : Convert.toHexString(decrypted));
       return response;
     } catch (RuntimeException e) {
       logger.debug(e.toString());
       return DECRYPTION_FAILED;
     }
   }
-
 }

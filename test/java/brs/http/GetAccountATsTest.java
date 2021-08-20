@@ -25,7 +25,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 ;
 
 public class GetAccountATsTest {
@@ -54,8 +53,18 @@ public class GetAccountATsTest {
     when(mockAccount.getId()).thenReturn(mockAccountId);
 
     final long mockATId = 1L;
-    byte[] mockATIDBytes = new byte[ AtConstants.AT_ID_SIZE ];
-    byte[] creatorBytes = new byte[]{(byte) 'c', (byte) 'r', (byte) 'e', (byte) 'a', (byte) 't', (byte) 'o', (byte) 'r', (byte) 'r'};
+    byte[] mockATIDBytes = new byte[AtConstants.AT_ID_SIZE];
+    byte[] creatorBytes =
+        new byte[] {
+          (byte) 'c',
+          (byte) 'r',
+          (byte) 'e',
+          (byte) 'a',
+          (byte) 't',
+          (byte) 'o',
+          (byte) 'r',
+          (byte) 'r'
+        };
     final AtMachineState.MachineState mockMachineState = mock(AtMachineState.MachineState.class);
     final AT mockAT = mock(AT.class);
     when(mockAT.getCreator()).thenReturn(creatorBytes);
@@ -80,5 +89,4 @@ public class GetAccountATsTest {
     final JsonObject atsResult = (JsonObject) atsResultList.get(0);
     assertNotNull(atsResult);
   }
-
 }

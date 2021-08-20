@@ -22,7 +22,8 @@ class TransactionExpiry implements ExpiryPolicy<Long, Transaction> {
   }
 
   @Override
-  public Duration getExpiryForUpdate(Long key, Supplier<? extends Transaction> oldValue, Transaction newValue) {
+  public Duration getExpiryForUpdate(
+      Long key, Supplier<? extends Transaction> oldValue, Transaction newValue) {
     return Duration.ofSeconds((long) newValue.getExpiration() - time.getTime());
   }
 }

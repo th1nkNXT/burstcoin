@@ -28,7 +28,8 @@ public interface DigitalGoodsStoreStore {
 
   Collection<DigitalGoodsStore.Goods> getGoodsInStock(int from, int to);
 
-  Collection<DigitalGoodsStore.Goods> getSellerGoods(long sellerId, boolean inStockOnly, int from, int to);
+  Collection<DigitalGoodsStore.Goods> getSellerGoods(
+      long sellerId, boolean inStockOnly, int from, int to);
 
   Collection<DigitalGoodsStore.Purchase> getAllPurchases(int from, int to);
 
@@ -36,7 +37,8 @@ public interface DigitalGoodsStoreStore {
 
   Collection<DigitalGoodsStore.Purchase> getBuyerPurchases(long buyerId, int from, int to);
 
-  Collection<DigitalGoodsStore.Purchase> getSellerBuyerPurchases(long sellerId, long buyerId, int from, int to);
+  Collection<DigitalGoodsStore.Purchase> getSellerBuyerPurchases(
+      long sellerId, long buyerId, int from, int to);
 
   Collection<DigitalGoodsStore.Purchase> getPendingSellerPurchases(long sellerId, int from, int to);
 

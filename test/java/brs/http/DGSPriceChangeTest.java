@@ -48,9 +48,8 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
   public void processRequest() throws BurstException {
     final int priceNQTParameter = 5;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, priceNQTParameter)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, priceNQTParameter));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(1L);
@@ -65,10 +64,13 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
     when(parameterServiceMock.getGoods(eq(req))).thenReturn(mockGoods);
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.DigitalGoodsPriceChange attachment = (Attachment.DigitalGoodsPriceChange) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.DigitalGoodsPriceChange attachment =
+        (Attachment.DigitalGoodsPriceChange)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(PRICE_CHANGE, attachment.getTransactionType());
@@ -78,9 +80,8 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_goodsDelistedUnknownGoods() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123L)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, 123L));
 
     final Account mockAccount = mock(Account.class);
 
@@ -95,9 +96,8 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_goodsWrongSellerIdUnknownGoods() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PRICE_NQT_PARAMETER, 123L)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PRICE_NQT_PARAMETER, 123L));
 
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(1L);
@@ -111,5 +111,4 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
 
     assertEquals(UNKNOWN_GOODS, t.processRequest(req));
   }
-
 }

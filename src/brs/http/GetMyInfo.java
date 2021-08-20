@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 final class GetMyInfo extends APIServlet.JsonRequestHandler {
 
   static final GetMyInfo instance = new GetMyInfo();
-  
+
   private final String uuid;
 
   private GetMyInfo() {
     super(new APITag[] {APITag.INFO});
-    
+
     uuid = UUID.randomUUID().toString();
   }
 
@@ -28,5 +28,4 @@ final class GetMyInfo extends APIServlet.JsonRequestHandler {
     response.addProperty("UUID", uuid);
     return response;
   }
-
 }

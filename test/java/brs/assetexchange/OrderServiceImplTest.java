@@ -120,7 +120,8 @@ public class OrderServiceImplTest {
 
     final Collection<Ask> mockAskIterator = mock(Collection.class);
 
-    when(orderStoreMock.getAskOrdersByAccount(eq(accountId), eq(from), eq(to))).thenReturn(mockAskIterator);
+    when(orderStoreMock.getAskOrdersByAccount(eq(accountId), eq(from), eq(to)))
+        .thenReturn(mockAskIterator);
 
     assertEquals(mockAskIterator, t.getAskOrdersByAccount(accountId, from, to));
   }
@@ -134,7 +135,8 @@ public class OrderServiceImplTest {
 
     final Collection<Ask> mockAskIterator = mock(Collection.class);
 
-    when(orderStoreMock.getAskOrdersByAccountAsset(eq(accountId), eq(assetId), eq(from), eq(to))).thenReturn(mockAskIterator);
+    when(orderStoreMock.getAskOrdersByAccountAsset(eq(accountId), eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockAskIterator);
 
     assertEquals(mockAskIterator, t.getAskOrdersByAccountAsset(accountId, assetId, from, to));
   }
@@ -174,7 +176,8 @@ public class OrderServiceImplTest {
 
     final Collection<Bid> mockBidIterator = mock(Collection.class);
 
-    when(orderStoreMock.getBidOrdersByAccount(eq(accountId), eq(from), eq(to))).thenReturn(mockBidIterator);
+    when(orderStoreMock.getBidOrdersByAccount(eq(accountId), eq(from), eq(to)))
+        .thenReturn(mockBidIterator);
 
     assertEquals(mockBidIterator, t.getBidOrdersByAccount(accountId, from, to));
   }
@@ -188,7 +191,8 @@ public class OrderServiceImplTest {
 
     final Collection<Bid> mockBidIterator = mock(Collection.class);
 
-    when(orderStoreMock.getBidOrdersByAccountAsset(eq(accountId), eq(assetId), eq(from), eq(to))).thenReturn(mockBidIterator);
+    when(orderStoreMock.getBidOrdersByAccountAsset(eq(accountId), eq(assetId), eq(from), eq(to)))
+        .thenReturn(mockBidIterator);
 
     assertEquals(mockBidIterator, t.getBidOrdersByAccountAsset(accountId, assetId, from, to));
   }

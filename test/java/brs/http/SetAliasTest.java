@@ -46,7 +46,9 @@ public class SetAliasTest extends AbstractTransactionTest {
     aliasServiceMock = mock(AliasService.class);
     apiTransactionManagerMock = mock(APITransactionManager.class);
 
-    t = new SetAlias(parameterServiceMock, blockchainMock, aliasServiceMock, apiTransactionManagerMock);
+    t =
+        new SetAlias(
+            parameterServiceMock, blockchainMock, aliasServiceMock, apiTransactionManagerMock);
   }
 
   @Test
@@ -54,16 +56,19 @@ public class SetAliasTest extends AbstractTransactionTest {
     final String aliasNameParameter = "aliasNameParameter";
     final String aliasUrl = "aliasUrl";
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ALIAS_NAME_PARAMETER, aliasNameParameter),
-        new MockParam(ALIAS_URI_PARAMETER, aliasUrl)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ALIAS_NAME_PARAMETER, aliasNameParameter),
+            new MockParam(ALIAS_URI_PARAMETER, aliasUrl));
 
     mockStatic(Burst.class);
-    final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
+    final FluxCapacitor fluxCapacitor =
+        QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
     when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.MessagingAliasAssignment attachment = (Attachment.MessagingAliasAssignment) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.MessagingAliasAssignment attachment =
+        (Attachment.MessagingAliasAssignment)
+            attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(ALIAS_ASSIGNMENT, attachment.getTransactionType());
@@ -73,31 +78,28 @@ public class SetAliasTest extends AbstractTransactionTest {
 
   @Test
   public void processRequest_missingAliasName() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ALIAS_NAME_PARAMETER, null),
-        new MockParam(ALIAS_URI_PARAMETER, "aliasUrl")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ALIAS_NAME_PARAMETER, null),
+            new MockParam(ALIAS_URI_PARAMETER, "aliasUrl"));
 
     assertEquals(MISSING_ALIAS_NAME, t.processRequest(req));
   }
 
   @Test
   public void processRequest_incorrectAliasLength_nameOnlySpaces() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ALIAS_NAME_PARAMETER, "  "),
-        new MockParam(ALIAS_URI_PARAMETER, null)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ALIAS_NAME_PARAMETER, "  "), new MockParam(ALIAS_URI_PARAMETER, null));
 
     assertEquals(INCORRECT_ALIAS_LENGTH, t.processRequest(req));
   }
 
-
   @Test
   public void processRequest_incorrectAliasLength_incorrectAliasName() throws BurstException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ALIAS_NAME_PARAMETER, "[]"),
-        new MockParam(ALIAS_URI_PARAMETER, null)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ALIAS_NAME_PARAMETER, "[]"), new MockParam(ALIAS_URI_PARAMETER, null));
 
     assertEquals(INCORRECT_ALIAS_NAME, t.processRequest(req));
   }
@@ -110,12 +112,11 @@ public class SetAliasTest extends AbstractTransactionTest {
       uriOver1000Characters.append("a");
     }
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ALIAS_NAME_PARAMETER, "name"),
-        new MockParam(ALIAS_URI_PARAMETER, uriOver1000Characters.toString())
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ALIAS_NAME_PARAMETER, "name"),
+            new MockParam(ALIAS_URI_PARAMETER, uriOver1000Characters.toString()));
 
     assertEquals(INCORRECT_URI_LENGTH, t.processRequest(req));
   }
-
 }

@@ -54,7 +54,16 @@ public class ParameterServiceImplTest {
     transactionProcessorMock = mock(TransactionProcessor.class);
     atServiceMock = mock(ATService.class);
 
-    t = new ParameterServiceImpl(accountServiceMock, aliasServiceMock, assetExchangeMock, dgsGoodsStoreServiceMock, blockchainMock, blockchainProcessorMock, transactionProcessorMock, atServiceMock);
+    t =
+        new ParameterServiceImpl(
+            accountServiceMock,
+            aliasServiceMock,
+            assetExchangeMock,
+            dgsGoodsStoreServiceMock,
+            blockchainMock,
+            blockchainProcessorMock,
+            transactionProcessorMock,
+            atServiceMock);
   }
 
   @Test
@@ -62,7 +71,8 @@ public class ParameterServiceImplTest {
     final String accountId = "123";
     final Account mockAccount = mock(Account.class);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
     when(accountServiceMock.getAccount(eq(123L))).thenReturn(mockAccount);
 
@@ -78,7 +88,8 @@ public class ParameterServiceImplTest {
   @Test(expected = ParameterException.class)
   public void getAccount_UnknownAccountWhenIdNotFound() throws BurstException {
     final String accountId = "123";
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
     when(accountServiceMock.getAccount(eq(123L))).thenReturn(null);
 
@@ -88,7 +99,8 @@ public class ParameterServiceImplTest {
   @Test(expected = ParameterException.class)
   public void getAccount_IncorrectAccountWhenRuntimeExceptionOccurs() throws BurstException {
     final String accountId = "123";
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
     when(accountServiceMock.getAccount(eq(123L))).thenThrow(new RuntimeException());
 
@@ -100,7 +112,7 @@ public class ParameterServiceImplTest {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     final String accountID1 = "123";
     final String accountID2 = "321";
-    final String[] accountIds = new String[]{accountID1, accountID2};
+    final String[] accountIds = new String[] {accountID1, accountID2};
 
     when(req.getParameterValues(eq(ACCOUNT_PARAMETER))).thenReturn(accountIds);
 
@@ -121,7 +133,7 @@ public class ParameterServiceImplTest {
   @Test
   public void getAccounts_emptyResultWhenEmptyAccountValueGiven() throws ParameterException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    final String[] accountIds = new String[]{""};
+    final String[] accountIds = new String[] {""};
 
     when(req.getParameterValues(eq(ACCOUNT_PARAMETER))).thenReturn(accountIds);
 
@@ -134,7 +146,7 @@ public class ParameterServiceImplTest {
   @Test
   public void getAccounts_emptyResultWhenNullAccountValueGiven() throws ParameterException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
-    final String[] accountIds = new String[]{null};
+    final String[] accountIds = new String[] {null};
 
     when(req.getParameterValues(eq(ACCOUNT_PARAMETER))).thenReturn(accountIds);
 
@@ -143,7 +155,6 @@ public class ParameterServiceImplTest {
     assertNotNull(result);
     assertTrue(result.isEmpty());
   }
-
 
   @Test(expected = ParameterException.class)
   public void getAccounts_missingAccountWhenNoParametersNull() throws ParameterException {
@@ -167,7 +178,7 @@ public class ParameterServiceImplTest {
   public void getAccounts_unknownAccountWhenNotFound() throws ParameterException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     final String accountID1 = "123";
-    final String[] accountIds = new String[]{accountID1};
+    final String[] accountIds = new String[] {accountID1};
 
     when(req.getParameterValues(eq(ACCOUNT_PARAMETER))).thenReturn(accountIds);
 
@@ -180,7 +191,7 @@ public class ParameterServiceImplTest {
   public void getAccounts_incorrectAccountWhenRuntimeExceptionOccurs() throws ParameterException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     final String accountID1 = "123";
-    final String[] accountIds = new String[]{accountID1};
+    final String[] accountIds = new String[] {accountID1};
 
     when(req.getParameterValues(eq(ACCOUNT_PARAMETER))).thenReturn(accountIds);
 
@@ -192,11 +203,13 @@ public class ParameterServiceImplTest {
   @Test
   public void getSenderAccount_withSecretPhrase() throws ParameterException {
     final String secretPhrase = TEST_SECRET_PHRASE;
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(SECRET_PHRASE_PARAMETER, secretPhrase));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(SECRET_PHRASE_PARAMETER, secretPhrase));
 
     final Account mockAccount = mock(Account.class);
 
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(secretPhrase)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(secretPhrase))))
+        .thenReturn(mockAccount);
 
     assertEquals(mockAccount, t.getSenderAccount(req));
   }
@@ -204,21 +217,26 @@ public class ParameterServiceImplTest {
   @Test
   public void getSenderAccount_withPublicKey() throws ParameterException {
     final String publicKey = "123";
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
 
     final Account mockAccount = mock(Account.class);
 
-    when(accountServiceMock.getAccount(eq(Convert.parseHexString(publicKey)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Convert.parseHexString(publicKey))))
+        .thenReturn(mockAccount);
 
     assertEquals(mockAccount, t.getSenderAccount(req));
   }
 
   @Test(expected = ParameterException.class)
-  public void getSenderAccount_withPublicKey_runtimeExceptionGivesParameterException() throws ParameterException {
+  public void getSenderAccount_withPublicKey_runtimeExceptionGivesParameterException()
+      throws ParameterException {
     final String publicKey = "123";
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
 
-    when(accountServiceMock.getAccount(eq(Convert.parseHexString(publicKey)))).thenThrow(new RuntimeException());
+    when(accountServiceMock.getAccount(eq(Convert.parseHexString(publicKey))))
+        .thenThrow(new RuntimeException());
 
     t.getSenderAccount(req);
   }
@@ -232,7 +250,8 @@ public class ParameterServiceImplTest {
   @Test(expected = ParameterException.class)
   public void getSenderAccount_noAccountFoundResultsInUnknownAccount() throws ParameterException {
     final String publicKey = "123";
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PUBLIC_KEY_PARAMETER, publicKey));
 
     when(accountServiceMock.getAccount(eq(Convert.parseHexString(publicKey)))).thenReturn(null);
 
@@ -243,7 +262,8 @@ public class ParameterServiceImplTest {
   public void getAliasByAliasId() throws ParameterException {
     final Alias mockAlias = mock(Alias.class);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ALIAS_PARAMETER, "123"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ALIAS_PARAMETER, "123"));
 
     when(aliasServiceMock.getAlias(eq(123L))).thenReturn(mockAlias);
 
@@ -254,7 +274,8 @@ public class ParameterServiceImplTest {
   public void getAliasByAliasName() throws ParameterException {
     final Alias mockAlias = mock(Alias.class);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ALIAS_NAME_PARAMETER, "aliasName"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ALIAS_NAME_PARAMETER, "aliasName"));
 
     when(aliasServiceMock.getAlias(eq("aliasName"))).thenReturn(mockAlias);
 
@@ -267,7 +288,8 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getAlias_noAliasOrAliasNameGivenIsMissingAliasOrAliasName() throws ParameterException {
+  public void getAlias_noAliasOrAliasNameGivenIsMissingAliasOrAliasName()
+      throws ParameterException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     t.getAlias(req);
   }
@@ -276,7 +298,8 @@ public class ParameterServiceImplTest {
   public void noAliasFoundIsUnknownAlias() throws ParameterException {
     final Alias mockAlias = mock(Alias.class);
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ALIAS_PARAMETER, "123"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ALIAS_PARAMETER, "123"));
 
     when(aliasServiceMock.getAlias(eq(123L))).thenReturn(null);
 
@@ -285,7 +308,8 @@ public class ParameterServiceImplTest {
 
   @Test
   public void getAsset() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ASSET_PARAMETER, "123"));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ASSET_PARAMETER, "123"));
 
     final Asset mockAsset = mock(Asset.class);
 
@@ -313,9 +337,8 @@ public class ParameterServiceImplTest {
 
   @Test
   public void getGoods() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(GOODS_PARAMETER, "1")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(GOODS_PARAMETER, "1"));
 
     final DigitalGoodsStore.Goods mockGoods = mock(DigitalGoodsStore.Goods.class);
 
@@ -331,9 +354,8 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getGoods_unknownGoods() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(GOODS_PARAMETER, "1")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(GOODS_PARAMETER, "1"));
 
     when(dgsGoodsStoreServiceMock.getGoods(eq(1L))).thenReturn(null);
 
@@ -342,18 +364,16 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getGoods_incorrectGoods() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(GOODS_PARAMETER, "notANumber")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(GOODS_PARAMETER, "notANumber"));
 
     t.getGoods(req);
   }
 
   @Test
   public void getPurchase() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PURCHASE_PARAMETER, "1")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PURCHASE_PARAMETER, "1"));
 
     final DigitalGoodsStore.Purchase mockPurchase = mock(DigitalGoodsStore.Purchase.class);
 
@@ -369,9 +389,8 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getPurchase_unknownPurchase() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PURCHASE_PARAMETER, "1")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PURCHASE_PARAMETER, "1"));
 
     when(dgsGoodsStoreServiceMock.getPurchase(eq(1L))).thenReturn(null);
 
@@ -380,36 +399,39 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getPurchase_incorrectPurchase() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(PURCHASE_PARAMETER, "notANumber")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(PURCHASE_PARAMETER, "notANumber"));
 
     t.getPurchase(req);
   }
 
   @Test
   public void getEncryptMessage_isNotText() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "beef123"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "beef123"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
 
     final Account mockRecipientAccount = mock(Account.class);
     when(mockRecipientAccount.getPublicKey()).thenReturn(new byte[0]);
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
-    when(mockRecipientAccount.encryptTo(eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE))).thenReturn(encryptedDataMock);
+    when(mockRecipientAccount.encryptTo(
+            eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE)))
+        .thenReturn(encryptedDataMock);
 
     assertEquals(encryptedDataMock, t.getEncryptedMessage(req, mockRecipientAccount, null));
   }
 
   @Test(expected = ParameterException.class)
   public void getEncryptMessage_missingRecipientParameterException() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "beef123"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "beef123"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
@@ -418,26 +440,29 @@ public class ParameterServiceImplTest {
 
   @Test
   public void getEncryptMessage_isText() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "message"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "true"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "message"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "true"));
 
     final Account mockRecipientAccount = mock(Account.class);
     when(mockRecipientAccount.getPublicKey()).thenReturn(new byte[0]);
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
-    when(mockRecipientAccount.encryptTo(eq(Convert.toBytes("message")), eq(TEST_SECRET_PHRASE))).thenReturn(encryptedDataMock);
+    when(mockRecipientAccount.encryptTo(eq(Convert.toBytes("message")), eq(TEST_SECRET_PHRASE)))
+        .thenReturn(encryptedDataMock);
 
     assertEquals(encryptedDataMock, t.getEncryptedMessage(req, mockRecipientAccount, null));
   }
 
   @Test
   public void getEncryptMessage_encryptMessageAndNonce() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ENCRYPTED_MESSAGE_DATA_PARAMETER, "abc"),
-        new MockParam(ENCRYPTED_MESSAGE_NONCE_PARAMETER, "123"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ENCRYPTED_MESSAGE_DATA_PARAMETER, "abc"),
+            new MockParam(ENCRYPTED_MESSAGE_NONCE_PARAMETER, "123"));
 
     EncryptedData result = t.getEncryptedMessage(req, null, null);
 
@@ -446,23 +471,28 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getEncryptMessage_encryptMessageAndNonce_runtimeExceptionIncorrectEncryptedMessage() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ENCRYPTED_MESSAGE_DATA_PARAMETER, "zz"),
-        new MockParam(ENCRYPTED_MESSAGE_NONCE_PARAMETER, "123"));
+  public void getEncryptMessage_encryptMessageAndNonce_runtimeExceptionIncorrectEncryptedMessage()
+      throws ParameterException {
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ENCRYPTED_MESSAGE_DATA_PARAMETER, "zz"),
+            new MockParam(ENCRYPTED_MESSAGE_NONCE_PARAMETER, "123"));
 
     t.getEncryptedMessage(req, null, null);
   }
 
   @Test(expected = ParameterException.class)
-  public void getEncryptMessage_encryptionRuntimeExceptionParameterException() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "invalidHexNumber"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
+  public void getEncryptMessage_encryptionRuntimeExceptionParameterException()
+      throws ParameterException {
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_PARAMETER, "invalidHexNumber"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_IS_TEXT_PARAMETER, "false"));
 
     final Account mockAccount = mock(Account.class);
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE))))
+        .thenReturn(mockAccount);
 
     t.getEncryptedMessage(req, mockAccount, null);
   }
@@ -474,60 +504,71 @@ public class ParameterServiceImplTest {
 
   @Test
   public void getEncryptToSelfMessage_isNotText() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "beef123"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "beef123"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
 
     final Account mockAccount = mock(Account.class);
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE))))
+        .thenReturn(mockAccount);
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
-    when(mockAccount.encryptTo(eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE))).thenReturn(encryptedDataMock);
+    when(mockAccount.encryptTo(eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE)))
+        .thenReturn(encryptedDataMock);
 
     assertEquals(encryptedDataMock, t.getEncryptToSelfMessage(req));
   }
 
   @Test(expected = ParameterException.class)
-  public void getEncryptToSelfMessage_isNotText_notHexParameterException() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "zzz"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
+  public void getEncryptToSelfMessage_isNotText_notHexParameterException()
+      throws ParameterException {
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "zzz"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
 
     final Account mockAccount = mock(Account.class);
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE))))
+        .thenReturn(mockAccount);
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
-    when(mockAccount.encryptTo(eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE))).thenReturn(encryptedDataMock);
+    when(mockAccount.encryptTo(eq(Convert.parseHexString("beef123")), eq(TEST_SECRET_PHRASE)))
+        .thenReturn(encryptedDataMock);
 
     assertEquals(encryptedDataMock, t.getEncryptToSelfMessage(req));
   }
 
   @Test
   public void getEncryptToSelfMessage_encryptMessageToSelf_isText() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "message"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "true"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "message"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "true"));
 
     final Account mockAccount = mock(Account.class);
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE))))
+        .thenReturn(mockAccount);
 
     EncryptedData encryptedDataMock = mock(EncryptedData.class);
 
-    when(mockAccount.encryptTo(eq(Convert.toBytes("message")), eq(TEST_SECRET_PHRASE))).thenReturn(encryptedDataMock);
+    when(mockAccount.encryptTo(eq(Convert.toBytes("message")), eq(TEST_SECRET_PHRASE)))
+        .thenReturn(encryptedDataMock);
 
     assertEquals(encryptedDataMock, t.getEncryptToSelfMessage(req));
   }
 
   @Test
   public void getEncryptToSelfMessage_encryptMessageAndNonce() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ENCRYPT_TO_SELF_MESSAGE_DATA, "abc"),
-        new MockParam(ENCRYPT_TO_SELF_MESSAGE_NONCE, "123"));
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ENCRYPT_TO_SELF_MESSAGE_DATA, "abc"),
+            new MockParam(ENCRYPT_TO_SELF_MESSAGE_NONCE, "123"));
 
     EncryptedData result = t.getEncryptToSelfMessage(req);
 
@@ -536,35 +577,43 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getEncryptToSelfMessage_encryptMessageAndNonce_runtimeExceptionIncorrectEncryptedMessage() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(ENCRYPT_TO_SELF_MESSAGE_DATA, "zz"),
-        new MockParam(ENCRYPT_TO_SELF_MESSAGE_NONCE, "123"));
+  public void
+      getEncryptToSelfMessage_encryptMessageAndNonce_runtimeExceptionIncorrectEncryptedMessage()
+          throws ParameterException {
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(ENCRYPT_TO_SELF_MESSAGE_DATA, "zz"),
+            new MockParam(ENCRYPT_TO_SELF_MESSAGE_NONCE, "123"));
 
     t.getEncryptToSelfMessage(req);
   }
 
   @Test(expected = ParameterException.class)
-  public void getEncryptToSelfMessage_encryptionRuntimeExceptionParameterException() throws ParameterException {
-    HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "invalidHexNumber"),
-        new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
-        new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
+  public void getEncryptToSelfMessage_encryptionRuntimeExceptionParameterException()
+      throws ParameterException {
+    HttpServletRequest req =
+        QuickMocker.httpServletRequest(
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_PARAMETER, "invalidHexNumber"),
+            new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE),
+            new MockParam(MESSAGE_TO_ENCRYPT_TO_SELF_IS_TEXT_PARAMETER, "false"));
 
     final Account mockAccount = mock(Account.class);
-    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE)))).thenReturn(mockAccount);
+    when(accountServiceMock.getAccount(eq(Crypto.getPublicKey(TEST_SECRET_PHRASE))))
+        .thenReturn(mockAccount);
 
     t.getEncryptToSelfMessage(req);
   }
 
   @Test
-  public void getEncryptToSelfMessage_messageToSelf_messageNullReturnsNull() throws ParameterException {
+  public void getEncryptToSelfMessage_messageToSelf_messageNullReturnsNull()
+      throws ParameterException {
     assertNull(t.getEncryptToSelfMessage(QuickMocker.httpServletRequest()));
   }
 
   @Test
   public void getSecretPhrase() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE));
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(SECRET_PHRASE_PARAMETER, TEST_SECRET_PHRASE));
 
     assertEquals(TEST_SECRET_PHRASE, t.getSecretPhrase(req));
   }
@@ -577,7 +626,10 @@ public class ParameterServiceImplTest {
   @Test
   public void getNumberOfConfirmations() throws ParameterException {
     when(blockchainMock.getHeight()).thenReturn(6);
-    assertEquals(5, t.getNumberOfConfirmations(QuickMocker.httpServletRequest(new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "5"))));
+    assertEquals(
+        5,
+        t.getNumberOfConfirmations(
+            QuickMocker.httpServletRequest(new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "5"))));
   }
 
   @Test
@@ -586,21 +638,30 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getNumberOfConfirmations_wrongFormatNumberOfConfirmationsParameterException() throws ParameterException {
-    t.getNumberOfConfirmations(QuickMocker.httpServletRequest(new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "noNumber")));
+  public void getNumberOfConfirmations_wrongFormatNumberOfConfirmationsParameterException()
+      throws ParameterException {
+    t.getNumberOfConfirmations(
+        QuickMocker.httpServletRequest(
+            new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "noNumber")));
   }
 
   @Test(expected = ParameterException.class)
-  public void getNumberOfConfirmations_numberOfConfirmationsBiggerThanBlockchainHeightParameterException() throws ParameterException {
+  public void
+      getNumberOfConfirmations_numberOfConfirmationsBiggerThanBlockchainHeightParameterException()
+          throws ParameterException {
     when(blockchainMock.getHeight()).thenReturn(4);
-    assertEquals(5, t.getNumberOfConfirmations(QuickMocker.httpServletRequest(new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "5"))));
+    assertEquals(
+        5,
+        t.getNumberOfConfirmations(
+            QuickMocker.httpServletRequest(new MockParam(NUMBER_OF_CONFIRMATIONS_PARAMETER, "5"))));
   }
 
   @Test
   public void getHeight() throws ParameterException {
     when(blockchainMock.getHeight()).thenReturn(6);
     when(blockchainProcessorMock.getMinRollbackHeight()).thenReturn(4);
-    assertEquals(5, t.getHeight(QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "5"))));
+    assertEquals(
+        5, t.getHeight(QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "5"))));
   }
 
   @Test
@@ -610,7 +671,8 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getHeight_wrongFormatHeightParameterException() throws ParameterException {
-    assertEquals(-1, t.getHeight(QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "five"))));
+    assertEquals(
+        -1, t.getHeight(QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "five"))));
   }
 
   @Test(expected = ParameterException.class)
@@ -619,7 +681,8 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getHeight_heightGreaterThanBlockchainHeightParameterException() throws ParameterException {
+  public void getHeight_heightGreaterThanBlockchainHeightParameterException()
+      throws ParameterException {
     when(blockchainMock.getHeight()).thenReturn(5);
     t.getHeight(QuickMocker.httpServletRequest(new MockParam(HEIGHT_PARAMETER, "6")));
   }
@@ -641,13 +704,16 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void parseTransaction_transactionBytes_validationExceptionParseHexStringOccurs() throws ParameterException {
+  public void parseTransaction_transactionBytes_validationExceptionParseHexStringOccurs()
+      throws ParameterException {
     t.parseTransaction("ZZZ", null);
   }
 
   @Test(expected = ParameterException.class)
-  public void parseTransaction_transactionBytes_runTimeExceptionOccurs() throws ValidationException, ParameterException {
-    when(transactionProcessorMock.parseTransaction(any(byte[].class))).thenThrow(new RuntimeException());
+  public void parseTransaction_transactionBytes_runTimeExceptionOccurs()
+      throws ValidationException, ParameterException {
+    when(transactionProcessorMock.parseTransaction(any(byte[].class)))
+        .thenThrow(new RuntimeException());
 
     t.parseTransaction("123", null);
   }
@@ -656,27 +722,33 @@ public class ParameterServiceImplTest {
   public void parseTransaction_transactionJSON() throws ValidationException, ParameterException {
     final Transaction mockTransaction = mock(Transaction.class);
 
-    when(transactionProcessorMock.parseTransaction(any(JsonObject.class))).thenReturn(mockTransaction);
+    when(transactionProcessorMock.parseTransaction(any(JsonObject.class)))
+        .thenReturn(mockTransaction);
 
     assertEquals(mockTransaction, t.parseTransaction(null, "{}"));
   }
 
   @Test(expected = ParameterException.class)
-  public void parseTransaction_transactionJSON_validationExceptionOccurs() throws ParameterException, ValidationException {
-    when(transactionProcessorMock.parseTransaction(any(JsonObject.class))).thenThrow(new BurstException.NotValidException(""));
+  public void parseTransaction_transactionJSON_validationExceptionOccurs()
+      throws ParameterException, ValidationException {
+    when(transactionProcessorMock.parseTransaction(any(JsonObject.class)))
+        .thenThrow(new BurstException.NotValidException(""));
 
     t.parseTransaction(null, "{}");
   }
 
   @Test(expected = ParameterException.class)
-  public void parseTransaction_transactionJSON_runTimeExceptionOccurs() throws ParameterException, ValidationException {
-    when(transactionProcessorMock.parseTransaction(any(JsonObject.class))).thenThrow(new RuntimeException());
+  public void parseTransaction_transactionJSON_runTimeExceptionOccurs()
+      throws ParameterException, ValidationException {
+    when(transactionProcessorMock.parseTransaction(any(JsonObject.class)))
+        .thenThrow(new RuntimeException());
 
     t.parseTransaction(null, "{}");
   }
 
   @Test(expected = ParameterException.class)
-  public void parseTransaction_transactionJSON_parseExceptionTransactionProcessorOccurs() throws ParameterException {
+  public void parseTransaction_transactionJSON_parseExceptionTransactionProcessorOccurs()
+      throws ParameterException {
     t.parseTransaction(null, "badJson");
   }
 
@@ -689,9 +761,8 @@ public class ParameterServiceImplTest {
   public void getAT() throws ParameterException {
     final long atId = 123L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(AT_PARAMETER, atId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(AT_PARAMETER, atId));
 
     final AT mockAT = mock(AT.class);
 
@@ -710,9 +781,8 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void getAT_incorrectAT() throws ParameterException {
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(AT_PARAMETER, "notLongId")
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(AT_PARAMETER, "notLongId"));
 
     t.getAT(req);
   }
@@ -721,13 +791,11 @@ public class ParameterServiceImplTest {
   public void getAT_unknownAT() throws ParameterException {
     final long atId = 123L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-        new MockParam(AT_PARAMETER, atId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(AT_PARAMETER, atId));
 
     when(atServiceMock.getAT(eq(atId))).thenReturn(null);
 
     t.getAT(req);
   }
-
 }

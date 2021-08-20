@@ -10,7 +10,6 @@ final class GetPeers implements PeerServlet.PeerRequestHandler {
 
   private GetPeers() {}
 
-
   @Override
   public JsonElement processRequest(JsonObject request, Peer peer) {
 
@@ -19,17 +18,16 @@ final class GetPeers implements PeerServlet.PeerRequestHandler {
     JsonArray peers = new JsonArray();
     for (Peer otherPeer : Peers.getAllPeers()) {
 
-      if (! otherPeer.isBlacklisted() && otherPeer.getAnnouncedAddress() != null
-          && otherPeer.getState() == Peer.State.CONNECTED && otherPeer.shareAddress()) {
+      if (!otherPeer.isBlacklisted()
+          && otherPeer.getAnnouncedAddress() != null
+          && otherPeer.getState() == Peer.State.CONNECTED
+          && otherPeer.shareAddress()) {
 
         peers.add(otherPeer.getAnnouncedAddress());
-
       }
-
     }
     response.add("peers", peers);
 
     return response;
   }
-
 }

@@ -40,11 +40,18 @@ public class GeneratorImpl implements Generator {
   private final AccountService accountService;
   private final TimeService timeService;
   private final FluxCapacitor fluxCapacitor;
-  
-  private static final double LN_SCALE = ((double) Constants.BURST_BLOCK_TIME) / Math.log((double) Constants.BURST_BLOCK_TIME);
-  // private static final double LN_SCALE = 49d; // value that would keep the legacy network size estimation close to real capacity
 
-  public GeneratorImpl(Blockchain blockchain, DownloadCacheImpl downloadCache, AccountService accountService, TimeService timeService, FluxCapacitor fluxCapacitor) {
+  private static final double LN_SCALE =
+      ((double) Constants.BURST_BLOCK_TIME) / Math.log((double) Constants.BURST_BLOCK_TIME);
+  // private static final double LN_SCALE = 49d; // value that would keep the legacy network size
+  // estimation close to real capacity
+
+  public GeneratorImpl(
+      Blockchain blockchain,
+      DownloadCacheImpl downloadCache,
+      AccountService accountService,
+      TimeService timeService,
+      FluxCapacitor fluxCapacitor) {
     this.blockchain = blockchain;
     this.downloadCache = downloadCache;
     this.accountService = accountService;
@@ -60,7 +67,9 @@ public class GeneratorImpl implements Generator {
       try {
         long currentBlock = blockchain.getLastBlock().getHeight();
         Iterator<Entry<Long, GeneratorStateImpl>> it = generators.entrySet().iterator();
-        while (it.hasNext() && !Thread.currentThread().isInterrupted() && ThreadPool.running.get()) {
+        while (it.hasNext()
+            && !Thread.currentThread().isInterrupted()
+            && ThreadPool.running.get()) {
           Entry<Long, GeneratorStateImpl> generator = it.next();
           if (currentBlock < generator.getValue().getBlock()) {
             generator.getValue().forge(blockchainProcessor);
@@ -75,8 +84,10 @@ public class GeneratorImpl implements Generator {
   }
 
   @Override
-  public void generateForBlockchainProcessor(ThreadPool threadPool, BlockchainProcessor blockchainProcessor) {
-    threadPool.scheduleThread("GenerateBlocks", generateBlockThread(blockchainProcessor), 500, TimeUnit.MILLISECONDS);
+  public void generateForBlockchainProcessor(
+      ThreadPool threadPool, BlockchainProcessor blockchainProcessor) {
+    threadPool.scheduleThread(
+        "GenerateBlocks", generateBlockThread(blockchainProcessor), 500, TimeUnit.MILLISECONDS);
   }
 
   @Override
@@ -102,11 +113,16 @@ public class GeneratorImpl implements Generator {
 
     GeneratorStateImpl generator = new GeneratorStateImpl(secretPhrase, nonce, publicKey, id);
     GeneratorStateImpl curGen = generators.get(id);
-    if (curGen == null || generator.getBlock() > curGen.getBlock() || generator.getDeadline().compareTo(curGen.getDeadline()) < 0) {
+    if (curGen == null
+        || generator.getBlock() > curGen.getBlock()
+        || generator.getDeadline().compareTo(curGen.getDeadline()) < 0) {
       generators.put(id, generator);
       listeners.notify(generator, Event.NONCE_SUBMITTED);
       if (logger.isDebugEnabled()) {
-        logger.debug("Account {} started mining, deadline {} seconds", Convert.toUnsignedLong(id), generator.getDeadline());
+        logger.debug(
+            "Account {} started mining, deadline {} seconds",
+            Convert.toUnsignedLong(id),
+            generator.getDeadline());
       }
     } else {
       if (logger.isDebugEnabled()) {
@@ -137,7 +153,8 @@ public class GeneratorImpl implements Generator {
   }
 
   @Override
-  public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
+  public BigInteger calculateHit(
+      long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
     return burstCrypto.calculateHit(accountId, nonce, genSig, scoop, getPocVersion(blockHeight));
   }
 
@@ -145,11 +162,11 @@ public class GeneratorImpl implements Generator {
   public BigInteger calculateHit(byte[] genSig, byte[] scoopData) {
     return burstCrypto.calculateHit(genSig, scoopData);
   }
-  
+
   @Override
   public double getCommitmentFactor(long commitment, long averageCommitment, int blockHeight) {
-    if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
-      double commitmentFactor = ((double)commitment)/averageCommitment;
+    if (fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
+      double commitmentFactor = ((double) commitment) / averageCommitment;
       commitmentFactor = Math.pow(commitmentFactor, 0.4515449935);
       commitmentFactor = Math.min(8.0, commitmentFactor);
       commitmentFactor = Math.max(0.125, commitmentFactor);
@@ -160,23 +177,28 @@ public class GeneratorImpl implements Generator {
   }
 
   @Override
-  public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
+  public BigInteger calculateDeadline(
+      BigInteger hit,
+      long capacityBaseTarget,
+      long commitment,
+      long averageCommitment,
+      int blockHeight) {
     BigInteger deadline = hit.divide(BigInteger.valueOf(capacityBaseTarget));
-    if(fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
+    if (fluxCapacitor.getValue(FluxValues.POC_PLUS, blockHeight)) {
       double commitmentFactor = getCommitmentFactor(commitment, averageCommitment, blockHeight);
-      
-      double nextDeadline = deadline.doubleValue()/commitmentFactor;
-      if(nextDeadline > 0) {
+
+      double nextDeadline = deadline.doubleValue() / commitmentFactor;
+      if (nextDeadline > 0) {
         // Avoid zero logarithm
         nextDeadline = Math.log(nextDeadline) * LN_SCALE;
       }
-      deadline = BigInteger.valueOf((long)(nextDeadline));
-    }
-    else if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
-      if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
-    	  // Avoid the double precision limit for extremely large numbers (of no value) and zero logarithm
-    	  double sodiumDeadline = Math.log(deadline.doubleValue()) * LN_SCALE;
-    	  deadline = BigInteger.valueOf((long)sodiumDeadline);
+      deadline = BigInteger.valueOf((long) (nextDeadline));
+    } else if (fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
+      if (deadline.bitLength() < 100 && deadline.longValue() > 0L) {
+        // Avoid the double precision limit for extremely large numbers (of no value) and zero
+        // logarithm
+        double sodiumDeadline = Math.log(deadline.doubleValue()) * LN_SCALE;
+        deadline = BigInteger.valueOf((long) sodiumDeadline);
       }
     }
     return deadline;
@@ -195,7 +217,8 @@ public class GeneratorImpl implements Generator {
     private GeneratorStateImpl(String secretPhrase, Long nonce, byte[] publicKey, Long account) {
       this.secretPhrase = secretPhrase;
       this.publicKey = publicKey;
-      // need to store publicKey in addition to accountId, because the account may not have had its publicKey set yet
+      // need to store publicKey in addition to accountId, because the account may not have had its
+      // publicKey set yet
       this.accountId = account;
       this.nonce = nonce;
 
@@ -213,11 +236,17 @@ public class GeneratorImpl implements Generator {
       baseTarget = lastBlock.getCapacityBaseTarget();
       hit = calculateHit(accountId, nonce, newGenSig, scoopNum, lastBlock.getHeight() + 1);
       long commitmment = 0L;
-      if(fluxCapacitor.getValue(FluxValues.POC_PLUS, lastBlock.getHeight() + 1)) {
+      if (fluxCapacitor.getValue(FluxValues.POC_PLUS, lastBlock.getHeight() + 1)) {
         commitmment = estimateCommitment(accountId, lastBlock);
       }
-      
-      deadline = calculateDeadline(hit, baseTarget, commitmment, lastBlock.getAverageCommitment(), lastBlock.getHeight() + 1);
+
+      deadline =
+          calculateDeadline(
+              hit,
+              baseTarget,
+              commitmment,
+              lastBlock.getAverageCommitment(),
+              lastBlock.getHeight() + 1);
     }
 
     @Override
@@ -234,7 +263,7 @@ public class GeneratorImpl implements Generator {
     public BigInteger getDeadline() {
       return deadline;
     }
-    
+
     @Override
     public BigInteger getDeadlineLegacy() {
       return hit.divide(BigInteger.valueOf(baseTarget));
@@ -245,7 +274,8 @@ public class GeneratorImpl implements Generator {
       return block;
     }
 
-    private void forge(BlockchainProcessor blockchainProcessor) throws BlockchainProcessor.BlockNotAcceptedException {
+    private void forge(BlockchainProcessor blockchainProcessor)
+        throws BlockchainProcessor.BlockNotAcceptedException {
       Block lastBlock = blockchain.getLastBlock();
 
       int elapsedTime = timeService.getEpochTime() - lastBlock.getTimestamp();
@@ -257,13 +287,19 @@ public class GeneratorImpl implements Generator {
 
   public static class MockGenerator extends GeneratorImpl {
     private final PropertyService propertyService;
-    public MockGenerator(PropertyService propertyService, Blockchain blockchain, TimeService timeService, FluxCapacitor fluxCapacitor) {
+
+    public MockGenerator(
+        PropertyService propertyService,
+        Blockchain blockchain,
+        TimeService timeService,
+        FluxCapacitor fluxCapacitor) {
       super(blockchain, null, null, timeService, fluxCapacitor);
       this.propertyService = propertyService;
     }
 
     @Override
-    public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
+    public BigInteger calculateHit(
+        long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
       return BigInteger.valueOf(propertyService.getInt(Props.DEV_MOCK_MINING_DEADLINE));
     }
 
@@ -273,7 +309,12 @@ public class GeneratorImpl implements Generator {
     }
 
     @Override
-    public BigInteger calculateDeadline(BigInteger hit, long capacityBaseTarget, long commitment, long averageCommitment, int blockHeight) {
+    public BigInteger calculateDeadline(
+        BigInteger hit,
+        long capacityBaseTarget,
+        long commitment,
+        long averageCommitment,
+        int blockHeight) {
       return BigInteger.valueOf(propertyService.getInt(Props.DEV_MOCK_MINING_DEADLINE));
     }
   }
@@ -290,29 +331,29 @@ public class GeneratorImpl implements Generator {
     long capacityBaseTarget = previousBlock.getCapacityBaseTarget();
     int height = previousBlock.getHeight();
     int endHeight = height;
-    
+
     // Check if there are mined blocks on the download cache or commitment removals
     Block blockIt = null;
-    if(downloadCache != null) {
+    if (downloadCache != null) {
       blockIt = downloadCache.getBlock(previousBlock.getId());
     }
     // Get some pending from cache and later from DB directly when available
     // We also check if the blockchain actually have blockIt, we might be processing a fork
-    while(blockIt != null && (endHeight >= blockchain.getHeight() ||
-        blockchain.getBlockIdAtHeight(blockIt.getHeight()) != blockIt.getId())) {
-      if(blockIt.getGeneratorId() == generatorId) {
-        if(height - endHeight <= Constants.CAPACITY_ESTIMATION_BLOCKS)
-          nBlocksMinedOnCache++;
-        else
-          nBlocksMinedOnCacheMax++;
+    while (blockIt != null
+        && (endHeight >= blockchain.getHeight()
+            || blockchain.getBlockIdAtHeight(blockIt.getHeight()) != blockIt.getId())) {
+      if (blockIt.getGeneratorId() == generatorId) {
+        if (height - endHeight <= Constants.CAPACITY_ESTIMATION_BLOCKS) nBlocksMinedOnCache++;
+        else nBlocksMinedOnCacheMax++;
       }
-      for(Transaction tx : blockIt.getTransactions()) {
-        if(tx.getSenderId() == generatorId) {
-          if(blockIt.getHeight() <= height - Constants.COMMITMENT_WAIT && tx.getType() == TransactionType.BurstMining.COMMITMENT_ADD) {
+      for (Transaction tx : blockIt.getTransactions()) {
+        if (tx.getSenderId() == generatorId) {
+          if (blockIt.getHeight() <= height - Constants.COMMITMENT_WAIT
+              && tx.getType() == TransactionType.BurstMining.COMMITMENT_ADD) {
             CommitmentAdd txAttachment = (CommitmentAdd) tx.getAttachment();
             committedAmountOnCache += txAttachment.getAmountNQT();
           }
-          if(tx.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
+          if (tx.getType() == TransactionType.BurstMining.COMMITMENT_REMOVE) {
             CommitmentRemove txAttachment = (CommitmentRemove) tx.getAttachment();
             committedAmountOnCache -= txAttachment.getAmountNQT();
           }
@@ -322,47 +363,54 @@ public class GeneratorImpl implements Generator {
       endHeight--;
       blockIt = downloadCache.getBlock(blockIt.getPreviousBlockId());
     }
-    
+
     Account account = accountService.getAccount(generatorId);
     if (account != null) {
       committedAmount = blockchain.getCommittedAmount(account, height, endHeight, null);
       committedAmount += committedAmountOnCache;
-      if(committedAmount <= 0L) {
-        if(logger.isDebugEnabled()) {
-          logger.debug("Block {}, ID {}, no commitment", height, BurstID.fromLong(generatorId).getID());
+      if (committedAmount <= 0L) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(
+              "Block {}, ID {}, no commitment", height, BurstID.fromLong(generatorId).getID());
         }
         return 0L;
       }
-      
+
       // First we try to estimate the capacity using more recent blocks only
-      nBlocksMined = blockchain.getBlocksCount(account, height - capacityEstimationBlocks, endHeight);
-      if(nBlocksMined + nBlocksMinedOnCache < 3) {
+      nBlocksMined =
+          blockchain.getBlocksCount(account, height - capacityEstimationBlocks, endHeight);
+      if (nBlocksMined + nBlocksMinedOnCache < 3) {
         // Use more blocks in the past to make the estimation if that is necessary
         capacityEstimationBlocks = Constants.CAPACITY_ESTIMATION_BLOCKS_MAX;
-        nBlocksMined = blockchain.getBlocksCount(account, height - capacityEstimationBlocks,
-            endHeight) + nBlocksMinedOnCacheMax;
+        nBlocksMined =
+            blockchain.getBlocksCount(account, height - capacityEstimationBlocks, endHeight)
+                + nBlocksMinedOnCacheMax;
       }
     }
     nBlocksMined += nBlocksMinedOnCache;
-    
+
     long genesisTarget = Constants.INITIAL_BASE_TARGET;
-    genesisTarget = (long)(genesisTarget / 1.83d); // account for Sodium deadlines
-    long estimatedCapacityGb = genesisTarget*nBlocksMined*1000L/(capacityBaseTarget * capacityEstimationBlocks);
-    if(estimatedCapacityGb < 1000L) {
+    genesisTarget = (long) (genesisTarget / 1.83d); // account for Sodium deadlines
+    long estimatedCapacityGb =
+        genesisTarget * nBlocksMined * 1000L / (capacityBaseTarget * capacityEstimationBlocks);
+    if (estimatedCapacityGb < 1000L) {
       estimatedCapacityGb = 1000L;
     }
     // Commitment being the committed balance per TiB
-    long commitment = (committedAmount/estimatedCapacityGb) * 1000L;
-    
-    if(logger.isDebugEnabled()) {
-      logger.debug("Block {}, Network {} TiB, ID {}, forged {}/{} blocks, {} TiB, commitmentNQT {}",
+    long commitment = (committedAmount / estimatedCapacityGb) * 1000L;
+
+    if (logger.isDebugEnabled()) {
+      logger.debug(
+          "Block {}, Network {} TiB, ID {}, forged {}/{} blocks, {} TiB, commitmentNQT {}",
           height,
-          (double)genesisTarget/capacityBaseTarget,
+          (double) genesisTarget / capacityBaseTarget,
           BurstID.fromLong(generatorId).getID(),
-          nBlocksMined, capacityEstimationBlocks, estimatedCapacityGb/1000D,
+          nBlocksMined,
+          capacityEstimationBlocks,
+          estimatedCapacityGb / 1000D,
           commitment);
     }
-    
+
     return commitment;
   }
 }

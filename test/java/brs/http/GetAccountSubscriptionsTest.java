@@ -45,9 +45,8 @@ public class GetAccountSubscriptionsTest extends AbstractUnitTest {
   public void processRequest() throws BurstException {
     final long userId = 123L;
 
-    final HttpServletRequest req = QuickMocker.httpServletRequest(
-      new MockParam(ACCOUNT_PARAMETER, userId)
-    );
+    final HttpServletRequest req =
+        QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, userId));
 
     final Account account = mock(Account.class);
     when(account.getId()).thenReturn(userId);
@@ -60,7 +59,8 @@ public class GetAccountSubscriptionsTest extends AbstractUnitTest {
     when(subscription.getTimeNext()).thenReturn(4);
 
     final Collection<Subscription> subscriptionIterator = this.mockCollection(subscription);
-    when(subscriptionServiceMock.getSubscriptionsByParticipant(eq(userId))).thenReturn(subscriptionIterator);
+    when(subscriptionServiceMock.getSubscriptionsByParticipant(eq(userId)))
+        .thenReturn(subscriptionIterator);
 
     final JsonObject result = (JsonObject) t.processRequest(req);
     assertNotNull(result);
@@ -73,9 +73,12 @@ public class GetAccountSubscriptionsTest extends AbstractUnitTest {
     assertNotNull(resultSubscription);
 
     assertEquals("" + subscription.getId(), JSON.getAsString(resultSubscription.get(ID_RESPONSE)));
-    assertEquals("" + subscription.getAmountNQT(), JSON.getAsString(resultSubscription.get(AMOUNT_NQT_RESPONSE)));
-    assertEquals(subscription.getFrequency(), JSON.getAsInt(resultSubscription.get(FREQUENCY_RESPONSE)));
-    assertEquals(subscription.getTimeNext(), JSON.getAsInt(resultSubscription.get(TIME_NEXT_RESPONSE)));
+    assertEquals(
+        "" + subscription.getAmountNQT(),
+        JSON.getAsString(resultSubscription.get(AMOUNT_NQT_RESPONSE)));
+    assertEquals(
+        subscription.getFrequency(), JSON.getAsInt(resultSubscription.get(FREQUENCY_RESPONSE)));
+    assertEquals(
+        subscription.getTimeNext(), JSON.getAsInt(resultSubscription.get(TIME_NEXT_RESPONSE)));
   }
-
 }
