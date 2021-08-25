@@ -46,7 +46,7 @@
     <mockito.version>3.0.0</mockito.version>
     <powermock.version>2.0.2</powermock.version>
     <apachehttpclient.version>4.5.9</apachehttpclient.version>
-    <jacoco.version>0.8.4</jacoco.version>
+    <jacoco.version>0.8.7</jacoco.version>
     <jiconfont.version>1.0.0</jiconfont.version>
     <font_awesome.version>4.7.0.1</font_awesome.version>
 
@@ -284,13 +284,6 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>jacoco-maven-plugin</artifactId>
-      <version>${jacoco.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -581,6 +574,28 @@
         </configuration>
       </plugin>
 
+      <!--jacoco plugin -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+     <!--jacoco plugin end -->
     </plugins>
 
   </build>
