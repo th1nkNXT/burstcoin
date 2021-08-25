@@ -189,3 +189,4 @@ For more information, see [Credits](doc/Credits.md)
 # Test coverage
 
 [![codecov](https://codecov.io/gh/th1nkNXT/burstcoin/branch/citests/graph/badge.svg?token=H9VSS61HUQ)](https://codecov.io/gh/th1nkNXT/burstcoin)
+[![codecov](https://codecov.io/gh/th1nkNXT/burstcoin/branch/citests/graph/sunburst.svg?token=H9VSS61HUQ)](https://codecov.io/gh/th1nkNXT/burstcoin)
