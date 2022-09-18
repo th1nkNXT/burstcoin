@@ -6,6 +6,8 @@ import brs.fluxcapacitor.FluxValues;
 import brs.peer.Peer;
 import brs.util.Convert;
 import brs.util.JSON;
+import lombok.Builder;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -60,7 +62,7 @@ public class Block {
       long totalFeeCashBackNQT, long totalFeeBurntNQT,
       int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature,
       byte[] blockSignature, byte[] previousBlockHash, List<Transaction> transactions,
-      long nonce, byte[] blockATs, int height, long baseTarget) throws BurstException.ValidationException {
+      long nonce, byte[] blockATs, int height, long baseTarget, BigInteger cumulativeDifficulty, long nextBlockId, long id) throws BurstException.ValidationException {
 
     if (payloadLength > Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height) || payloadLength < 0) {
       throw new BurstException.NotValidException(
@@ -79,8 +81,8 @@ public class Block {
     this.generatorPublicKey = generatorPublicKey;
     this.generationSignature = generationSignature;
     this.blockSignature = blockSignature;
-
     this.previousBlockHash = previousBlockHash;
+
     if (transactions != null) {
       this.blockTransactions.set(Collections.unmodifiableList(transactions));
       if (blockTransactions.get().size() > (Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {

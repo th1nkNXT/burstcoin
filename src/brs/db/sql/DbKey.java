@@ -166,7 +166,7 @@ public interface DbKey extends BurstKey {
     private final long id;
     private final String idColumn;
 
-    private LongKey(long id, String idColumn) {
+    public LongKey(long id, String idColumn) {
       this.id       = id;
       this.idColumn = idColumn;
     }

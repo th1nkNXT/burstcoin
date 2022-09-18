@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Supplier;
 
-public final class DownloadCacheImpl {
+public class DownloadCacheImpl {
   private final int blockCacheMB;
 
   private final Map<Long, Block> blockCache = new LinkedHashMap<>();
