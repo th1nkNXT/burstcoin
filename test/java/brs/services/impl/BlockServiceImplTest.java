@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import java.math.BigInteger;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -36,6 +37,7 @@ import brs.util.DownloadCacheImpl;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Burst.class)
 public class BlockServiceImplTest {
+
 
   final int currentHeight = 2;
 
@@ -87,36 +89,73 @@ public class BlockServiceImplTest {
   public void verifyBlockSignature() throws ValidationException, BlockOutOfOrderException {
     Block block = createValidBlock(currentHeight+1);
     Block prevBlock = createPrevBlock(block);
+    block.getBlockTransactions().set(Collections.unmodifiableList(Collections.emptyList()));
+    prevBlock.getBlockTransactions().set(Collections.unmodifiableList(Collections.emptyList()));
+
     when(blockchainMock.getBlock(block.getPreviousBlockId())).thenReturn(prevBlock);
 
     assertTrue(t.verifyBlockSignature(block));
   }
   
   private Block createValidBlock(int height) throws ValidationException {
-    return Block.builder()
-      .version(3)
-      .height(height)
-      .generationSignature(Convert.parseHexString("305a98571a8b96f699449dd71eff051fc10a3475bce18c7dac81b3d9316a9780"))
-      .generatorPublicKey(Convert.parseHexString("a44e4299354f59919329a0bfbac7d6858873ef06c8db3a6a90158f581478bd38"))
-      .payloadHash(Convert.parseHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"))
-      .blockSignature(Convert.parseHexString("0271d3d9adae0636d8d7c4a3612848f694690157693847734441f3a499410a0cadfc65aac43802afe39e22725465b9301eae89ae59fdd554835607a40c3b370b"))
-      .timestamp(683)
-      .transactions(Collections.emptyList())
-      .previousBlockId(3444294670862540038L)
-      .previousBlockHash(Convert.parseHexString("065d8826c197cc2fc7059b15fedc7d700bc56320095eafb4c1ab115ba0a3979e"))
-      .nonce(31687)
-      .baseTarget(Constants.INITIAL_BASE_TARGET)
-    .build();
+	    final int version = 3;
+	    final long previousBlockId = 3444294670862540038L;
+	    final int blockTimestamp = 683; 
+	    final int payloadLength = 0;
+	    final byte[] payloadHash = Convert.parseHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    	final byte[] previousBlockHash = Convert.parseHexString("065d8826c197cc2fc7059b15fedc7d700bc56320095eafb4c1ab115ba0a3979e");
+    	final byte[] generationSignature = Convert.parseHexString("305a98571a8b96f699449dd71eff051fc10a3475bce18c7dac81b3d9316a9780");
+    	final byte[] generatorPublicKey = Convert.parseHexString("a44e4299354f59919329a0bfbac7d6858873ef06c8db3a6a90158f581478bd38");
+    	final byte[] blockSignature = Convert.parseHexString("0271d3d9adae0636d8d7c4a3612848f694690157693847734441f3a499410a0cadfc65aac43802afe39e22725465b9301eae89ae59fdd554835607a40c3b370b");
+
+        return new Block(version, 
+	    		blockTimestamp, 
+	    		previousBlockId, 
+	    		0, 
+	    		0, 
+	    		0, 
+	    		0,
+	    		payloadLength, 
+	    	    payloadHash, 
+	    	    generatorPublicKey, 
+	    	    generationSignature, 
+	    	    blockSignature, 
+	    	    previousBlockHash, 
+	    	    BigInteger.ONE, 
+	    	    Constants.INITIAL_BASE_TARGET,
+	    	    0, 
+	    	    height, 
+	    	    3444294670862540039L, 
+	    	    31687, 
+	    	    null); 
+
   }
 
   private Block createPrevBlock(Block block) throws ValidationException {
-    return Block.builder()
-      .id(3444294670862540038L)  
-      .version(block.getVersion())
-      .height(block.getHeight()-1)
-      .blockSignature(Convert.parseHexString("0271d3d9adae0636d8d7c4a3612848f694690157693847734441f3a499410a0cadfc65aac43802afe39e22725465b9301eae89ae59fdd554835607a40c3b370b"))
-      .timestamp(block.getTimestamp()-1)
-      .transactions(Collections.emptyList())
-    .build();
+	final long previousBlockId = 3444294670862540037L;
+	final int payloadLength = 0;
+	final byte[] payloadHash = Convert.parseHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+	final byte[] previousBlockHash = Convert.parseHexString("065d8826c197cc2fc7059b15fedc7d700bc56320095eafb4c1ab115ba0a3979e");
+
+  	return new Block(block.getVersion(), 
+    		    block.getTimestamp()-1, 
+	    		previousBlockId, 
+	    		0, 
+	    		0, 
+	    		0, 
+	    		0,
+	    		payloadLength, 
+	    	    payloadHash, 
+	    	    null, 
+	    	    null, 
+	    	    Convert.parseHexString("0271d3d9adae0636d8d7c4a3612848f694690157693847734441f3a499410a0cadfc65aac43802afe39e22725465b9301eae89ae59fdd554835607a40c3b370b"), 
+	    	    previousBlockHash, 
+	    	    BigInteger.ONE, 
+	    	    Constants.INITIAL_BASE_TARGET,
+	    	    0, 
+	    	    block.getHeight()-1, 
+	    	    3444294670862540038L, 
+	    	    31687, 
+	    	    null); 
     }
 }
